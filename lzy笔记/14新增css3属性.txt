@@ -1,0 +1,103 @@
+css3
+
+1、边框属性：圆角边框  border-radius:4/13 24/1 24 3 /1234
+					20px/5px
+
+单方向圆角边框：border-top-left-radius:10px;
+		border-bottom-right-radius:10px;
+
+		注意：先写上下后左右
+
+	支持单位：px、em、% rem
+
+边框图片：border-image:url(../images/pic15.png) 70 stretch;
+ 
+	图片边框显示方式：repeat（重复）样图尺寸不变、round（平铺）尺寸变化拟合、space空隙变化、stretch（拉伸 默认值）
+
+	70：切割图片的宽度 采样值
+
+
+2、阴影：盒子阴影：box-shadow: 0 0 10px 5px #0f0 outset;  
+
+1水平位置（Horizontal） 2垂直位置（Vertical）3模糊半径程度 4外延扩展值（blur）5阴影颜色  6inset（内阴影，放在最前或最后）
+
+盒子阴影可以同时设置多个，用逗号分隔；默认阴影颜色是黑色  
+
+h和v的值可以是负值；模糊程度、外延值不可以是负值
+先上后下，多阴影定义逗号隔开
+
+
+文字阴影与盒子阴影语法相似，区别：文字阴影  无内阴影 无外延扩展值 text-shadow: 0 0 10px #0f0; 
+多阴影定义逗号隔开
+
+
+3、背景色渐变(背景图的渐变色表现)
+
+线型渐变：background:linear-gradient(to top/90deg/left bottom/50px 60%, red, orange 50%,yellow 70%);  渐变方向，起始渐变色，……，最终渐变色
+
+径向渐变：background:radial-gradient(100px,circle/ellipse, red, orange 0%,yellow 100%); 圆半径（扩散范围），起始渐变色，……，最终渐变色
+也可以background-image:-webkit-gradient(radial, 45 45, 10, 52 50, 30, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62)),color-stop(90%, #019F62)),-webkit-gradient()
+
+
+4、省略号
+	white-space: nowrap;   强制不换行
+	overflow: hidden;      溢出隐藏
+	text-overflow:ellipsis;省略号
+
+text-overflow:clip；剪切
+text-overflow:ellipsis;省略号
+
+
+5、css3新增背景属性
+   设置背景图的起始位置(定位区域)
+   background-origin ： border-box | padding-box（默认值） | content-box;
+
+   设置背景图从边框或内填充或内容区域向外裁剪（显示范围）
+
+   background-clip ： border-box（默认值） | padding-box | content-box | no-clip
+
+   background-size：auto；默认值，不影响宽高比例的改变
+   background-size：100px 50px；第一个设置宽，第二个设置高
+   background-size：100%  50%；
+   background-size：cover；填充容器，覆盖 将背景图像等比缩放到完全覆盖容器，背景图像有可能超出容器
+   background-size：contain；紧贴某个边缘将背景图像等比缩放到宽度或高度与容器的宽度或高度相等，背景图像始终被包含在容器内。
+
+!!背景图的多重定义，中间用逗号隔开，先上，后下
+css3中，一个盒子可以设置多个背景
+
+6、outline:solid .5rem #fcc;轮廓线/外边框 outline-offset: -10px偏移; 不占位
+  
+7、盒子挤压属性：盒子尺寸的计算方式 width/height
+box-sizing：border-box|content-box；
+
+	box-sizing：content-box；=content.盒子宽度不包含padding与border；与w3c盒模型计算模式一样
+		content-box；:content=width
+		padding-box；:content+padding=width
+		border-box；:padding+border+content=width
+	
+	box-sizing：border-box；盒子大小包含padding与border+content；内容向内挤压变小  与ie的怪异模式相同
+
+实心圆：宽高相等、border-radius是宽/高的一半
+
+上半圆：高是宽的一半，border-radius：高度值 高度值 0 0；
+
+下半圆：高是宽的一半，border-radius：0 0 高度值 高度值 ；
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,59 @@
+输入专用类型：input
+
+1、电话号码<input type="tel" name="tel" pattern="[0-9]{11}">  pattern自动验证属性   required必填属性
+
+2、<p><input type="email" name="email"></p>  电子邮件 @
+
+3、url  网址 http://
+
+4、<input type="number" min="0" max="10" step="3">  数值类型   min最小值  max最大值 step步长值（递增、递减）
+y
+5、range  选取数值范围，显示为滑动条   <output>输出</output>
+
+5.1 search 搜索输入框
+
+5.2 color 颜色输入框
+
+6、<progress></progress>进度条
+
+7、列表菜单<input type="text" list="opt">  input的list属性与datalist的id属性进行关联
+			<datalist id="opt">
+				<option value="1">请选择</option>
+				<option value="2">北京</option>
+				<option value="3">上海</option>
+				<option value="4">请选择</option>
+
+			</datalist>
+
+8、日期：date  年月日
+	datetime/datetime-local年月日时间-本地
+	 month  年月
+	 week   周
+	 time   时间
+
+
+新增属性：1、placeholder
+          2、autofocus 自动获取焦点-鼠标
+	  3、pattern自动验证属性格式【】{}
+          4、required必填属性验证 非空
+	  5、min最小值  max最大值 step步长值（递增、递减）
+	  6、input的list属性与datalist的id属性进行关联
+	  7、formaction  更改表单组件提交地址
+	  8、formmethod  更改组件提交方式
+	  9、form= 组件的所属关联 id
+	10、formnovalidate 禁止组件验证
+	11、novalidate 禁止整个form验证
+	12/tabindex="12" tab键顺序焦点
+	
+focus:"pointer"
+
+	disabled
+	readonly
+
+
+
+
+
+
+
+

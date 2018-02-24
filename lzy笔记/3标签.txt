@@ -1,0 +1,147 @@
+标签学习：是什么标签，什么情况下使用，注意事项有啥，写法与标签属性？？？？
+
+图片标签：传达信息用图 <img src=“” alt=“替换文本搜索” title=“鼠标下描述/标题文字”/>
+css背景图：修饰用图
+
+标题标签：<h1></h1>---<h6></h6>
+	h1用法：
+
+段落标签：<p></p> 
+	用法：1、2
+
+容器标签：<div></div>
+	用法：1、2
+
+超链接标签：<a></a>
+<a href="html/jiadian.html" target="_blank" name="">家电城</a>
+
+target默认在原窗口打开  _self
+
+target="_blank" 新建窗口打开
+
+target="_parent"父级框架
+
+target="_top"最顶级框架
+
+锚点/书签链接实现同页面或不同页面指定打开位置的跳转，实现原理，a元素里的href值=#+目标元素的id值
+
+<a href="#name">我要找到你</a>
+
+<h1 id="name">我在这里等你！</h1>
+<a name="name"></a>
+
+href的链接对象：网址、空链接、图片、exe应用程序，邮件mailto:
+
+
+无序列表标签：
+	用法：1
+<ul>
+    <li><a href="#">首页</a></li>
+    <li><a href="#">百家</a></li>
+    <li><a href="#">新闻</a></li>
+    <li><a href="#">社会</a></li>
+    <li><a href="#">首页</a></li>
+</ul>
+
+默认特点：实心圆（disc）；空心圆（circle）、方块（square）、隐藏（none）（decimal）数字  通过list-style或list-style-type属性改变风格
+
+list-style-image:url();将图片作为列表的项目符号
+
+项目符号的位置
+list-style-position：inside；
+list-style-position ：outside； 默认
+
+应用：导航、整齐的列表项
+
+有序列表：
+<ol type="A" reversed="reversed" start=“3”>
+    <li><a href="#">首页</a></li>
+    <li><a href="#">百家</a></li>
+    <li><a href="#">新闻</a></li>
+    <li><a href="#">社会</a></li>
+    <li><a href="#">首页</a></li>
+</ol>
+
+默认特点：数字索引；通过ol标签上的type属性改变风格：A、a、I、i
+
+start：起始值
+
+reversed="reversed"反转
+
+ul li,ol li{ list-style-type:none;}群组选择器，用逗号分隔
+
+定义列表：
+<dl>
+    <dt>北京</dt>
+    <dd>海淀区</dd>
+    <dd>朝阳区</dd>
+    <dd>大兴区</dd>
+    <dt>河南</dt>
+    <dd>郑州</dd>
+    <dd>焦作</dd>
+    <dd>济源</dd>
+</dl>
+
+dt是定义项，dd是描述项
+
+应用：图文混排 dt名词/标题/ 简单，dd定义/描述/复杂
+浮动并行时，要定义dt或dd宽度
+
+span:特殊的文本字节、日期
+
+格式化标签：
+b、strong：加粗
+em、i：倾斜
+u ：下划线
+sub：下标
+sup：上标
+
+
+
+标签分类：1、块标签的特点：独占一行，自动换新行；支持所有属性【div、hn、p、ul、li、ol、dl、dt、dd】，宽度100%
+
+	  2、行内标签的特点：默认在一行显示；行内元素的宽高默认被内容所撑开；默认不支持宽高属性【a、img、span、b、strong、em、i、u，input、textarea select label】
+	
+	
+
+如何转化标签？
+
+	1、display：block；将行内元素转化为块元素
+
+	2、display：inline；将块元素转化为行内元素（默认值）img
+
+	3、display：inline-block；内联块元素属性；既支持宽高又支持在一行显示 兼容
+
+	4、display：none；整体隐藏 br datalist
+	
+	5、display:list-item
+	6、display:table-cell 内的元素可垂直居中
+	**或者：float/position：absolute/fixed
+	注意：是元素表现特征的转换，3种方法
+
+色块：1、margin：0 auto；快元素居中
+2、text-algin:center  内联元素居中
+
+标签的嵌套：块》块、内联
+	  内联》内联
+《结构层-表现层-行为层-内容层》
+
+
+思考总结：各个元素的不同作用，什么情况下使用
+
+
+
+
+&lt; <
+
+&gt; >
+
+&quot;"
+
+&reg; 注册
+
+&copy;版权
+
+&nbsp;半角空格
+
+

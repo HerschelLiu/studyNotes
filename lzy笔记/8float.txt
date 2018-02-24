@@ -1,0 +1,65 @@
+浮动：脱离文档流的属性，不占位（影响：使浮动元素之后的其它元素上飞跟随）
+
+float：left；，元素从左向右开始排，正序
+
+float：right；元素从右向左排，倒序
+
+float：none；默认值
+
+浮动的作用：1、使元素并行显示 都加浮动
+	    2、改变元素的位置
+	    3、可以将行内元素转化为块元素
+	    4、可以解决首个盒子的margin-top失效问题
+	    5、行内元素垂直间距不生效；使块元素宽度自适应；img上3px空隙
+
+浮动的坏问题：1浮动后元素不占位
+	父级元素：高度塌陷、未闭合、无内容高度、背景消失，边框线一顶条
+	后面的元素：整体上飞，部分内容上飞、背景上飞，背景消失，上margin上padding失效
+	
+	2同行右浮元素要前置
+
+	首个盒子的margin-top失效问题：1、float：left；
+			      2、给父元素加border
+			      3、用padding-top替代；注意盒子高度必须减	
+
+
+clear：清除浮动-可以使页面布局正常。可起到换行的作用
+	（注1：单纯的br标签只能对内联元素换行）
+	（注2：不要在浮动元素的父级盒子上添加clear属性）
+
+clear：left；
+
+clear：right；
+
+clear：both；
+
+clear：none；默认值
+
+清除的方法：1、给受浮动影响的元素加clear：both；
+	    2、在浮动元素结束后加<块元素 class="clear"></快元素>
+	    3、给浮动元素的父元素加高度
+	    4、给浮动元素的父元素加overflow：hidden；/zoom：1；（支持ie）
+      为父标签添加{overflow:hidden;}的样式
+
+	5，父级元素:after{clear:both;visiblity:hidden;}
+		.cont:before{clear:both;visiblity:hidden;}
+
+		6.<br style="clear:both" />
+鼠标显示：1、cursor: pointer;小手
+	  2、cursor:move; 移动指针
+	  3、cursor:help;求助
+
+补充：line-height  行高属性；设置行间距；单位：px、%
+
+li的间距问题 IE6浏览器 li标签设置宽高，且li里面的元素发生了浮动；
+
+
+
+
+
+
+
+
+
+
+

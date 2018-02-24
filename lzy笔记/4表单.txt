@@ -1,0 +1,73 @@
+表单标签：<form></form>
+
+表单标签的属性：action:提交地址#   method：提交方法、方式（get、post）  name（区别多个表单） target（打开方式）
+
+get：提交量小100，安全性低
+
+post：提交量大，安全性高
+
+
+输入类型标签：<input/>  type=“”    输入框：text  属性：value初始值（默认初始文字，光标在后显示，可删除）；placeholder提示文字（光标在前，自动删除）
+
+			   密码框：password
+
+			   单选框：radio  属性：1、name组名，保持一致以实现单选，必填属性 2、checked设置默认选中状态
+
+			   复选框：checkbox  属性：checked设置默认选中状态
+
+			   上传文件域：file 属性：multiple设置同时上传多个文件	
+		
+	   		   提交按钮：submit 属性：value（改变按钮上的文字）；直接提交
+
+		           普通按钮：button 需要js辅助实现提交
+
+			   重置按钮：reset
+
+		   	  图像域按钮：image  属性：src链接图片；将图片作为提交按钮使用
+
+			   隐藏域： hidden 收集隐藏信息
+			 
+			<label for="组件的id名">标注文本</label> 触发被包含或id名的组件，扩大触发区域
+			<label>标注文本+组件</label>
+
+			<fieldset> 将表单内的相关组件分组
+				<legend> 为 fieldset 定义标题</legend>
+			</fieldset> 
+
+按钮<button>文本/图像</button>
+
+
+下拉菜单：：<select multiple="multiple">
+        	<option value="1">请选择</option>
+                <option value="2">北京</option>
+                <option value="3" selected="selected">上海</option>
+                <option value="4">广州</option>
+        </select>
+		<optgroup>选项组</optgroup>
+
+select的属性：
+multiple:实现多选 
+
+size：多行显示为列表，值为数字
+
+option的属性：1、value 是菜单的提交值  2、selected="selected" 默认选中状态/值
+
+
+多行文本域：<textarea cols="50" rows="10" maxlength="60"></textarea>
+
+cols：控制宽（列-字符数）  rows：控制高（行数）maxlength：设置输入的最大字符数
+
+
+
+input、select、textarea共同属性：name（不可省略，记忆功能）、value
+
+disabled 不可编辑 hidden除外 禁用
+
+readonly  对text只读
+
+
+
+
+
+
+

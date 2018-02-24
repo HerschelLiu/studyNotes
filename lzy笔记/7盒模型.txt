@@ -1,0 +1,155 @@
+
+
+盒模型基本六属性：content（width+height）+border+padding+margin+background（可选）
+标准模式实际尺寸：width/height+border+padding+margin
+ie默认怪异模型=width/height+margin  （border+padding已经在宽高内了）DTD声明
+width、height：用来定义内容区的宽高，不一定是盒子的实际尺寸
+
+什么情况下定义尺寸
+	内联/块
+
+	尺寸<1em--
+
+	尺寸<内容
+
+
+什么情况下不用定义尺寸
+	
+	块：
+
+	内联：
+
+
+max-height/min-height IE6不识别
+max-width/min-width : none
+
+
+一、边框：border-width:5px;粗细
+	border-style:solid;线型（solid实线）（dashed虚线）（dotted点线）（double双实线）（none隐藏） hidden
+	border-color:#f00;颜色
+
+复合属性：border:3px solid ;
+
+        border-top-color:#ff0;
+	border-right-style:dashed;
+	border-bottom-width:0;
+4个方向：-top -right -bottom -left
+
+
+位置：padding区的外，margin的内
+先总后分/尺寸的定义/上右下左border-width: 10px 5px 3px 8px;
+
+取消边框：1、border-width：0；2、border-style：none；3、border：0；4、border：none；
+	hidden;兼容ie7
+
+缺省情况下：网页的默认字体颜色 2px
+效果案例：
+小三角效果
+
+
+二、padding：内边距/内填充（背景色填充间距）  设置内容到边框的距离 （有背景或边框线内侧）
+ 	padding-top:50px;
+	padding-right:50px;
+	padding-bottom:50px;
+	padding-left:50px;
+
+复合属性：padding：10px；上右下左
+
+	  padding:10px 20px;上下 左右
+
+	  padding:10px 20px 30px;上 左右 下
+
+	  padding:10px 20px 30px 40PX;上 右 下 左
+
+内联元素：上下padding值无效
+ 正值
+
+
+三、margin：外边距/外边界（设置盒子与盒子/边框与边框的间距）；间距透明（没有背景或边框线外侧）
+
+上下margin相遇会重叠(折叠、重合)，取大值应用（float，父级overflow，定位，根元素）
+margin：正负值
+先总后分
+首个子元素的margin-top失效=======float 父级overflow
+IE6双倍浮向=======display：inline/_margin:1/2
+内联元素：上下margin值无效 
+
+margin、padding共同特点：间距会相加
+
+margin、padding的区别：1、padding的垂直间距会进行叠加；margin上下间距取最大值；2、padding不允许使用负值；margin可以使用负值 重叠
+
+
+margin-left：当前元素向右移动40px
+
+margin-right：后一个元素向右移动40px
+
+margin-top：当前元素距离上侧40px；向下移动
+
+margin-bottom：当前元素距离下侧40px；下侧元素向下移动40px
+
+
+盒模型宽度计算公式=width + border-left + border-right ++padding-left+padding-right+margin-left+margin-right
+
+影响盒子尺寸的属性有：border、padding、margin,width.height
+
+四、背景属性：位置：padding区+content区
+	    	background-color:#999;背景色 transparent
+		background-image:url(../images/banner.png);背景图；默认双向平铺 在左上角
+		background-repeat:no-repeat;平铺方式  不平铺
+				  repeat  双向平铺（默认）
+				  repeat-x  水平横向平铺
+				  repeat-y  垂直纵向平铺
+		background-position:center center;背景图位置 left top/100px 50%
+			(先X后Y)（第二值可省略默认为center）;
+		水平位置   垂直位置
+		left       top
+		center	   center
+		right	   bottom
+		
+			
+		属性值格式：单词、数值加px单位、百分比、负值
+		background-attachment:fixed;背景附件；内容动；背景图固定不动scroll（兼容）
+
+复合属性：background:#0f0 url(../images/pic01.jpg) no-repeat fixed center 100px ;
+	默认值为：transparent none repeat scroll 0% 0%。
+
+1,位置2默认3先总后分4尺寸5margin空隙无背景
+
+
+
+
+效果案例：
+css sprites/雪碧图/图片精灵：背景图标的整合位移技术
+将多个小icon放在一张大背景图下，通过background-position显示目标图片指定的不同位置。
+
+优点：减少http请求次数，加快加载速度，减轻服务器的负担
+
+缺点：制作麻烦，不利于后期维护
+
+精灵图制作要点：1横图竖立，竖图横置  2等距放置 3背景透明
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
