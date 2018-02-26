@@ -51,8 +51,23 @@ function fun (a ,b) { ... }
 ## 四.分号结束符
 ### 以前写JS的时候，喜欢在每一行的结束加上<font color="red">;</font>作为结束，但是这里就不用了。如果写了反而会报错。
 ```
-# 正确示范
+#### 正确示范
 var a = '123'
-# 错误示范
+#### 错误示范
 var a = '123';
+```
+## 五.vue2.0中没有了`$index`，所以
+```
+## 错误：
+<li class="support-item" v-for="item in seller.supports">
+    <span class="icon" :class="classMap[seller.supports[$index].type]"></span>
+    <span class="text">{{ seller.supports[$index].description }}</span>
+</li>
+```
+改为
+```
+<li class="support-item" v-for="(item,index) in seller.supports">
+    <span class="icon" :class="classMap[seller.supports[index].type]"></span>
+    <span class="text">{{ seller.supports[index].description }}</span>
+</li>
 ```
