@@ -23,6 +23,7 @@ var a = '123'
 var a= '123'
 var a ='123'
 ```
+# 三.`<template></template>`中只能有一个根元素
 
 
 
