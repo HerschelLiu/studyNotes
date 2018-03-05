@@ -72,4 +72,3 @@
 + 在表单元素上创建双向数据绑定，监听用户的输入事件以及更新数据
 + <font color="red">**注意：**</font>只适用于input，select，textarea
 
-jsonview
