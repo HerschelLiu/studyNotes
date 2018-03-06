@@ -72,3 +72,7 @@ var a = '123';
     <span class="text">{{ seller.supports[index].description }}</span>
 </li>
 ```
+
+## 六.import引用
+是`export default`的import时不用{}
+是`export function`的用{}
