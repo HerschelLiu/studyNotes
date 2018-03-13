@@ -1,21 +1,23 @@
 # 安装 #
 + npm install -g vue
-	>全局安装vue
+  >全局安装vue
 + npm install -g vue-cli
-	>全局安装vue-cli
+  >全局安装vue-cli
 ---------------------------
 # 项目准备
 
 + vue init webpack name
-	>创建一个基于webpack模板且名字为name的新项目。
+  > 创建一个基于webpack模板且名字为name的新项目。
 	注意：你可以在你想要放文件的位置调出命令行，并写这行代码。
+  > 下载太慢可以用淘宝镜像事先下载webpack包cnpm install --save-dev webpack，之后运行vue init webpack name
+  > 注意：要在你想要的地方下载
 + cd name
-	>进入到创建好的name文件夹内
+  > 进入到创建好的name文件夹内
 + 安装依赖
 	-npm install
-		>可以用cnpm
+	  > 可以用cnpm
 	-npm run dev
-		>把地址复制进浏览器就好
+	  > 把地址复制进浏览器就好
 --------------------------------------------
 
 # 网页的文件要放在src文件夹中
