@@ -272,3 +272,218 @@ true-value，false-value只适合同一个checkbox组只有一个checkbox的情�
   </select>
 ```
 勾选时vm.selected === {number:123}
+
+# 六.过滤器
+  过滤器本质上都是函数，其作用在于用户输入数据后，他能进行处理，并返回一个数据结果
+使用管道符（|）进行连接`{{'abc' | uppercase}}// 'abc' => 'ABC'`，
+这里使用了vue内置的过滤器uppercase将字符串中的字母全部转换为大写形式
+除了双大括号形式，还可以在绑定指令的表达式后调用
+```
+<span v-text="message | uppercase"></span>
+```
+过滤器可以接受参数，参数跟在过滤器名称后面，参数之间以空格分隔
+```
+{{message | filterFunction 'arg1' arg2}}
+```
+强调：过滤器函数将始终以表达式的值作为第一个参数。带引号的参数会被当成字符串处理，
+而不带引号的参数会被当作数据属性名来处理。
+这里message将作为第一个参数，字符串arg1作为第二个参数，表达式arg2的值在计算出来后作为第三个参数传给过滤器
+
+## 6.1 内置过滤器
+  vue内置了一系列常用的过滤器，可以直接调用。这些内置过滤器相对比较简单，复杂的自己定义
+  > 字母操作：capitalize（首字母大写）、uppercase（所有字母转换为大写）、lowercase（所有字母转换为小写）
+  > 限制：
+    用于处理并返回过滤后的数组，比如与v-for搭配使用
+	注意：这三个过滤器所处理的表达式的值必须是数组
+	1. limitBy：限制数组为开始的前N个元素，N由传入的第一个参数指定，第二个参数可选，用于指定开始的偏移量，默认为0，即不偏移
+	   <!--只显示开始的10个元素-->
+       <div v-for="item in items | limitBy 10"></div>
+	   <!--只显示5到15个元素-->
+       <div v-for="item in items | limitBy 10 5"></div>
+	2. filterBy：使用比较灵活，第一个参数可以是字符串或函数
+	     如果第一个参数是字符串，将在每个数组中搜索它，并返回包含该字符串的元素组成的数组
+	3. orderBy：返回排序后的数组，>=0升序，order<0降序，第一个参数字符串||数组||函数。第二个参数order可选，决定结果为升序或降序，默认为1，即升序
+  > json：JSON.stringify（）的精简缩略版，可将表达式的值转换为JSON字符串
+    即输出表达式经过JSON.stringify（）处理厚的结果
+	json可以接受一个类型为Number的参数，用于决定转换后的JSON字符串的缩进新，若不出入，默认为2
+	```
+	 // 以4个空格的缩进打印一个对象
+      <pre>{{didiFamily | json 4}}</pre>    
+	```
+  > currency：将数字值转换为货币形式输出，第一个参数接受类型为String的货币符号，不输入默认为美元符号$，第二个参数接受NUmber类型的小数位，不输入默认为2
+    如果第一个参数默认，第二个参数修改小数位，则第一参数不可省略
+	 {{amount | currency '￥'}}
+     // 12345 => ￥12,345.00
+	 将小数位调整为3位
+	 {{amount | currency '$' 3}}
+     // 12345 => $12,345.000
+  > debounce： 延迟处理器一定时间的执行，其接受的表达式的值必须为函数，因此一般与v-on等指令结合使用
+     接受一个可选参数作为延迟时间，单位毫秒，默认为300毫秒
+	
+### 6.2.1 fillter（自定义过滤器的语法）
+```
+//此为es6写法
+    filters: {
+      formatDate (time) {
+        let date = new Date(time)
+        return formatDate(date, 'yyyy-MM-dd hh:mm')
+      }
+    }
+```
+# 七.Class与Style绑定
+  常见需求是操作元素的class列表和他的内联样式，可以用v-bind处理他们
+
+## 7.1 绑定HTML Class
+### 7.1.1 对象语法
+  可以传给v-bind：class一个对象，以动态的切换class
+注意：v-bind：class可以与普通class并存
+
+### 7.1.2 数组语法
+我们可以把一个数组传给v-bind:class，以应用一个class列表
+
+## 7.2 绑定内联样式
+### 7.2.1 对象语法
+  v-bind:style对象语法非常直观，看着非常像CSS
+  ```
+   通常直接绑定到一个样式对象更好,让模板更清晰。代码示例如下：
+ <div id-example'v-bind:style="ddfe"></div>
+ new Vue ({
+   el: 'example',
+   data: {
+     ddfe: {
+	   color: orange,
+       fontSize: 13px
+	 }
+   }
+ })
+ ```
+### 7.2.2 数组语法
+  v-bind：style的数组语法可以将多个样式对象应用到一个元素上
+  ```
+  <div v-bind:style="[ddfe, didiFamily]"></div>
+  ```
+##### 7.2.3 自动添加前缀
+  当v-bind：style使用需要前缀的css属性，vue会自动添加
+  
+# 八.过渡（2.0版本）[vue.js文档transition](https://cn.vuejs.org/v2/api/#transition)
+  应用过渡效果，需要用`<transition name='myname'></transition>`包裹想要进行过渡效果的标签，其中name是定义过渡属性类名的前缀
+  transition的类名要与被包裹元素的类名同级
+  
+  说明：
+ * *-enter：进入过渡的开始状态，元素被插入时生效
+ * *-enter-active：进入过渡的结束状态
+ * *-leave：离开过渡的开始状态
+ * *-leave-active：离开过渡的结束状态
+ * *-enter，*-leave-active这两个设置样式时一起设置
+ 
+ 还可以使用钩子函数（在methods中写）：beforeEnter，enter，afterEnter，enterCancelled，beforeLeave，leave，afterLeave，leaveCancelled
+ 
+# 九.methods
+  vue的事件监听一般通过v-on指令配置在HTML中
+## 9.1 如何绑定事件
+### 9.1.1 内联方式
+```
+<button v-on:click="greet">Greet</button>
+```
+这中内联方式下，一个事件处理器只能绑定一个方法，如需绑定多个方法，仍需在js代码中使用
+addEventListener方法来绑定
+
+### 9.1.2 methods配置
+  当用户将click时间与某个方法绑定时，需要在vue实例中进行定义，所有定义的方法都放在
+methods属性下
+
+### 9.1.3 $event应用
+  创建的方法需要访问原生DOM事件时可以传入event来获取
+  
+# 十 vue实例方法 
+  vue实例提供的一些有用得属性和方法，这额都以$前缀开头
+## 10.1 实例属性
+* 组件树访问：
+  + $parent:访问当前组件实例的父实例
+  + $root：访问当前组件树的根实例，若当前组件无父实例，$root表示当前组件本身
+  + $children：访问当前组件实例的的直接子组件实例
+  + $refs： 用来访问ref指令的子组件
+* DOM访问: $el, $els（2.0中已经不存在，而是用$refs）
+* 数据访问：
+  + $data：访问组件实例观察的数据对象
+  + $options： 访问组件实例化时的初始化选项对象
+  
+## 10.2 实例方法
+### 10.2.1 实例DOM方法的使用
+ callback可选
+* 内部插入：
+  + $appendTo(字符串或DOM元素, callback)：将ref所指的DOM元素或片段插入到目标元素中
+* 同级插入
+  + $after(字符串或DOM元素, callback)：将ref所指的DOM元素或片段插入到目标元素之后
+  + $before(字符串或DOM元素, callback)：将ref所指的DOM元素或片段插入到目标元素之前
+* 删除
+  + $remove(callback)：将ref所指的DOM元素或片段从DOM中删除
+* 延迟
+  + $nextTick(callback)：用来在下次DOM更新循环后执行指定的回调函数，
+     +使用他可以保证DOM中内容已经与最新数据保持同步（异步更新）
+
+## 10.2.2 实例Event方法的使用
+* 触发
+  + $dispatch, $broadcast(被$emit取代)
+  + $emit(event(字符串), args(可选，传递给监听函数的参数))：用来触发事件
+* 监听
+  + $on(event(字符串), callback)：用来监听实例上的自定义事件
+  + $once(event(字符串), callback): 与$on相同，但只触发一次
+* 删除
+  + $off(event(字符串), callback(可选))：删除事件监听器
+  
+# 十一.组件
+  可重用性高。把组件代码按照template、style、script拆分，放到对应的.vue文件里
+  * 模板（template）
+  * 初始数据（data）
+  * 接受的外部参数（props）：组件之间通过参数来进行数据的传递和共享
+  * 方法（methods）
+  * 生命周期钩子函数（created、attached、destroyed）
+  
+## 11.1 基础
+### 11.1.1 注册
+1.全局注册
+vue.component（'name', 组建的构造函数）
+2.局部注册
+在本组件内components中注册你想使用标签的名字比如demo，注册之后在父组件就可以以自定义元素<demo></demo>的形式在本组件内使用
+
+### 11.1.2 数据传递
+vue组件之间有三种数据传递方式：props，组件通信，slot
+1.props是组件数据的一个字段，期望从父组件传下来数据。可以是字面量，表达式，还可以绑定修饰符。默认是单向绑定，
+  为了防止子组件无意修改父组件状态
+  + .sync双向绑定
+  + .once单次绑定
+  
+#### 添加keep-alive指令：可以把切换出去的组件保留在内存中。，，可以保留它的状态或避免重新渲染
+
+## 11.2 相关拓展
+### 11.2.1 组件和v-for
+  自定义组件可以像普通元素一样直接使用v-for
+### 11.2.2 编写可复用组件
+### 11.2.4 资源命名约定
+vue支持资源的名字使用camelCase或PascalCase形式，并且在模板中自动转换为kebab-case形式
+
+# 十二.表单校验
+  表单校验在web应用中是很重要的一环，在vue中可以使用vue-validator
+## 12.1 安装
+1. npm：npm install vue-validator
+## 12.2 基本使用
+  将要校验的表单元素包裹在<validator>之中，而在要校验的表单控件元素的v-validate
+属性上绑定相应的校验规则。结果会保存在组件实例的$validation属性下，$validation是由validator元素的name属性和前缀$组成的
+
+# 十三.与服务端通信（vue-resource）
+## 13.1 配置
+### 13.1.4 基本HTTP调用
+1. 底层方法
+  全局的Vue.http和vue组件的实例方法this.$http都属于底层方法，他们根据所传option参数
+的methods属性来判断请求方式是GET还是POST，或者是其他HTTP的合法方法
+  （1）全局方法
+    ```
+	Vue.http(option)
+	```
+  （2）组件实例调用
+    ```
+	this.$http(option)
+	```
+	二者接受相同option参数，都返回Promise对象。不同的是，全局调用方式
+  回调中this指向window，而组建实例调用方式回调指向组件实例
