@@ -487,3 +487,55 @@ vue支持资源的名字使用camelCase或PascalCase形式，并且在模板中�
 	```
 	二者接受相同option参数，都返回Promise对象。不同的是，全局调用方式
   回调中this指向window，而组建实例调用方式回调指向组件实例
+  
+  2.便捷方法
+    是对底层方法的封装，在调用时可以省去配置需选项option中的method属性，
+  以下为vue-resource提供的便捷方法
+  ```
+  get/post/put/patch/delete/jsonp(url,[data],[options])(data可选)
+  ```
+  
+# 十四.路由与视图
+  vue并没有提供路由机制，但是官方以插件（vue-router）的形式提供了对路由的支持
+## 14.1安装
+  npm install vue-router
+## 14.2 基本使用
+  ```
+  <!-- <router-link> 默认会被渲染成一个 `<a>` 标签 -->
+  <router-link to="/foo">Go to Foo</router-link>
+  
+  <!-- 路由出口 -->
+  <!-- 路由匹配到的组件将渲染在这里 -->
+  <router-view></router-view>
+  ```
+# 十五.Scrat与vue
+## 15.1 安装Scrat
+  1.`npm install -g scrat`
+  安装后执行 `scrat -v` 查看工具版本
+  如果安装失败可以用淘宝镜像`cnpm install -g scrat`
+  2.初始化项目
+    Scrat 自带脚手架功能，通过`scrat init`命令生成一个scrat脚手架项目
+	生成的目录结构如下：
+	vue-scrat-demo
+	 |- components（模块化资源）
+	 |- server（服务端代码）
+	 |- views（非模块化资源）
+	 |- component.json（模块化资源描述文件）
+	 |- fis-conf.js（构建工具配置文件）
+	 |- package.json（项目描述文件）
+  3.安装依赖组件库
+   Scrat采用component作为生态模块，因此可以通过安装component组件，方便开发和团队共享
+   打开component.接收文件，修改依赖关系，如下：
+   ```
+   {
+     "name": "scrat-vue",
+	 "version": "1.0.0",
+	 "dependencies": {
+	   "scrat-team/fastclick": "1.0.2"
+	 }
+   }
+   ```
+   生态模块名称的结构是"用户名/仓库名回@版本号"，
+   这里的fastclick是一个Java Script库，是由github用户scrat-team创建的，版本是1.0.2。
+   接节来我们在项目目录下执行scrat install命令,依赖的fastclick库会安装到当前项目
+   模块安装后，我们可以在js代码中通过`require('fastclick')`来引用这个模块
