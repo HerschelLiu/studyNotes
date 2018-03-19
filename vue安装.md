@@ -20,3 +20,8 @@
 
 # 网页的文件要放在src文件夹中
 # 运行项目就是 npm run dev,并且要注意，命令行窗口不能关
+
+# 下载webpack（手动配置自己webpack，webpack+vue-loader）
+在你想要的位置
+`(c)npm install webpack webpack-dev-server`
+这其实是两条命命令下载两个东西。这么写就直接两个都下在了
