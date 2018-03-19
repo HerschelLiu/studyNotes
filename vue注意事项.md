@@ -76,3 +76,8 @@ var a = '123';
 ## 六.import引用
 是`export default`的import时不用{}
 是`export function`的用{}
+
+## 七.数据绑定
+{{msg}} 数据更新，模板变化
+{{*msg}}数据只绑定一次
+{{{msg}}}HTML转义输出
