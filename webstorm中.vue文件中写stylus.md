@@ -1,0 +1,1 @@
+就在style内加入type="text/less(stylus)"
