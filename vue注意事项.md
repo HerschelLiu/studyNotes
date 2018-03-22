@@ -45,7 +45,7 @@ function fun (a , b) { ... }
 function fun (a ,b) { ... }
 ```
 ### 其他空格
-####if和for语句的空格处理办法和上面函数是一样的，这里就不多说，尝试一遍就清楚了
+#### if和for语句的空格处理办法和上面函数是一样的，这里就不多说，尝试一遍就清楚了
 
 
 
@@ -101,14 +101,14 @@ var a = '123';
 ## 十.ready
   2.0中变为mounted
 ## 十一.生命周期（钩子函数）（2.0）
-beforeCreate 组件实例刚刚被创建，属性都没有
-created 实例已经创建完成，属性已经绑定
-beforeMount 模板编译之前
-mounted 模板编译之后
-beforeUpdate 组件更新之前
-updated 组件更新完毕
-beforeDestroy 组件销毁之前
-destroyed 组件销毁之后
+* beforeCreate 组件实例刚刚被创建，属性都没有
+* created 实例已经创建完成，属性已经绑定
+* beforeMount 模板编译之前
+* mounted 模板编译之后
+* beforeUpdate 组件更新之前
+* updated 组件更新完毕
+* beforeDestroy 组件销毁之前
+* destroyed 组件销毁之后
 
 ## 十二.track-by=“id”
 2.0中变成了 :key="index"
