@@ -77,3 +77,32 @@ alert(obj2.name) // tom
 # 数组indexOf与lastIndexOf
   只是一个从开头找一个从末尾找，但是返回的数值还是按照正常的数组项的位置返回，而不是说从后面查找就是从后面开始数位置
   参数为要查找的项，查找起点位置的索引（可选）
+  
+# querySelector与getElementById
+  区别：getXXXByXXX 获取的是动态集合，querySelector获取的是静态集合。
+
+简单的说就是，动态就是选出的元素会随文档改变，静态的不会，取出来之后就和文档的改变无关了。<br />
+如果只要一次查找就可得到元素时，首选getXXXByXXX ；
+
+如果需要经过多级查找，才能得到元素时，首选querySelector；
+
+# 自定义数据属性
+  设置带有data-前缀的，为元素提供与渲染无关的信息。<br />
+  用`dataset`来获取
+  ```
+   var box = document.getElementById("box");
+  // 获取自定义属性的值
+  var boxId = box.dataset.boxId;
+  ```
+  如果浏览器不支持dataset，例如FireFox 4,输出结果为undfined<br />
+  需要注意的是带连字符连接的名称在使用的时候需要命名驼峰化,例如`data-meal-time`就是`box.dataset.mealTime`<br />
+  
+  传统方法获取data-：
+  `var boxId = document.getElementById('box').getAttribute('data-boxId');`
+  
+# 事件冒泡
+  IE的事件流称为事件冒泡，比如单击了<div>这个元素，click事件会从这个点击的<div>开始，然后沿着dom树向上传播,<br />
+直到document对象
+
+# 事件对象
+  在触发DOM上的某个事件，会产生一个事件对象event
