@@ -1,3 +1,13 @@
+### 添加meta标签
+
+在布局app样式时，为了确保绘制和缩放的效果需要在`<head>`标签中添加 `viewport` 元数据标签
+
+`<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>`
+
+同时添加`format-detection`，防止ios机型将连续数组转为手机号码
+
+`<meta name="format-detection" content="telephone=no"/>`
+
 # 端设置
 
 * 图标最好为150*150大小的
