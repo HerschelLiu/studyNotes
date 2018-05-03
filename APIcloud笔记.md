@@ -199,3 +199,10 @@ api.openFrame({
 4. 每个应用具有独立的沙箱，APICloud提供资源访问协议
 5. APICloud支持widget之间的通信和调用
 6. APICloud应用可以同设备中其他的Native应用进行通信和调用
+
+## 模块
+
+#### clipBoard（复制，获取内容）
+
+[  clipBoard文档](https://docs.apicloud.com/Client-API/Device-Access/clipBoard)
+
