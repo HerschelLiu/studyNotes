@@ -206,3 +206,45 @@ api.openFrame({
 
 [  clipBoard文档](https://docs.apicloud.com/Client-API/Device-Access/clipBoard)
 
+
+
+## 获取主frame属性值
+
+主frame使用openFrame方法中加入pageParam就可以给子frame传值，子frame使用api.api.pageParam获取
+
+```
+//主frame
+var header = $api.dom('header'); // 获取 header 标签元素
+var footer = $api.dom('footer'); // 获取 footer 标签元素
+var headerH = $api.fixStatusBar(header);
+var footerH = $api.offset(footer).h;
+api.openFrame({
+    name: '' + name + '',
+    url: 'html/' + name + '.html',
+    bounces: true,
+    rect: { // 推荐使用Margin布局，用于适配屏幕的动态变化
+        marginTop: headerH, // main页面距离win顶部的高度
+        marginBottom: footerH, // main页面距离win底部的高度
+        w: 'auto' // main页面的宽度 自适应屏幕宽度
+    },
+    pageParam: {
+        headerH: headerH,
+        footerH: footerH
+    }
+});
+
+//子frame
+var indexHeaderH = api.pageParam.headerH;
+        var indexFooterH = api.pageParam.footerH;
+```
+
+## frame显示内容的高度
+
+rect中的h值为frame高度-header高度-footer高度
+
+```
+h: api.frameHeight - indexFooterH - indexHeaderH
+```
+
+
+
