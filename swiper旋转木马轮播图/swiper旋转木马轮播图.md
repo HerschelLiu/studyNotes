@@ -160,3 +160,44 @@ certifySwiper = new Swiper('#certify .swiper-container', {
 }
 ```
 
+```
+// 更改后的
+var banner = new Swiper('.banner .swiper-container', {
+        watchSlidesProgress: true,
+        slidesPerView: 'auto',
+        centeredSlides: true,
+        loop: true,
+        loopedSlides: 3, // 有多少图片就是几
+        autoplay: true,
+        on: {
+            progress: function(progress) {
+                for (i = 0; i < this.slides.length; i++) {
+                    var slide = this.slides.eq(i);
+                    var slideProgress = this.slides[i].progress;
+                    modify = 1;
+                    if (Math.abs(slideProgress) > 1) {
+                        modify = (Math.abs(slideProgress) - 1) * 0.54 + 1;// 图片间距，乘的值越大空隙越大
+                    }
+                    translate = slideProgress * modify * 260 + 'px';// 260为图片宽度的一半
+                    scale = 1 - Math.abs(slideProgress) / 8;
+                    zIndex = 999 - Math.abs(Math.round(10 * slideProgress));
+                    slide.transform('translateX(' + translate + ') scale(' + scale + ')');
+                    slide.css('zIndex', zIndex);
+                    slide.css('opacity', 1);
+                    if (Math.abs(slideProgress) > 3) {
+                        slide.css('opacity', 0);
+                    }
+                }
+            },
+            setTransition: function(transition) {
+                for (var i = 0; i < this.slides.length; i++) {
+                    var slide = this.slides.eq(i)
+                    slide.transition(transition);
+                }
+
+            }
+        }
+
+    })
+```
+
