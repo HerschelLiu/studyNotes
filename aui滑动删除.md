@@ -123,5 +123,18 @@
         var thisParent = $api.closest(el, '.orderFormBar');
         $api.remove(thisParent);
     }
+    
+    // 另一种写法
+    
+    //滑动删除事件
+    var swipe = new auiListSwipe(function(ret) {
+        //移除对话条
+        var deleteBtn = $api.next(ret.dom);
+
+        $api.addEvt(deleteBtn, 'click', function(){
+          var thisParent = $api.closest(this, '.infoBar');
+          $api.remove(thisParent);
+        });
+    });
 ```
 
