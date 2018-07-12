@@ -27,6 +27,7 @@
             height: 164px;
             margin: auto;
             background: #f7f7f7;
+            border-radius: 15px;
             z-index: 10;
         }
 
@@ -48,6 +49,8 @@
             align-items: center;
             width: 100%;
             height: 38px;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
         }
 
         .btnBox>.cancel {
@@ -67,8 +70,7 @@
             width: 50%;
             height: 38px;
             line-height: 38px;
-            background: linear-gradient(left, #0f4bb2, #0052df);
-            background: -webkit-linear-gradient(left, #0f4bb2, #0052df);
+            background: #f77045;
             padding-left: .25rem;
             text-align: center;
             font-size: .65rem;
@@ -114,5 +116,26 @@
         event.perventDefault();
     });
 </script>
+
+
+
+
+api.openFrame({
+                    name: 'fm_coupon-confirm',
+                    url: './fm_coupon-confirm.html',
+                    rect: {
+                        x: 0,
+                        y: 0,
+                        w: 'auto',
+                        h: 'auto'
+                    },
+                    bounces: false,
+                    bgColor: 'rgba(0,0,0,0)',
+                    vScrollBarEnabled: true,
+                    hScrollBarEnabled: true,
+                    animation: {
+                        type: 'fade'
+                    }
+                });
 ```
 
