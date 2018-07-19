@@ -85,5 +85,31 @@
             letter-spacing: .25rem;
             box-sizing: border-box;
         }
+        
+        
+        
+        <footer id="footer" class="aui-bar aui-bar-tab">
+        <div class="aui-bar-tab-item menu-active" tapmode onclick="setMenuIndex(0)">
+            <div class="menu-one"></div>
+            <div class="aui-bar-tab-label">夫子医</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode onclick="setMenuIndex(1)">
+            <div class="aui-dot"></div>
+            <div class="menu-two"></div>
+            <div class="aui-bar-tab-label">消息</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode onclick="setMenuIndex(2)">
+            <div class="menu-three"></div>
+            <div class="aui-bar-tab-label">检测</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode onclick="setMenuIndex(3)">
+            <div class="menu-four"></div>
+            <div class="aui-bar-tab-label">留言</div>
+        </div>
+        <div class="aui-bar-tab-item" tapmode onclick="setMenuIndex(4)">
+            <div class="menu-five"></div>
+            <div class="aui-bar-tab-label">个人</div>
+        </div>
+    </footer>
 ```
 
