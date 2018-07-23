@@ -27,3 +27,9 @@
 [atom-ternjs](https://atom.io/packages/atom-ternjs) js代码提示很强大，高度定制化。 
 ## autoprefixer 
 autoprefixer 用来补充 css 前缀的，会自动生成多个浏览器的前缀
+
+
+
+## activate-power-mode 
+
+游戏效果敲代码
