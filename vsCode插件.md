@@ -50,4 +50,17 @@
 
 • Material Icon
 
-  
+* **Atom One Dark Theme** :atom主题
+* **Beautify** 美化vscode代码
+* **Bracket Pair Colorizer** 每一对括号用不同颜色区别 （括号强迫症必备）
+* **cssrem** 将css中的px自动转换为rem.再也不用计算器了（大漠大神推介）
+* **HTML CSS Support** vscode对html，css文件支持，便于你快速书写属性
+* **Vetur** 添加对.vue后缀文件的快速书写支持。
+* **Vue 2 Snippets** 快速新建vue页面
+* **markdownlint** 书写md文件的预览插件
+* **language-stylus** CSS预处理器styl后缀文件的识别扩展
+* **View In Browser** 迅速通过浏览器打开html文件
+* **Easy LESS** :会默认生成css文件到less文件所在的目录。这是插件实现的（我想node.js是必须安装的）。
+
+
+
