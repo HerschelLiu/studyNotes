@@ -39,16 +39,6 @@
 * Minify:是一款用于压缩合并 JavaScript 和 CSS 文件的应用程序。它提供了大量自定义的设置，以及自动压缩保存并导出为.min文件的选项。它能够分别通过 uglify-js、clean-css 和 html-minifier，与 JavaScript、CSS 和 HTML 协同工作
 * Change Case:虽然 VSCode 内置了开箱即用的文本转换选项，但其只能进行文本大小写的转换。而此插件则添加了用于修改文本的更多命名格式，包括驼峰命名、下划线分隔命名，snake_case 命名以及 CONST_CAS 命名等。
 * Regex Previewer:这是一个用于实时测试正则表达式的实用工具。它可以将正则表达式模式应用在任何打开的文件上，并高亮所有的匹配项。
-* Language and Framework Packs:VSCode 默认支持大量的主流编程语言，但如果你所使用的编程语言不包括在内，也可以通过下载扩展包来自动添加。同时，你还可以添加一些像 React Native 与Vue 的相关 Web 开发插件包。
-* Themes:当然，在众多的实用插件中，岂能少了漂亮的主题呢？你每天都会与你的 VSCode 编辑器进行“亲密的接触”，为何不把它打扮得更漂亮些呢？这里有一些帮助你更改侧边栏的配色方案，以及图标的相关主题，与大家分享：
-
-• One Monokai
-
-• Aglia
-
-• One Dark
-
-• Material Icon
 
 * **Atom One Dark Theme** :atom主题
 * **Beautify** 美化vscode代码
