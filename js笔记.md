@@ -84,3 +84,33 @@ function User(name,pass){
 
 ```
 
+### slice和substring区别
+
+* substring是以两个参数中较小一个作为起始位置，较大的参数作为结束位置。如：alert(test.substring(7,4)); 而slice是第一个参数是起始位置
+* substring结束点不支持负数；当接收的参数是负数时，slice会将它字符串的长度与对应的负数相加，结果作为参数（相当于从后往前，注意的是，从末尾数不是从0开始，而是从1开始）；substr则仅仅是将第一个参数与字符串长度相加后的结果作为第一个参数；substring则干脆将负参数都直接转换为0
+
+### every()和some()区别
+
+- every()是对数组中每一项运行给定函数，如果该函数对每一项返回true,则返回true
+
+- some()是对数组中每一项运行给定函数，如果该函数对任一项返回true，则返回true
+
+- ```
+  var arr = [ 1, 2, 3, 4, 5, 6 ]; 
+  
+  console.log( arr.some( function( item, index, array ){ 
+      console.log( 'item=' + item + ',index='+index+',array='+array ); 
+      return item > 3; 
+  })); 
+  
+  console.log( arr.every( function( item, index, array ){ 
+      console.log( 'item=' + item + ',index='+index+',array='+array ); 
+      return item > 3; 
+  }));1234567891011
+  ```
+
+  some一直在找符合条件的值，一旦找到，则不会继续迭代下去。 every从迭代开始，一旦有一个不符合条件，则不会继续迭代下去。
+
+### fliter 与 forEach
+
+* fliter 是创建新的数组来存储符合条件的元素;forEach 方法用于调用数组的每个元素，并将元素传递给回调函数。
