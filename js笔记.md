@@ -158,3 +158,58 @@ var target = e.target || e.srcElement;// 事件目标兼容
 
        ```
 
+### 阻止默认行为
+
+DOM中：event.preventDefault()  阻止默认行为
+
+IE中:  event.returnValue=false  返回值=false  // return  false 
+
+阻止默认行为的兼容写法，写成函数
+
+```
+
+    
+			function  preventDefault(eve){
+				if(eve.preventDefault){
+					eve.preventDefault();
+				}else{
+					eve.returnValue=false;
+				}
+			}
+```
+
+### 事件监听
+
+浏览器兼容
+
+```
+var $ = {
+	// 添加事件处理程序
+	addEvent:function(element , type , handler){
+		// DOM2级事件处理程序
+		if( element.addEventListener ){
+			element.addEventListener( type , handler , false );
+		// IE事件处理程序
+		}else if( element.attachEvent ){
+			element.attachEvent( "on" + type , handler );
+		// DOM0级事件处理程序
+		}else{
+			element["on" + type] = handler;
+		}
+	},
+	// 删除事件处理程序
+	removeEvent:function(element , type , handler){
+		// DOM2级事件处理程序
+		if( element.removeEventListener ){
+			element.removeEventListener( type , handler , false );
+		// IE事件处理程序
+		}else if( element.detachEvent ){
+			element.detachEvent( "on" + type , handler );
+		// DOM0级事件处理程序
+		}else{
+			element["on" + type] = null;
+		}
+	}
+};
+```
+
