@@ -131,3 +131,30 @@ var e = e || window.event;// 事件对象兼容
 var target = e.target || e.srcElement;// 事件目标兼容
 ```
 
+### 阻止冒泡
+
+* 标准浏览器下 DOM中 : event.stopPropagation()   停止传播
+
+* IE浏览器下：         event.cancelBubble=true   取消冒泡
+
+​            
+
+       ```
+ //阻止冒泡的兼容写法，写成函数
+
+          function stopPropagation(eve){
+
+                    if(eve.stopPropagation){ //标准
+
+                            eve.stopPropagation();//函数方法
+
+                    }else{
+
+                        eve.cancelBubble=true; //IE
+
+                    }
+
+              }
+
+       ```
+
