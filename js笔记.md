@@ -114,3 +114,20 @@ function User(name,pass){
 ### fliter 与 forEach
 
 * fliter 是创建新的数组来存储符合条件的元素;forEach 方法用于调用数组的每个元素，并将元素传递给回调函数。
+
+#### sort
+
+想要按照数值大小对数字排序
+
+```javascript
+arr.sort( (a,b)=>a-b ); // es6
+arr.sort( functioin(a,b){a-b });
+```
+
+### 事件
+
+```javascript
+var e = e || window.event;// 事件对象兼容
+var target = e.target || e.srcElement;// 事件目标兼容
+```
+
