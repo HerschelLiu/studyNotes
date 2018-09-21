@@ -139,23 +139,23 @@ var target = e.target || e.srcElement;// 事件目标兼容
 
 ​            
 
-       ```
+
  //阻止冒泡的兼容写法，写成函数
 
           function stopPropagation(eve){
-
+    
                     if(eve.stopPropagation){ //标准
-
+    
                             eve.stopPropagation();//函数方法
-
+    
                     }else{
-
+    
                         eve.cancelBubble=true; //IE
-
+    
                     }
-
+    
               }
-
+    
        ```
 
 ### 阻止默认行为
@@ -213,3 +213,26 @@ var $ = {
 };
 ```
 
+### 判断类型
+
+* typeof可以返回对应类型,判断字符串的话`typeof(str)=='string'``typeof(num)=='number`,数组用isArray()
+* instanceof只能判断以new方法创建的,类型为首字母大写,例如字符串
+
+```
+var str = new String('abc');
+
+console.log(str instanceof String);// true
+```
+
+### `__proto__`
+
+`__proto__`
+
+```
+ 实例化对象.__proto__ == 构造函数.prototype
+    console.log( obj.__proto__ == Person.prototype );
+
+  console.log( Person.prototype );
+
+  console.log( obj.__proto__ );
+```
