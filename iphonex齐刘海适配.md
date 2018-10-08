@@ -22,3 +22,22 @@ viewport-fit的作用，它有三个可能的值：
 
 安卓暂定为40px
 
+##### **如何适配全面屏手机**
+
+根据谷歌兼容性（CTS）标准要求,应用必须按以下方式中的任意一种，在AndroidManifest.xml中配置方可全屏显示，否则将以非全屏显示。
+
+方式一：配置支持最大高宽比
+
+\* <meta-data android:name="android.max_aspect"  android:value="ratio_float" />
+
+\* android:maxAspectRatio="ratio_float"   （API LEVEL 26）
+
+说明：以上两种接口可以二选一，ratio_float = 屏幕高 / 屏幕宽 （如oppo新机型屏幕分辨率为2280 x 1080， ratio_float = 2280 / 1080 = 2.11，建议设置 ratio_float为2.2或者更大）
+
+
+
+方式二：支持分屏，注意验证分屏下界面兼容性
+
+android:resizeableActivity="true"  
+
+建议采用方式二适配支持全面屏。
