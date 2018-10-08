@@ -1,16 +1,47 @@
-在设置了全屏width:100%;height:100%的情况下。IphoneX底部会有一个空白区域，这个是IphoneX底部是预留操作区。需要手动拖动才能把白色区域给覆盖。
+iPhoneX的适配---适配方案viewport-fit
 
-# 解决办法
+###     3.1  PhoneX的适配，在iOS 11中采用了viewport-fit的meta标签作为适配方案；viewport-fit的默认值是auto。
 
-那么如何一开始全屏呢？消除白色区域呢？
+　　  viewport-fit取值如下：
 
-Iphone官网已经给予解决方案。在viewport加入 viewport-fit=cover 属性。就可以解决了
+| auto  | 默认：viewprot-fit:contain;页面内容显示在safe area内 |
+| ----- | ---------------------------------------------------- |
+| cover | viewport-fit:cover,页面内容充满屏幕                  |
+
+　　    viewport-fit meta标签设置(cover时)
+
+ 
 
 ```
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 ```
 
-# 说明
+###     3.2  css constant()函数 与safe-area-inset-top & safe-area-inset-left & safe-area-inset-right & safe-area-inset-bottom的介绍
+
+ ![img](https://images2017.cnblogs.com/blog/949019/201711/949019-20171106205332075-1346398687.png)
+
+如上图所示 在iOS 11中的WebKit包含了一个新的[CSS函数constant()](https://github.com/w3c/csswg-drafts/pull/1817)，以及一组[四个预定义的常量](https://github.com/w3c/csswg-drafts/pull/1819)：safe-area-inset-left, safe-area-inset-right, safe-area-inset-top和 safe-area-inset-bottom。当合并一起使用时，允许样式引用每个方面的安全区域的大小。
+
+​    3.1当我们设置viewport-fit:contain,也就是默认的时候时;设置safe-area-inset-left, safe-area-inset-right, safe-area-inset-top和 safe-area-inset-bottom等参数时不起作用的。
+
+​    3.2当我们设置viewport-fit:cover时：设置如下
+
+```
+body {
+    padding-top: constant(safe-area-inset-top);   //为导航栏+状态栏的高度 88px            
+    padding-left: constant(safe-area-inset-left);   //如果未竖屏时为0                
+    padding-right: constant(safe-area-inset-right); //如果未竖屏时为0                
+    padding-bottom: constant(safe-area-inset-bottom);//为底下圆弧的高度 34px       
+}
+```
+
+# 5.iPhoneX的适配---媒体查询
+
+注意这里采用的是690px(safe area高度)，不是812px;
+
+```
+`@media only ``screen` `and (``width``: ``375px``) and (``height``: ``690px``){``    ``body {``        ``background``: ``blue``;``    ``}``}`
+```
 
 viewport-fit的作用，它有三个可能的值：
 
