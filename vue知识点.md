@@ -80,3 +80,243 @@
 * 不同点：v-if是将元素添加或移除出dom树模型中，v-show只是在这个属性上加了display：none而已
 * v-if有更高得切换消耗，安全性更高。v-show初始化消耗大一点。所以，如果需要频繁切换并对安全性没有要求时，可以使用v-show。如果运行时，条件不可能改变的话，使用v-if更好一点
 
+## 组件的使用
+
+```vue
+<template id="account"> //只能是id
+    <div>
+      <h3>账号组件的内容</h3>
+      <a href="">账号</a>
+      <a href="">密码</a>
+    </div>
+  </template>
+  <div id="app">
+      <account1></account1>
+  </div>
+
+
+Vue.component('account1', {
+    template: '#account'
+  }); 
+/* vue.component('别名', {
+    template: '#id'
+  });
+此为注册全局组件，
+注意，注册组件要在new Vue之前
+*/
+
+  new Vue({
+    el: '#app',
+    data: {
+
+    },
+    methods: {
+      myClick: function () {
+        console.log('我被点击了');
+
+      }
+    }
+  })
+```
+
+## 组件间传值
+
+* 父->子：
+
+```
+<template id="account">
+    <div>
+      <h1>组件的内容:{{name1}}</h1>
+    </div>
+  </template>
+  <div id="app">
+    <account1 :name1="name"></account1>给子组件绑定数据
+  </div>
+</body>
+<script>
+  Vue.component('account1', {
+    template: '#account',
+    data: function () {
+      return {
+        
+      }
+    },
+    props: {
+      name1: String // 值类型，子组件接收数据
+    }
+  });
+  new Vue({
+    el: '#app',
+    data: {
+      name: 'haha'
+    }
+  })
+
+</script>
+```
+
+* 子->父 ：运用methods以及v-on
+
+```
+<template id="account">
+    <div>
+      <h1 @click="sendData">发送数据</h1>
+    </div>
+  </template>
+  <div id="app">
+    <account1 @send='getDate'></account1>
+  </div>
+</body>
+<script>
+  Vue.component('account1', {
+    template: '#account',
+    data: function () {
+      return {
+
+      }
+    },
+    methods: {
+      sendData() {
+        this.$emit('send', 123) // this.$emit('父组件v-on绑定的名字', 数据)
+      }
+    }
+  });
+  new Vue({
+    el: '#app',
+    data: {
+      name: 'haha'
+    },
+    methods: {
+      getDate(input) {
+        console.log(input);
+
+      } 
+      // 接受子组件传来的数据，另外，父子组件中的methods均可用function名字：function（）{}方式
+    }
+  })
+
+</script>
+```
+
+## vue-router路由基本使用
+
+在一个系统中或app中，由多个页面组成，通常会使用vue中的组件来实现。那么当从一个页面跳到另一个页面时，通过url路径来实现的哪个url对应哪个页面，在vue中时通过**vue-router**来实现
+
+```
+<script src="./vue.min.js"></script>
+<script src="./vue-router.min.js"></script>
+
+<body>
+  <div id="app">
+    <router-link to="/login">登陆</router-link>
+    <router-link to="/register">注册</router-link>
+    <!-- 占位符 -->
+    <router-view></router-view>
+  </div>
+</body>
+<script>
+  // 定义根组件
+  var App = Vue.extend()
+  // 定义注册组件
+  var register = Vue.extend({
+    template: '<h2>注册</h2>'
+  })
+
+  // 定义登陆组件并注册路由规则
+  var login = Vue.extend({
+    template: '<h2>登陆</h2>'
+  })
+
+  // 定义路由
+  /*
+  {
+      path: '/',
+      redirect: './login'
+    }
+    为设置默认路径
+  */
+  var vueRouter = new VueRouter({
+    routes: [{
+      path: '/',
+      redirect: '/login'
+    }, {
+      path: '/login',
+      component: login
+    }, {
+      path: '/register',
+      component: register
+    }]
+  })
+
+  // 使用路由
+  new Vue({
+    el: '#app',
+    router: vueRouter
+  })
+
+</script>
+```
+
+## 路由传值
+
+```
+<body>
+  <div id="app">
+    <router-link to="/login">登陆</router-link>
+    <router-link to="/register/haha">注册</router-link> // 传值
+    <!-- 占位符 -->
+    <router-view></router-view>
+  </div>
+</body>
+<script>
+  // 定义根组件
+  var App = Vue.extend()
+  // 定义注册组件
+  var register = Vue.extend({
+    template: '<h2>注册{{oname}}</h2>',
+    data: function () {
+      return {
+        oname: '' 
+      }
+    },
+    //接收数据
+    created: function () {
+      this.oname = this.$route.params.uname 
+    }
+  })
+
+  // 定义登陆组件并注册路由规则
+  var login = Vue.extend({
+    template: '<h2>登陆</h2>'
+  })
+
+  // 定义路由
+  /*
+  {
+      path: '/',
+      redirect: './login'
+    }
+    为设置默认路径
+  */
+  var vueRouter = new VueRouter({
+    routes: [{
+      path: '/',
+      redirect: '/login'
+    }, {
+      path: '/login',
+      component: login
+    }, {
+      path: '/register/:uname', // 传值
+      component: register
+    }]
+  })
+
+  // 使用路由
+  new Vue({
+    el: '#app',
+    router: vueRouter
+  })
+
+</script>
+```
+
