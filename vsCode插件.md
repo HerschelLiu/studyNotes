@@ -1,3 +1,5 @@
+* Chinese （Simplified）Language Pack for Visual Studio Code中文
+
 * live-server   预览页面（ctrl+F1）  
 
 * vscode-icons 侧栏的图标，对于一个有视觉强迫症的人是必须要的
@@ -59,8 +61,6 @@
 * **HTML CSS Support** vscode对html，css文件支持，便于你快速书写属性
 
 * **Vetur** 添加对.vue后缀文件的快速书写支持。
-
-* **Vue 2 Snippets** 快速新建vue页面
 
 * **markdownlint** 书写md文件的预览插件
 
@@ -156,5 +156,8 @@
   >
   > Ctrl+P / F1 弹出输入>sync,即可重新配置你的其它token来同步
 
-* 
+* canvas-snippets
+
+* cssrem:css转换工具
+
 
