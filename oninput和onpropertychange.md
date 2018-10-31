@@ -1,0 +1,9 @@
+前端页面开发的非常多情况下都须要实时监听文本框输入，比方腾讯微博编写140字的微博时输入框hu9i动态显示还能够输入的字数。
+
+过去一般都使用onchange/onkeyup/onkeypress/onkeydown实现，可是这存在着一些不好的用户体验。
+
+比方onchange事件仅仅在键盘或者鼠标操作改变对象属性，且失去焦点时触发，脚本触发无效；而onkeydown/onkeypress/onkeyup在处理复制、粘贴、拖拽、长按键（按住键盘不放）等细节上并不完好。
+
+onpropertychange属性可在某些情况下解决上面存在的问题，不用考虑是否失去焦点。无论js操作还是键盘鼠标手动操作，仅仅要HTML元素属性发生改变就可以马上捕获到。遗憾的是。onpropertychange为IE专属的。其它浏览器下假设想要实现这一实时监听的需求。就要用到HTML5中的标准事件oninput，只是IE9下面的浏览器是不支持oninput事件的。
+
+所以我们须要综合oninput和onpropertychange二者来实现文本区域实时监听的功能。**对支持oninput的浏览器用oninput。其它浏览器（IE6/7/8）使用onpropertychange**
