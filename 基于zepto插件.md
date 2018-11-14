@@ -580,3 +580,35 @@ $(document).on('click', '#btn-23', function() {
     }, 3000);
 });
 ```
+
+### 目录结构
+
+```
+.
+├─dist                # 项目发布资源目录, Grunt 生成
+│  ├─css              # 项目 CSS 文件
+│  ├─demos            # 项目示例页面
+│  ├─images           # 项目 image 文件
+│  ├─js               # 项目 JS 文件
+│  │  ├─dialog.js     # 弹窗 JS
+│  │  ├─dialog.min.js # 弹窗最小版本 JS
+│  │  └─example.js    # 示例 JS
+│  └─lib              # 公共 JS 文件
+│
+├─src                 # 实际进行开发的目录
+│  ├─css              # 项目 CSS 文件, 由 Grunt 生成
+│  ├─demos            # 项目示例页面
+│  ├─images           # 项目 image 文件
+│  ├─js               # 项目 JS 文件
+│  │  ├─dialog.js     # 弹窗主要 JS
+│  │  ├─example.js    # 示例 JS
+│  │  ├─ripple.js     # 点击水波纹效果 JS
+│  │  └─tapEvent.js   # 点击事件 JS
+│  ├─lib              # 公共 JS 文件
+│  ├─scss             # 项目相关 SCSS 文件
+│  └─templates        # 初始静态 DMEO 资源目录
+│
+├─Gruntfile.js        # Grunt任务配置
+├─_config.json        # Grunt配置所需信息
+└─package.json        # 项目信息以及依赖
+```
