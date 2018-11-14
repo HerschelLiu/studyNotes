@@ -1,0 +1,1 @@
+**package.json创建命令** `npm init -y`
