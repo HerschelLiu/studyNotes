@@ -612,3 +612,120 @@ $(document).on('click', '#btn-23', function() {
 ├─_config.json        # Grunt配置所需信息
 └─package.json        # 项目信息以及依赖
 ```
+
+## 上拉刷新，下拉加载（dropload）
+
+### 使用
+
+```html
+<link rel="stylesheet" href="../dist/dropload.css">
+<script src="../dist/dropload.min.js"></script>
+```
+
+
+
+示例
+
+```javascript
+   <div id="content"></div>
+
+
+$('#content').dropload({
+      scrollArea: window,
+      domDown: {
+        domClass: 'dropload-down',
+        domRefresh: '<div class="dropload-refresh">↑上拉加载更多</div>',
+        domLoad:
+          '<div class="dropload-load"><span class="loading"></span>加载中...</div>',
+        domNoData: '<div class="dropload-noData">暂无数据</div>'
+      },
+      loadDownFn: function(me) {
+        $.ajax({
+          type: 'GET',
+          url: './more.json',
+          dataType: 'json',
+          success: function(data) {
+            if (data.lists.length > 0) {
+              var result = '';
+              for (var i = 0; i < data.lists.length; i++) {
+                result +=
+                  '<a class="item opacity" href="' +
+                  data.lists[i].link +
+                  '">' +
+                  '<img src="' +
+                  data.lists[i].pic +
+                  '" alt="">' +
+                  '<h3>' +
+                  data.lists[i].title +
+                  '</h3>' +
+                  '<span class="date">' +
+                  data.lists[i].date +
+                  '</span>' +
+                  '</a>';
+              }
+            } else {
+              // 如果没有数据
+              //锁定
+              me.lock();
+              // 无数据
+              me.noData();
+            }
+            // 为了测试，延迟2秒加载
+            setTimeout(function() {
+              $('.dropload-down').before(result);
+              // 每次数据加载完，必须重置
+              me.resetload();
+            }, 2000);
+          },
+          error: function(xhr, type) {
+            alert('Ajax error!');
+            // 即使加载出错，也得重置
+            me.resetload();
+          }
+        });
+      }
+    });
+```
+
+### 参数列表
+
+| 参数       | 说明         | 默认值                                                       | 可填值                                     |
+| ---------- | ------------ | ------------------------------------------------------------ | ------------------------------------------ |
+| scrollArea | 滑动区域     | 绑定元素自身                                                 | window                                     |
+| domUp      | 上方DOM      | { domClass : 'dropload-up', domRefresh : '<div class="dropload-refresh">↓下拉刷新</div>', domUpdate  : '<div class="dropload-update">↑释放更新</div>', domLoad : '<div class="dropload-load">○加载中...</div>' } | 数组                                       |
+| domDown    | 下方DOM      | { domClass : 'dropload-down', domRefresh : '<div class="dropload-refresh">↑上拉加载更多</div>', domLoad : '<div class="dropload-load">○加载中...</div>', domNoData : '<div class="dropload-noData">暂无数据</div>' } | 数组                                       |
+| autoLoad   | 自动加载     | true                                                         | true和false                                |
+| distance   | 拉动距离     | 50                                                           | 数字                                       |
+| threshold  | 提前加载距离 | 加载区高度2/3                                                | 正整数                                     |
+| loadUpFn   | 上方function | 空                                                           | function(me){ //你的代码 me.resetload(); } |
+| loadDownFn | 下方function | 空                                                           | function(me){ //你的代码 me.resetload(); } |
+
+### API
+
+暴露一些功能，可以让dropload更灵活的使用
+
+lock() 锁定dropload
+
+| 参数         | 说明                           |
+| ------------ | ------------------------------ |
+| lock()       | 智能锁定，锁定上一次加载的方向 |
+| lock('up')   | 锁定上方                       |
+| lock('down') | 锁定下方                       |
+
+unlock() 解锁dropload
+
+noData() 无数据
+
+| 参数          | 说明   |
+| ------------- | ------ |
+| noData()      | 无数据 |
+| noData(true)  | 无数据 |
+| noData(false) | 有数据 |
+
+### 已知问题
+
+由于部分Android中UC和QQ浏览器头部有地址栏，并且一开始滑动页面隐藏地址栏时，无法触发scroll和resize，所以会导致部分情况无法使用。解决方案1：增加distance距离，例如DEMO2中distance:50；解决方案2：加meta使之全屏显示
+
+```html
+`<``meta` `name``=``"full-screen"` `content``=``"yes"``>``<``meta` `name``=``"x5-fullscreen"` `content``=``"true"``>`
+```
