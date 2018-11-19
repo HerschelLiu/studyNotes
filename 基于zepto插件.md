@@ -729,3 +729,9 @@ noData() 无数据
 ```html
 `<``meta` `name``=``"full-screen"` `content``=``"yes"``>``<``meta` `name``=``"x5-fullscreen"` `content``=``"true"``>`
 ```
+
+## 点击图片放大（photoswipe）
+
+**此为基于原生的插件**
+
+[github](https://github.com/dimsemenov/photoswipe)
