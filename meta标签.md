@@ -14,6 +14,8 @@
 
 * 页面重定向和刷新`<meta http-equiv="refresh" content="0;url=" />`
 
+* minimal-ui ：iOS 7.1的Safari为meta（viewportd的）标签新增minimal-ui属性，在网页加载时隐藏地址栏与导航栏
+
 * 移动设备`<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>`
     <!-- `width=device-width` 会导致 iPhone 5 添加到主屏后以 WebApp 全屏模式打开页面时出现黑边  -->
 
