@@ -32,26 +32,28 @@ Vue.js只聚焦视图层，是一个构建数据驱动的web界面的库。他�
   - AngularJS学习成本高，而Vue本身提供的API比较简单，直观
   - 在性能上，A依赖对数据做脏检查,所以Watcher越多越慢
    > 脏检查：在 angular中，他没有办法判断你的数据是否做了更改， 
-   > 所以它设置了一些条件，当你触发了这些条件之后，它就执行一个检测来遍历所有的数据，对比你更改了地方，然后执行变化。
-   > 这个检查很不科学。而且效率不高，有很多多余的地方，所以官方称为 脏检查。
+   >  > 所以它设置了一些条件，当你触发了这些条件之后，它就执行一个检测来遍历所有的数据，对比你更改了地方，然后执行变化。
+   >  >
+   >  > > 这个检查很不科学。而且效率不高，有很多多余的地方，所以官方称为 脏检查。
 * 与React区别
  + 相同点：
   - React 采用特殊JSX语法，vue采用.vue特殊文件格式，二者都需要编译后使用
   - 中心思想相同： 一切都是组件
   - 都提供合理的钩子函数
    > 钩子函数：相当于生活中挂东西的钩子，在程序里来说就是你定义了一个小功能，可以在任何想用的地方挂上去。
-   > 这个小功能利用钩子挂上去，比如评论列表展示，可以是一个钩子，在需要的地方挂上去。
-   > 这个东西和插件其实差不多,插件的功能相对于钩子来说，更复杂，钩子的话，功能更单一更灵活。
-  - 都不内置类似AJAX、Router等功能的核心包，而是以插件方式加载
-  - 在组件开发中都支持mixins的特性
-  - React依赖Virtual AOM，会对渲染出来的结果做脏检查
-  - vue在模板中提供指令、过滤器等，方便、快捷操作DOM
-  
+   >  > 这个小功能利用钩子挂上去，比如评论列表展示，可以是一个钩子，在需要的地方挂上去。
+   >  >
+   >  > > 这个东西和插件其实差不多,插件的功能相对于钩子来说，更复杂，钩子的话，功能更单一更灵活。
+   > - 都不内置类似AJAX、Router等功能的核心包，而是以插件方式加载
+   > - 在组件开发中都支持mixins的特性
+   > - React依赖Virtual AOM，会对渲染出来的结果做脏检查
+   > - vue在模板中提供指令、过滤器等，方便、快捷操作DOM
+
 ### 1.2.2 如何使用vue
 * 安装
  + script方式引用
  + npm
- 
+
 # 二.数据绑定 
 ## 2.1 语法
 ### 2.1.1 插值
@@ -78,7 +80,7 @@ Vue.js只聚焦视图层，是一个构建数据驱动的web界面的库。他�
   ```
   * vue允许在表达式后面添加过滤符`{{example | toUpperCase}}`，
   * 还支持传入参数`{{example | filter a b}}`
-  
+
 # 三.指令
   指令是带有特殊前缀`v-`的特性。指令的值限定为绑定表达式
 
@@ -88,7 +90,7 @@ Vue.js只聚焦视图层，是一个构建数据驱动的web界面的库。他�
 
 ### 3.1.2 v-show
   是根据表达式的值来显示或者隐藏HTML元素
-  
+
 ### 3.1.3 v-else
   顾名思义，v-else就是js中else的意思，他必须跟着v-if
 
@@ -97,12 +99,14 @@ Vue.js只聚焦视图层，是一个构建数据驱动的web界面的库。他�
 双向数据绑定。
   v-model后面还可以添加多个参数（number、lazy、debounce）
   * number：如果想将用户输入自动转换为Number类型
+
     > <input type="text" v-model="msg" number>
   * lazy 默认数据是同步变化的，加上lazy会将数据改到change事件中发生
   * debounce：设置一个最小延时，每次敲击后延时同步输入框的值与数据
    > <input type="text" v-model="msg" debounce="5000">
-   > 内容会在5000ms后才改变
-  
+   >
+   >  > 内容会在5000ms后才改变
+
 ### 3.1.5 v-for
 `<div v-for="(item, index) in items"></div>`
 如果没有索引而报错，不防加上`:key=''`
@@ -114,7 +118,7 @@ Vue.js只聚焦视图层，是一个构建数据驱动的web界面的库。他�
 set`方法：demo.items.$set(0, {childMsg: 'Changed!'})
 `items是数组`括号中的数字指代位置，后面是插入的内容，
 意思就是在数组items[0]的位置插入 {childMsg: 'Changed!'}
-``` 
+```
  * `$remove`是splice的语法糖，用于从目标数组中查找并删除元素
   > demo.items.$remove(item)
 
@@ -222,28 +226,29 @@ set`方法：demo.items.$set(0, {childMsg: 'Changed!'})
   因为select控件分为单选和多选，所以v-model会又不同
   * 单选：
     ```
-	<select v-model="bizLine">
+    <select v-model="bizLine">
       <option value="flash" selected>快车</option>
       <option value="premium">专车</option>
       <option value="bus">公交</option>
     </select>
     <span>Selected: {{bizLine}}</span>
-	```
-	当被选中的option有value属性时，vm.select为对应option的value值，否则为text值
-	
-	* 对于多选，被选中值会放入一个数组中
-	```
-	<select v-model="bizLines" multiple>
+    ```
+    当被选中的option有value属性时，vm.select为对应option的value值，否则为text值
+
+    * 对于多选，被选中值会放入一个数组中
+    ```
+    <select v-model="bizLines" multiple>
       <option value="flash" selected>快车</option>
       <option value="premium">专车</option>
       <option value="bus">公交</option>
     </select>
     <span>Selected: {{bizLines | json}}</span>
+    ```
   ```
 ## 5.2 值绑定
   在通常情况下，对于radio、checkbox、select组件，通过v-model绑定的值都是字符串，
 checkbox除外，checkbox可能是布尔值
-```
+  ```
 <!--勾选时 toggle的值是布尔值true，否则为false-->
   <input type="checkbox" v-model="toggle">
 ```
@@ -254,6 +259,7 @@ checkbox除外，checkbox可能是布尔值
          v-model="toggle" 
          :true-value="a" 
          :false-value="b">
+
 ```
 * 勾选时。vm.toggle === v.a
 * 未勾选时。vm.toggle === v.b
@@ -306,9 +312,9 @@ true-value，false-value只适合同一个checkbox组只有一个checkbox的情�
   > json：JSON.stringify（）的精简缩略版，可将表达式的值转换为JSON字符串
     即输出表达式经过JSON.stringify（）处理厚的结果
 	json可以接受一个类型为Number的参数，用于决定转换后的JSON字符串的缩进新，若不出入，默认为2
-	```
+```
 	 // 以4个空格的缩进打印一个对象
-      <pre>{{didiFamily | json 4}}</pre>    
+	  <pre>{{didiFamily | json 4}}</pre>    
 	```
   > currency：将数字值转换为货币形式输出，第一个参数接受类型为String的货币符号，不输入默认为美元符号$，第二个参数接受NUmber类型的小数位，不输入默认为2
     如果第一个参数默认，第二个参数修改小数位，则第一参数不可省略
@@ -319,7 +325,7 @@ true-value，false-value只适合同一个checkbox组只有一个checkbox的情�
      // 12345 => $12,345.000
   > debounce： 延迟处理器一定时间的执行，其接受的表达式的值必须为函数，因此一般与v-on等指令结合使用
      接受一个可选参数作为延迟时间，单位毫秒，默认为300毫秒
-	
+
 ### 6.2.1 fillter（自定义过滤器的语法）
 ```
 //此为es6写法
@@ -356,7 +362,7 @@ true-value，false-value只适合同一个checkbox组只有一个checkbox的情�
 	 }
    }
  })
- ```
+  ```
 ### 7.2.2 数组语法
   v-bind：style的数组语法可以将多个样式对象应用到一个元素上
   ```
@@ -364,20 +370,20 @@ true-value，false-value只适合同一个checkbox组只有一个checkbox的情�
   ```
 ##### 7.2.3 自动添加前缀
   当v-bind：style使用需要前缀的css属性，vue会自动添加
-  
+
 # 八.过渡（2.0版本）[vue.js文档transition](https://cn.vuejs.org/v2/api/#transition)
   应用过渡效果，需要用`<transition name='myname'></transition>`包裹想要进行过渡效果的标签，其中name是定义过渡属性类名的前缀
   transition的类名要与被包裹元素的类名同级
-  
+
   说明：
  * *-enter：进入过渡的开始状态，元素被插入时生效
  * *-enter-active：进入过渡的结束状态
  * *-leave：离开过渡的开始状态
  * *-leave-active：离开过渡的结束状态
  * *-enter，*-leave-active这两个设置样式时一起设置
- 
+
  还可以使用钩子函数（在methods中写）：beforeEnter，enter，afterEnter，enterCancelled，beforeLeave，leave，afterLeave，leaveCancelled
- 
+
 # 九.methods
   vue的事件监听一般通过v-on指令配置在HTML中
 ## 9.1 如何绑定事件
@@ -394,7 +400,7 @@ methods属性下
 
 ### 9.1.3 $event应用
   创建的方法需要访问原生DOM事件时可以传入event来获取
-  
+
 # 十 vue实例方法 
   vue实例提供的一些有用得属性和方法，这额都以$前缀开头
 ## 10.1 实例属性
@@ -439,7 +445,7 @@ methods属性下
   * 接受的外部参数（props）：组件之间通过参数来进行数据的传递和共享
   * 方法（methods）
   * 生命周期钩子函数（created、attached、destroyed）
-  
+
 ## 11.1 基础
 ### 11.1.1 注册
 1.全局注册
@@ -453,7 +459,7 @@ vue组件之间有三种数据传递方式：props，组件通信，slot
   为了防止子组件无意修改父组件状态
   + .sync双向绑定
   + .once单次绑定
-  
+
 #### 添加keep-alive指令：可以把切换出去的组件保留在内存中。，，可以保留它的状态或避免重新渲染
 
 ## 11.2 相关拓展
@@ -480,11 +486,11 @@ vue支持资源的名字使用camelCase或PascalCase形式，并且在模板中�
   （1）全局方法
     ```
 	Vue.http(option)
-	```
+	  ```
   （2）组件实例调用
     ```
 	this.$http(option)
-	```
+	  ```
 	二者接受相同option参数，都返回Promise对象。不同的是，全局调用方式
   回调中this指向window，而组建实例调用方式回调指向组件实例
   
