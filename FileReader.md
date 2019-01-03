@@ -18,20 +18,8 @@ function imgPreview(fileDom) {
                 reader.onload = function (e) {
                     e = e || window.event;
                     //读取完成后，数据保存在对象的result属性中
-                    //获取图片dom
-                    var imgItem = '<div class="ngoods-imgs">' +
-                        '<div class="ngoods-delImg hide" onclick="delImg(this)">点击删除</div>' +
-                        '<img src="' + e.target.result + '" alt=""></div>';
-                    var $imgItem = $('.ngoods-imgs');
-                    if ($imgItem.length >= 5) {
-                        alert('最多添加5张图片');
-                        return false;
-                    } else {
-                        $('.ngoods-showImg').append(imgItem);
-                        imgHover();
-                    }
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(file);//不加他就获取不到文件
             } else {
                 alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
             }
