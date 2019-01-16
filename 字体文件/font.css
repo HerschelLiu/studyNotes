@@ -1,0 +1,18 @@
+@font-face {
+  font-family: "pingfangRegular";
+  src: url("fonts/PINGFANG_REGULAR.TTF");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: pingfangRegular, arial, sans-serif !important;
+}
+
+.pingfangRegular {
+  font-family: pingfangRegular, arial, sans-serif !important;
+}
