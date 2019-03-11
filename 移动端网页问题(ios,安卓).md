@@ -109,5 +109,19 @@ window.onorientationchange = function(){
 <input type="text"  readonly="readonly" unselectable="on" onfocus="this.blur()"/>
 ```
 
+**9.** ios唤起键盘页面被顶上去且无法自动回退带来的问题
+
+解决方法是添加js代码，使input失去焦点后让页面滑动
+
+```javascript
+// 1.
+dom.input.on('blur', function(){
+    document.querySelector('#msg_end').scrollIntoView();
+});
+
+//2.
+window.scroll(0, document.body.clientHeight) 
+```
+
 
 
