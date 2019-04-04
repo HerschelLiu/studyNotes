@@ -125,3 +125,11 @@ window.scroll(0, document.body.clientHeight)
 
 
 
+**10.** overflow:scroll;在ISO机型中滑动卡顿问题
+
+```css
+-webkit-overflow-scrolling: touch;
+```
+
+
+
