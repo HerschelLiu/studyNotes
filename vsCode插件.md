@@ -6,7 +6,7 @@
 
 * HTML Snippets 支持HTML5的标签提示
 
-* 路径自动补齐 Path Autocomplete
+* 路径自动补齐 Path Autocomplete(vscode自带)
 
 * ES6 格式化 JavaScript (ES6) code snippets  
 
