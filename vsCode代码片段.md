@@ -1,3 +1,4 @@
+## html
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -60,6 +61,61 @@
             "</html>"
         ],
         "description": "create my html5 document"
+    }
+}
+```
+
+## vue
+
+```vue
+<template>
+    <div id=""></div>
+</template>
+
+<script>
+
+export default {
+    name: '',
+    data () {
+        return {
+
+        }
+    },
+    components: {
+
+    },
+    methods: {
+
+    }
+}
+</script>
+```
+
+**vscode**
+
+```json
+{
+    "myvue": {
+        "prefix": "vueHtml",
+        "body": [
+            "<template>",
+            "\t<div id=\"$1\"></div>",
+            "</template>\n",
+            "<script>\n",
+            "export default {",
+            "\tname: '$2',",
+            "\tdata () {",
+            "\t\treturn {\n",
+            "\t\t}",
+            "\t},",
+            "\tcomponents: {\n",
+            "\t},",
+            "\tmethods: {\n",
+            "\t}",
+            "}",
+            "</script>"
+        ],
+        "description": "create my vue document"
     }
 }
 ```
