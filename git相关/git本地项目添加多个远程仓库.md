@@ -32,4 +32,28 @@ git remote set-url --add origin git@gitee.com:FishSay/studyNotes.git
 
 2. 正常推送
 
-**注意**: 先用第一种方法吧,第二种成功添加了地址,但是并没有推上去gitee,尝试下
+**注意**: 添加第二种地址时候,必须先有这个名字的地址,比如
+
+```
+// 有一个名叫github的地址
+git remote -v
+github  github-my:FishSay/studyNotes.git
+
+// 增加同步push的第二个地址
+git remote set-url --add origin git@gitee.com:FishSay/studyNotes.git
+
+// 此时会报错fatal: No such remote 'gitee2'
+```
+
+一般情况下第一个地址都是叫origin,所以如下
+
+```
+// 有一个名叫origin的地址
+git remote -v
+origin  github-my:FishSay/studyNotes.git
+
+// 增加同步push的第二个地址
+git remote set-url --add origin git@gitee.com:FishSay/studyNotes.git
+```
+
+保证两个仓库内的内容是一样的,否则会失败,或者第二个仓库为空(没尝试)
