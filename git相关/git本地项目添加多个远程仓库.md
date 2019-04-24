@@ -32,4 +32,4 @@ git remote set-url --add origin git@gitee.com:FishSay/studyNotes.git
 
 2. 正常推送
 
-**注意**: 先用第一种方法吧,第二种成功添加了地址,但是并没有推上去gitee
+**注意**: 先用第一种方法吧,第二种成功添加了地址,但是并没有推上去gitee,尝试下
