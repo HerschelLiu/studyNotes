@@ -57,3 +57,9 @@ git remote set-url --add origin git@gitee.com:FishSay/studyNotes.git
 ```
 
 保证两个仓库内的内容是一样的,否则会失败,或者第二个仓库为空(没尝试)
+
+
+
+#### 第二台电脑git pull报错
+
+在一台电脑上设置完第一种以及第二种方法后，在另一台电脑git pull会报错`ssh: Could not resolve hostname github.com: Name or service not known`，猜测是因为加入了第一种方法，有别名。解决就是第二台电脑也添加相同的remote
