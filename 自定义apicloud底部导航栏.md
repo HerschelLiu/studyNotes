@@ -1,4 +1,4 @@
-```
+```html
 .aui-bar-tab .aui-bar-tab-item .menu-one,
         .aui-bar-tab .aui-bar-tab-item .menu-two,
         .aui-bar-tab .aui-bar-tab-item .menu-three,
@@ -111,5 +111,60 @@
             <div class="aui-bar-tab-label">个人</div>
         </div>
     </footer>
+```
+
+```js
+api.openFrameGroup({
+
+            name: 'index',
+            background: '#fff',
+            scrollEnabled: false,
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: height - footerH
+            },
+            index: 0,
+            preload:0,
+            frames: [{
+                name: 'homepage',
+                url: './html/fm_homepage.html',
+            }, {
+                name: 'classification',
+                url: './html/fm_classification.html'
+            }, {
+                name: 'wallet',
+                url: './html/fm_wallet.html'
+            }, {
+                name: 'shoppingcart',
+                url: './html/fm_shoppingcart.html',
+            }, {
+                name: 'personal',
+                url: './html/fm_personal.html'
+            }]
+        }, function(ret, err) {
+            menuSelect(ret.index);
+        });
+    };
+
+    //切换菜单选中状态
+    function menuSelect(_index) {
+        for (var i = 0; i < menus.length; i++) {
+            if (_index == i) {
+                $api.addCls(menus[i], 'menu-active');
+            } else {
+                $api.removeCls(menus[i], 'menu-active');
+            }
+        }
+    }
+
+function setMenuIndex(_index){
+    api.setFrameGroupIndex({
+        name: 'index',
+        index: _index,
+    });
+}
+
 ```
 
