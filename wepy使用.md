@@ -235,3 +235,205 @@ export default class MyComponent extends wepy.component {
     ```
 
 5. 默认是在src/pages下创建wpy文件,编译后就是在dist下的pages下,但是这样所有的的文件都堆在一起,如果想像官方推荐的目录结构只要在src/pages下创建文件名就好了:scr/pages/项目名/项目名.wpy
+
+6. 组件传值，父组件绑定的数据是data中的，并且不用加{{}}，否则传不过去，并且传值不能直接传，必须是data中的
+
+    ```js
+    // 父组件
+    
+    <template lang='wxml'>
+        <Title :pagename="pagename" :capsuleSizeH.sync="capsuleSizeH" :capsuleSizeT.sync="capsuleSizeT"></Title>
+    </template>
+    
+    <script>
+    import wepy from 'wepy'
+    import Title from '../../components/title'
+    
+    export default class Historical_challenges extends wepy.page {
+        components = {
+            Title
+        };
+    
+        data = {
+            pagename: '历史挑战',
+            capsuleSizeH: 32,
+            capsuleSizeT: 30,
+        };
+    }
+    
+    // 子组件
+    
+    <template lang='wxml'>
+        <view class="page-title" style="height: {{capsuleSizeH}}px;line-height:{{capsuleSizeH}}px;margin-top: {{capsuleSizeT}}px;">{{pagename}}</view>
+    </template>
+    
+    <script>
+    import wepy from 'wepy'
+    
+    export default class Title extends wepy.component {
+        props = {
+            pagename: String,
+            capsuleSizeH: {
+                type: Number,
+                default: 32
+            },
+            capsuleSizeT: {
+                type: Number,
+                default: 26
+            }
+        };
+    }
+    ```
+
+7. 如何调用app实例中的函数：想在app页面写公共函数，要把函数写在 `customData= {}`中，在page页面`this.$parent`调用app实例
+
+8. 解决jsencrypt.js不兼容小程序
+	```js
+	// 1.兼容window.crypto
+// 源代码
+  if (window.crypto && window.crypto.getRandomValues) {    // 生成长度为256，元素值为0的数组
+      var z = new Uint32Array(256);    // 生成长度为256，元素随机值的数组
+      window.crypto.getRandomValues(z);
+  }
+  
+  // 兼容代码
+  // if (window.crypto && window.crypto.getRandomValues) {
+  //     // Extract entropy (2048 bits) from RNG if available
+  //     var z = new Uint32Array(256);
+  //     window.crypto.getRandomValues(z);
+  
+  //     for (t = 0; t < z.length; ++t) {
+  //         rng_pool[rng_pptr++] = z[t] & 255;
+  //     }
+  // }
+  // 兼容小程序
+  var getRandomValues = function (array) {
+  
+      for (var i = 0, l = array.length; i < l; i++) {
+  
+          array[i] = Math.floor(Math.random() * 256);
+      } return array;
+  }
+  
+  var z = new Uint32Array(256);
+  
+  getRandomValues(z);
+  
+  // 2.window.removeEventListener、window.detachEvent
+  // 源代码
+  if (window.removeEventListener) {   
+  
+    window.removeEventListener("mousemove", onMouseMoveListener_1, false);
+  
+  } else if (window.detachEvent) {    
+  
+    window.detachEvent("onmousemove", onMouseMoveListener_1);
+  
+  }
+  
+  // 兼容 直接删掉，监听的事件不会影响到加密和解密
+  
+  // 3.兼容navigator.appName、navigator.userAgent
+  // 源代码
+  if (j_lm && (navigator.appName == "Microsoft Internet Explorer")) {
+      BigInteger.prototype.am = am2;
+      dbits = 30;
+  } else if (j_lm && (navigator.appName != "Netscape")) {
+      BigInteger.prototype.am = am1;
+      dbits = 26;
+  } else { // Mozilla/Netscape seems to prefer am3
+      BigInteger.prototype.am = am3;
+      dbits = 28;
+  }
+  
+  // 兼容处理：直接删掉。navigator主要是对浏览器的判断
+  
+  // if (j_lm && (navigator.appName == "Microsoft Internet Explorer")) {
+  //     BigInteger.prototype.am = am2;
+  //     dbits = 30;
+  // } else if (j_lm && (navigator.appName != "Netscape")) {
+  //     BigInteger.prototype.am = am1;
+  //     dbits = 26;
+  // } else { // Mozilla/Netscape seems to prefer am3
+  //     BigInteger.prototype.am = am3;
+  //     dbits = 28;
+  // }
+  
+  BigInteger.prototype.am = am3;
+  dbits = 28;
+  
+  ```
+
+9. rsa加密解密：使用8的方法，最后还是会报错，所以换另外一个小程序的加密解密[wx_rsa.js](https://github.com/UFO0001/WX_RSA)
+
+   ```js
+   const RSA = require('./static/script/wx_rsa.js');
+   
+   
+   useRsa (jsonData, rsaname) {
+       const publicKey = '-----BEGIN PUBLIC KEY-----\n' +                   'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC50ZmLwUry1ygBy5U06u0jAuT7FWblZsZLtzJIU9egRfnkKBVWDx7p2CWccEnBz+3fqSS2GLLqLOCKmtVwyEs52Uiubhw2T+KKyL0e122vbXGjwJ8vonNtKiajd5acT/AMq7aDRM4gnkBcxPn3FJcL+FUMQMiqW2Q5MUA8b5zkmQIDAQAB\n' +
+       '-----END PUBLIC KEY-----';
+   
+       const privateKey = '-----BEGIN RSA PRIVATE KEY-----\n' +
+        'MIICXgIBAAKBgQDCgffYWxrAqfWzW5iz8nrl4kBzy4fgc+X1zEFxRSLT72x+BU4xkzQh73nUL1bCe6gp/RpHfcjkEo1vere7jMH4i2n+WoFiqbnPkfauiiO6HzaJLFdX7bPwmDzv8N8fJRbXGLliok1BdAy7xKdI/VLkqlFz5dYgZNnd+Rm5AEqHEQIDAQABAoGBALAGCHKu+AX1iZpYQVhQD3JtD6D7RysUF78aqvrD82HS4d8mE/5/VgWEAD/K23xDhgsBt7+NELl+JKsHZrD/ECW1mN73m4woEzY4XifitfH94GZQkc1kyXCHasPek2n22CRVYnSMVvDMQUyBOus11lOjZkufihF7vi29AH+59OMxAkEA8HpGHY0HauQXsv3xWtDp/efyoUAI9g/zYVPkV7/kC+8doGYiE/ALS3IcC3CDztjJ/cmLu9RICFksdHyCZzBprQJBAM8QEqNjeDkRCo/HBrTO5JK/kYK0LcASf/0GxV1pjnjnp96wYfLQDorEQaQ2g4ATZNohHvPcDiB/dhA/dVswh3UCQEJ7K0MkJ/bPFBYxyjW3J9k/9H3LvC56fmhbzvbLX/pEosYjNiyY4iZ7Z3FqK6ZVnJIC1BSbPUbBkF6rxUlNwwkCQQCOGpi/+zb56yEVdWC727VwpPpG+kLfq5Kc4vW2WwgFH+7MXL6L9o/UWkY2XZc34Zd4P/zPHTmwwekT04lF8PM1AkEAr9k57ybHjGfyWt/SHpK/zVXZlyfQMCiYUzO0nXp3erbwmhoOYLXxaMtzXebV4uDp5gChbdhXqwEKmoxwwuVUnA==\n' + 
+        '-----END RSA PRIVATE KEY-----';      
+       
+       switch (rsaname) {
+           case 'en':
+               const jsonData_en = JSON.stringify(jsonData);
+   
+               let encrypt_rsa = new RSA.RSAKey();
+               encrypt_rsa = RSA.KEYUTIL.getKey(publicKey);
+               return RSA.hex2b64(encrypt_rsa.encrypt(jsonData_en));
+               break;
+           case 'de':
+               let decrypt_rsa = new RSA.RSAKey();
+               decrypt_rsa = RSA.KEYUTIL.getKey(privateKey);
+               let jsonData_de = RSA.b64tohex(jsonData);
+   
+               return JSON.parse(decrypt_rsa.decrypt(jsonData_de));
+               break;
+       }  
+   }
+   ```
+
+10. 给子组件标签直接绑定事件不会触发事件，必须传给子组件，在组件里调用方法,注意：<font color="red">父组件中调用方法不要加括号，寄了括号相当于传了undefined</font>
+
+    ```js
+    // 父组件
+    <Child @childFn.user="back"></Child>
+    
+    methods = {
+        back(val, e) {
+                console.log('back');
+            }
+    }
+    
+    // 子组件
+    <template lang='wxml'>
+        <view class="title-box" style="margin-top: {{capsuleSizeT}}px;" @tap="back"></view>
+    </template>
+    
+    methods = {
+        back() {
+                wx.switchTab({
+                    url: '../personal/personal',
+                    complete: (val)=>{
+                        this.$emit('childFn', val);
+                    }
+                });
+                // this.$emit('back')
+            }
+    }
+    ```
+
+11. 什么函数放在methods里？在元素上绑定的方法放methods，其他的方法放外面
+
+12. 图片和导航的路径问题
+
+    - 不要在组件中使用相对定位，如`../`这种，因为当组件被引入到某个页面时，会相对哪个页面，导致路径无法复用
+    - 使用绝对定位，`/`，在小程序中，`/`是指的当前项目的文件夹，例如：`/pages/index`，这里的首个字符`/`就相当于`@/`都是指向`/src`目录
+    - 如果是图片，如`@/assets/icons/logo.png`可以用`/assets/icons/logo.png`，因为第一个字符是`/`就相当于`@/`，表示`/src`目录之下
+    - 如果是导航`wx.navigateTo`，如果导航到`/pages/user`，不要使用`/`或者`../`，直接`user`，最终会自动拼成`/pages/user`，也就是说微信默认`/pages/`+`user`
+    
+13. 优化事件参数传递：官方文档一直理解错了，之前理解是所有的data-都可以不用写，只要写进函数，编译后会自动在元素上加上data-。实际上意思是，原生小程序元素上绑定的事件是不能直接传参数的，只能通过添加data-，点击获取data-才行，wepy改成可以传参数，需要注意的是，如果穿的参数是undefined等的值的话，函数是接不到的，默认是event事件
