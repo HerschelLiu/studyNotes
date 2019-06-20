@@ -437,3 +437,5 @@ export default class MyComponent extends wepy.component {
     - 如果是导航`wx.navigateTo`，如果导航到`/pages/user`，不要使用`/`或者`../`，直接`user`，最终会自动拼成`/pages/user`，也就是说微信默认`/pages/`+`user`
     
 13. 优化事件参数传递：官方文档一直理解错了，之前理解是所有的data-都可以不用写，只要写进函数，编译后会自动在元素上加上data-。实际上意思是，原生小程序元素上绑定的事件是不能直接传参数的，只能通过添加data-，点击获取data-才行，wepy改成可以传参数，需要注意的是，如果穿的参数是undefined等的值的话，函数是接不到的，默认是event事件
+
+14. innerAudioContext不能播放的问题是，设置的src不支持相对路径，只支持根路径，地址是‘/static/media/countdown.mp3’
