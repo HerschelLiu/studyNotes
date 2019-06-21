@@ -1,70 +1,6 @@
-## 提示框: tiny-alert
-
-1. 引入css以及js文件
-2. 使用
-
-```javascript
- 
-$('#demo-1').on('click', function() {
-        $.dialog();
-});
-
-//属性
- 
-        // 内容
-        content: '加载中...',
-        
-        // 图标样式：load/ok/alert
-        title: 'load',
-        
-        // 宽度
-        width: 'auto',
-        
-        // 高度
-        height: 'auto',
-        
-        // 确定按钮回调函数
-        ok: null,
-        
-        // 取消按钮回调函数
-        cancel: null,
-        
-        // 确定按钮文字
-        okText: '确定',
-        
-        // 取消按钮文字
-        cancelText: '取消',
-        
-        // 自动关闭时间(毫秒)
-        time: null,
-        
-        // 是否锁屏
-        lock: true,
- 
-        // z-index值
-        zIndex: 9999
 
 
-//例子
- 
-$('#demo-3').on('click', function() {
-    $.dialog({
-        content : '对话框内容',
-        title : 'ok',
-        ok : function() {
-            alert('我是确定按钮，回调函数返回false时不会关闭对话框。');
-            return false;
-        },
-        cancel : function() {
-            alert('我是取消按钮');
-        },
-        lock : false
-    });
-});
-
-```
-
-## dialog
+## dialog(基于zepto/jq)
 
 [dialog](http://sufangyu.github.io/project/dialog2/dist/demos/)
 
@@ -648,3 +584,10 @@ noData() 无数据
 **此为基于原生的插件**
 
 [github](https://github.com/dimsemenov/photoswipe)
+
+
+
+# 原生js alert,prompt,confirm
+
+[PostbirdAlertBox.js](https://github.com/postbird/PostbirdAlertBox.js)
+
