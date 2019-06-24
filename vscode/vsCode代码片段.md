@@ -157,3 +157,20 @@ export default {
 }
 ```
 
+## wepy-mixin
+
+```json
+{
+	"mixin-wepy": {
+		"prefix": "mixin-wepy",
+		"body": [
+			"import wepy from 'wepy'\n",
+            "export default class ${1:${TM_FILENAME_BASE/([a-zA-Z])(.*)/${1:/upcase}$2/g}} extends wepy.mixin {",
+            "\t",
+            "}"
+		],
+		"description": "wepy mixin"
+	}
+}
+```
+
