@@ -14,38 +14,42 @@
 #### 判断权限,请求权限函数
 
 ```js
-function reqPermission(arr) {
-        if (Array.isArray(arr)) {
-            var resultList = api.hasPermission({
-                list: arr
-            });
-            var permission = [];
-            arr.forEach(function(item, index) {
-                permission.push('false');
-            });
-            console.log(JSON.stringify(resultList));
-            resultList.forEach(function(item, index) {
-                if (!item.granted) {
-                    api.requestPermission({
-                        list: [item.name],
-                        code: 1
-                    }, function(ret, err) {
-                        console.log(JSON.stringify(ret));
-                    });
-                } else {
-                    permission[index] = 'true';
-                }
-            });
+function reqPermission(arrArg) {
+    if (Array.isArray(arrArg)) {
+        var resultList = api.hasPermission({
+            list: arrArg
+        });
 
-            if (!(permission.indexOf('false') > -1)) {
-                return true;
-            } else {
-                return false;
+        console.log('resultList: ' + JSON.stringify(resultList));
+
+        var reqPerArr = [];
+
+        resultList.forEach(function(item, index) {
+            if (!item.granted) {
+                reqPerArr.push(item.name);
             }
+        });
+
+        if (reqPerArr.length > 0) {
+
+            api.requestPermission({
+                list: reqPerArr,
+                code: 1
+            }, function(ret, err) {
+                console.log(JSON.stringify(ret));
+            });
         } else {
-            console.log('请传数组');
+            return true;
         }
+    } else {
+        api.toast({
+            msg: '传数组',
+            duration: 1500,
+            location: 'middle'
+        });
+
     }
+}
 ```
 
 传数组进去
