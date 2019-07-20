@@ -1,8 +1,13 @@
 # 安装 #
 + npm install -g vue
+  
   >全局安装vue
 + npm install -g vue-cli
+  
   >全局安装vue-cli
+
++ 3.0安装`npm install -g @vue/cli`
+
 ---------------------------
 # 项目准备
 
@@ -10,6 +15,7 @@
   > 创建一个基于webpack模板且名字为name的新项目。
 	注意：你可以在你想要放文件的位置调出命令行，并写这行代码。
 + cd name
+  
   > 进入到创建好的name文件夹内
 + 安装依赖
 	-npm install
