@@ -83,4 +83,30 @@
 
 ## polyfill.io
 
-- 一个`CDN`方式提供的`polyfill`, 可根据浏览器`UserAgent`自动返回合适的`polyfill`, 详细内容自行google
+一个`CDN`方式提供的`polyfill`, 可根据浏览器`UserAgent`自动返回合适的`polyfill`,
+
+Polyfill 可以为旧浏览器提供和标准 API 一样的功能。比如你想要 IE 浏览器实现 Promise 和 fetch 功能，你需要手动引入 [es6-promise](https://github.com/stefanpenner/es6-promise)、[whatwg-fetch](https://github.com/github/fetch)。而通过 [Polyfill.io](https://polyfill.io/)，你只需要引入一个 JS 文件。
+
+`<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>`
+
+Polyfill.io 有一份[默认功能列表](https://polyfill.io/v2/docs/features/#default-sets)，包括了最常见的 polyfills：`document.querySelector`、`Element.classList`、ES5 新增的 `Array` 方法、`Date.now`、ES6 中的 `Object.assign`、`Promise` 等。
+
+你也可以通过传递 `features` 参数来自定义功能列表：
+
+```html
+<!-- 加载 Promise&fetch -->
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise,fetch"></script>
+<!-- 加载所有 ES5&ES6 新特性 -->
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=es5,es6"></script>
+```
+
+Polyfill.io 还提供了其他 API，具体请查阅[官方文档](https://polyfill.io/v2/docs/api)：
+
+```html
+<!-- 异步加载 -->
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?callback=main" async defer></script>
+<!-- 无视 UA，始终加载 -->
+<script src="https://cdn.polyfill.io/v2/polyfill.js?features=modernizr:es5array|always"></script>
+```
+
+[cdn.polyfill.io](http://cdn.polyfill.io/) 使用 Fastly 提供的 CDN 服务，虽然没有中国节点，但测试下来速度也不慢，感兴趣的不妨试试这个服务～
