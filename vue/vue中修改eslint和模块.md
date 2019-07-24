@@ -28,8 +28,9 @@ rules: {
             'error',
             'single'       // 改成字符串必须由单引号括起来而不是双引号，'string'不报错，"string"报错
         ],
-  	'semi': 0, // 末尾是否有分号
+  	'semi': 0, // 末尾是否有分号,
+  	'no-trailing-spaces': 0, // 是否允许语句之间有空行
   }
-  ```
-
+```
+  
   
