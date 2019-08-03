@@ -50,3 +50,21 @@ var browser = {
 }
 ```
 
+在微信浏览器中监听
+```javascript
+
+document.addEventListener("WeixinJSBridgeReady", function() {
+					if (browser.versions.ios) {
+						//是否在IOS浏览器打开
+						console.log('weixin ios');
+						$('.browser .ios').show();
+						$('.browser .android').hide();
+					} else if (browser.versions.android) {
+						//是否在安卓浏览器打开
+						console.log('weixin android');
+						$('.browser .android').show();
+					}
+
+					$('.goApplets_title_wx').show();
+				}, false);
+```
