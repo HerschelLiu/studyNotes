@@ -10,4 +10,18 @@ $ cd /mnt
 $bash VBoxLinuxAdditi.run
 ```
 
-完成之后就可以了，如果没重启就手动重启
+完成之后就可以了，如果没重启就手动重启，
+
+## 挂载主机与虚拟机共享文件夹
+
+1. 在主机里新建文件夹（我的叫deepinShare），在deepin系统->系统盘->home->主目录->新建文件夹（winShare）
+
+2. 在此目录下运行终端，输入
+
+   ```
+   sudo mount -t vboxsf deepinShare ./winShare
+   // deepinShare后是deepin共享文件夹的路径
+   ```
+
+3. 输入密码，就完成了
+
