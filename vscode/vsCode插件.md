@@ -167,3 +167,5 @@
 * Add jsdoc comments：只生成函数的jsDoc注释，function完整的类型
 
 * Document this/Document This Core: 生成jsDoc注释，选中方法 按两次快捷键 ctrl+alt+D 就可以了。这个插件支持 注释比较多，但是只支持html和js文件
+
+* stylus Supremacy：格式化stylue,并进行一下配置: Insert Colons(是否插入冒号),Insert Semicolons(是否插入分号),Insert Braces(是否插入大括号), Insert New Line Around Blocks(两个选择器中是否换行),insertNewLineAroundImports(import之后是否换行)都设置为false;再次格式化时，stylus的风格就不会发现变化了

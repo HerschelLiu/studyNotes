@@ -2,7 +2,7 @@
 
 > window创建点开头文件,重命名时,最后价格点就可以创建`.minttyrc.`
 
-* 文件地址:`c:\users\admin`
+* 文件地址:`c:\用户\电脑名`
 
   ```consolas
   //consolas dark
