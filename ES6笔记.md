@@ -240,6 +240,8 @@ console.log(foo.getX.apply(obj));   //81
 
 也就是说，区别是，当你希望改变上下文环境之后并非立即执行，而是回调执行的时候，使用 bind() 方法。而 apply/call 则会立即执行函数。
 
+**总结：**apply和call，第一个参数是让哪个对象去借用其他对象的方法，`Array.prototype.push(arr， value)`意思是让arr这个东西，去借用数组的push方法，第二个参数是要被push进arr中的值
+
 ### Array.from与扩展运算符
 这两个方法都可以将某些数据结构转为数组。
 
