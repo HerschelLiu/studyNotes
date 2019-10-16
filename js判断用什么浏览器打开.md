@@ -43,7 +43,14 @@ var browser = {
             android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或uc浏览器
             iPhone: u.indexOf('iPhone') > -1, //是否为iPhone或者QQHD浏览器
             iPad: u.indexOf('iPad') > -1, //是否iPad
-            webApp: u.indexOf('Safari') == -1 //是否web应该程序，没有头部与底部
+            webApp: u.indexOf('Safari') == -1, //是否web应该程序，没有头部与底部
+            webApp: u.indexOf('Safari') == -1, // 是否iPad
+            souyue: u.indexOf('souyue') > -1, // 是否web应用程序，没有头部与底部
+            superapp: u.indexOf('superapp') > -1,
+            weixin: u.toLowerCase().indexOf('micromessenger') > -1, // 微信浏览器
+            Safari: u.indexOf('Safari') > -1,
+            myqq: navigator.userAgent.indexOf('QQ') > -1,
+            UCBrowser: navigator.userAgent.indexOf('UCBrowser') > -1 // uc浏览器
         };
     }(),
     language: (navigator.browserLanguage || navigator.language).toLowerCase()

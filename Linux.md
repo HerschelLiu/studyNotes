@@ -1,8 +1,12 @@
+[TOC]
+
+
+
 [赋值自少数派]: https://zhuanlan.zhihu.com/p/34950508	"少数派"
 
- 
+ <font color="red">标注（成功）的为尝试通过的</font>
 
-## 更换Linux软件源并更新软件（windows的Linux子系统，Ubuntu)
+## 更换Linux软件源并更新软件（windows的Linux子系统，Ubuntu)（成功）
 
 使用 Ubuntu /debian 系最大的好处就是可以使用「软件源」进行软件安装，使用 Ubuntu 自带的 deb 包管理系统安装软件可以减少直接下载源码编译的麻烦，所以这里就要用到「apt-get」系列命令了。
 
@@ -58,6 +62,139 @@ apt-get update
 这里我们就将 Ubuntu 的软件源切换到阿里云的源了。
 
 之后再输入：`apt-get upgrade` 对当前系统的软件和类库进行来更新。如果不出意外系统会自动对现有的软件包进行更新，经过这一系列的操作，目前 Ubuntu 的软件以及类库都是最新的，而系统版本也升级到 Ubuntu 16.04.4 LTS。
+
+## 与 Windows 通讯
+
+目前 **子系统** 与 **Windows** 之间通过以下两种方式进行通讯
+
+> 1. 通过 `tcp` 协议进行通讯（简单点说就是用网络，端口都是通的）
+
+> 1. 通过 `/mnt/【盘符】/目录` 的方式访问Windows目录
+>    试过在Windows的资源管理器中直接对子系统环境目录下的文件所做的修改不能被子系统所识别，因此需要在bash下进行操作。
+
+[在任何情况下，请勿使用Windows应用程序，工具，脚本，控制台等创建或修改Linux文件](https://links.jianshu.com/go?to=https%3A%2F%2Fblogs.msdn.microsoft.com%2Fcommandline%2F2016%2F11%2F17%2Fdo-not-change-linux-files-using-windows-apps-and-tools%2F)
+
+### 安装 zsh
+
+------
+
+> 目前常用的 Linux 系统和 OS X 系统的默认 Shell 都是 bash，但是真正强大的 Shell 是深藏不露的 zsh， 这货绝对是马车中的跑车，跑车中的飞行车，史称『终极 Shell』，但是由于配置过于复杂，所以初期无人问津，很多人跑过来看看 zsh 的配置指南，什么都不说转身就走了。直到有一天，国外有个穷极无聊的程序员开发出了一个能够让你快速上手的zsh项目，叫做「oh my zsh」，Github 网址是：[https://github.com/robbyrussell/oh-my-zsh](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Frobbyrussell%2Foh-my-zsh)。这玩意就像「X天叫你学会 C++」系列，可以让你神功速成，而且是真的。
+
+**zsh** 就是一款强大的虚拟终端，网上也都推荐使用 [oh my zsh](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Frobbyrussell%2Foh-my-zsh) 来管理配置 , 不过对我来说还是不够傻瓜。于是，参考一篇 [文章](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.zhihu.com%2Fquestion%2F21418449%2Fanswer%2F300879747) 使用 **zsh** 的 [包管理器 antigen](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fzsh-users%2Fantigen) 来管理所有功能，文章中还给了现成的配置。
+
+- 安装 **zsh**
+
+```shell
+sudo apt-get -y install zsh
+```
+
+- 设置终端的 **shell** 环境默认为 **zsh**，输入以下命令（ 需要 **重启** ）
+
+```shell
+# 加 sudo 是修改 root 帐号的默认 shell
+chsh -s `which zsh`
+```
+
+- 如果上面命令无效，修改 **~/.bashrc** 文件, 在开头添加：
+
+```shell
+if [ -t 1 ]; then
+    exec zsh
+fi
+```
+
+- 安装 **antigen**
+
+```shell
+# 修改配置 ~/.zshrc（如果切换帐号后无法使用 zsh 则把该用户的配置文件再配一遍）
+curl -L https://raw.githubusercontent.com/skywind3000/vim/30b702725847bac4708de34664bb68454b54e0c0/etc/zshrc.zsh > ~/.zshrc
+
+# 修改主题, 参考：https://github.com/robbyrussell/oh-my-zsh/wiki/themes
+# 如果需要主题一直生效需要添加到 ~/.zshrc 中
+antigen theme ys
+
+# 配置修改完重新执行 zsh
+```
+
+- 如果出现警告：**zsh compinit: insecure directories, run compaudit for list.**
+
+```shell
+chmod -R 755 ~/.antigen
+```
+
+- [按键补齐](https://www.jianshu.com/p/f867f786b584) ( [解决zsh中无法正常使用home和end等键的问题](https://links.jianshu.com/go?to=https%3A%2F%2Fblog.csdn.net%2FPiasy%2Farticle%2Fdetails%2F37347521) )
+
+  在 **~/.zshrc** 文件末尾添加下面的内容
+
+```shell
+# key bindings
+bindkey "\e[1~" beginning-of-line
+bindkey "\e[4~" end-of-line
+bindkey "\e[5~" beginning-of-history
+bindkey "\e[6~" end-of-history
+
+# for rxvt
+bindkey "\e[8~" end-of-line
+bindkey "\e[7~" beginning-of-line
+# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
+bindkey "\eOH" beginning-of-line
+bindkey "\eOF" end-of-line
+# for freebsd console
+bindkey "\e[H" beginning-of-line
+bindkey "\e[F" end-of-line
+# completion in the middle of a line
+bindkey '^i' expand-or-complete-prefix
+
+# Fix numeric keypad  
+# 0 . Enter  
+bindkey -s "^[Op" "0"
+bindkey -s "^[On" "."
+bindkey -s "^[OM" "^M"
+# 1 2 3  
+bindkey -s "^[Oq" "1"
+bindkey -s "^[Or" "2"
+bindkey -s "^[Os" "3"
+# 4 5 6  
+bindkey -s "^[Ot" "4"
+bindkey -s "^[Ou" "5"
+bindkey -s "^[Ov" "6"
+# 7 8 9  
+bindkey -s "^[Ow" "7"
+bindkey -s "^[Ox" "8"
+bindkey -s "^[Oy" "9"
+# + - * /  
+bindkey -s "^[Ol" "+"
+bindkey -s "^[Om" "-"
+bindkey -s "^[Oj" "*"
+bindkey -s "^[Oo" "/"
+```
+
+### 安装 autojump ( [用法参考](https://links.jianshu.com/go?to=https%3A%2F%2Flinux.cn%2Farticle-3401-1.html) )
+
+------
+
+> autojump 是一个命令行工具，它允许你可以直接跳转到你喜爱的目录，而不受当前所在目录的限制。意思就是可以让你更快地切换目录，而不用频繁地使用 cd/tab 等命令。
+
+- 安装
+
+```shell
+sudo apt-get install autojump
+```
+
+- **zsh** 下运行报错:
+
+```shell
+$ autojump
+Please source the correct autojump file in your shell's
+startup file. For more information, please reinstall autojump
+and read the post installation instructions.
+```
+
+参照文章 [Mac终端增强技能](https://www.jianshu.com/p/0d4d5c0c31a1) 和 [终极 Shell](https://links.jianshu.com/go?to=http%3A%2F%2Fmacshuo.com%2F%3Fp%3D676) 找到解决办法：
+
+> 在 `~/.zshrc` 中安装插件 `brew install autojump` 再重新进入 zsh
+
+由于本文使用 **antigen** 作为 **zsh** 的包管理器，所以实际操作是在 `~/.zshrc` 中添加 `antigen bundle autojump`
 
 ## 启用 SSH 并使用SSH 客户端登录
 
