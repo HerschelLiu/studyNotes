@@ -107,13 +107,31 @@ fi
 
 ```shell
 # 修改配置 ~/.zshrc（如果切换帐号后无法使用 zsh 则把该用户的配置文件再配一遍）
-curl -L https://raw.githubusercontent.com/skywind3000/vim/30b702725847bac4708de34664bb68454b54e0c0/etc/zshrc.zsh > ~/.zshrc
+curl -L git.io/antigen > antigen.zsh
 
 # 修改主题, 参考：https://github.com/robbyrussell/oh-my-zsh/wiki/themes
 # 如果需要主题一直生效需要添加到 ~/.zshrc 中
-antigen theme ys
+# 使用
+source /path-to-antigen/antigen.zsh
 
-# 配置修改完重新执行 zsh
+# 加载oh-my-zsh库
+antigen use oh-my-zsh
+
+# Bundles from the default repo (robbyrussell's oh-my-zsh).
+antigen bundle git
+antigen bundle heroku
+antigen bundle pip
+antigen bundle lein
+antigen bundle command-not-found
+
+# 语法高亮
+antigen bundle zsh-users/zsh-syntax-highlighting
+
+# 加载主题
+antigen theme robbyrussell
+
+# 告诉Antigen使用
+antigen apply
 ```
 
 - 如果出现警告：**zsh compinit: insecure directories, run compaudit for list.**
@@ -196,7 +214,7 @@ and read the post installation instructions.
 
 由于本文使用 **antigen** 作为 **zsh** 的包管理器，所以实际操作是在 `~/.zshrc` 中添加 `antigen bundle autojump`
 
-## 启用 SSH 并使用SSH 客户端登录
+## 启用 SSH 并使用SSH 客户端登录（成功）
 
 虽说通过 App 或者应用的形式在 Windows 10 上体验 Linux 是一个不赖的选择，但对于很多软件开发的朋友而言，使用 Windows 内置的 CMD 或者 PowerShell 来操作Linux 依旧有着很多不习惯。而最为关键的是当需要对文件进行操作时，使用交互命令远不如使用 SFTP 来的更为「简单粗暴」。因此只要通过配置 SSH 远程登录，就可以像管理远程服务器那样来操作这个 Linux 系统了。
 
@@ -233,7 +251,7 @@ sudo vim /etc/ssh/sshd_config
 
 之后点击 「Esc」退出编辑模式，直接输入 `:wq` 退出并保存。
 
-然后输入命令：`service ssh start` 启动 SSH。
+然后输入命令：`service ssh start` 启动 SSH（要root权限）。
 
 如何验证已经可以访问呢？我们首先打开 SSH 客户端，比如我目前使用 Xshell，选择「新建会话」。
 
