@@ -11,3 +11,17 @@ git 在pull或者合并分支的时候有时会遇到这个界面。可以不管
 
 4. 输入":wq",注意是冒号+wq,按回车键即可
 
+### HTTP Basic: Access denied
+
+```
+git clone 项目失败，报下面的错误信息：
+$ git clone xxx
+Cloning into 'appEnterprise'...
+remote: HTTP Basic: Access denied
+fatal: Authentication failed for ...
+```
+
+因为之前输入错误的gitlab用户名和密码，第二次clone不弹框提示输入用户名和密码的解决方案。
+
+打开凭据管理器 - Windows凭据，找到对应的凭据，删除掉，重新clone，就会弹框
+提示用户名和密码。
