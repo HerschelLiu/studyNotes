@@ -2,11 +2,16 @@
 + npm install -g vue
   
   >全局安装vue
+  
 + npm install -g vue-cli
   
   >全局安装vue-cli
 
 + 3.0安装`npm install -g @vue/cli`
+
++ 3.0安装需要单独安装`安装工具`
+
+  > npm install -g @vue/cli-init
 
 ---------------------------
 # 项目准备

@@ -21,3 +21,5 @@ develop（开发）的简写。
 而我们使用的一些构建工具比如glup、webpack这些只是在开发中使用的包，上线以
 
 后就和他们没关系了，所以将它写入devDependencies。
+
+`npm install xxx -D`就是`npm install xxx --save-dev`
