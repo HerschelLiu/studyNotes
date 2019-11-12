@@ -8,21 +8,44 @@
    const express = require('express')
    const app = express();
    
-   app.listen(88, () => {
+   // 解决跨域
+   const cors = require('cors');
+   app.use(cors())
+   
+   const server = app.listen(88, () => {
        console.log('----------服务启动----------\n');
+       console.log(`----------请访问http://${server.address().address}:${server.address().port}----------\n`);
    });
    
-   app.get('/', (req, res) => {
-       res.json('HelloWorld');
+   app.all('*', (req, res, next) => { 
+       if (req.body.login) {
+           next(); // 如果没有它，就不会运行下面的接口
+       } else {
+           res.json({
+               status: 100,
+               data: {},
+               msg: '没登陆'
+           });
+       }
    });
-   
-   app.post('/', (req, res) => {
-       res.json('post');
-   });
-   
-   app.all('*', (req, res, next) => { // 这个支持所有的请求方式， *代表通配符，这样不管什么路径都能触发
-    res.json('****');
-       next();
+   app.all('/goods', (req, res) => { // 这个支持所有的请求方式， *代表通配符，这样不管什么路径都能触发
+       /*
+        * nodejs的express框架为我们提供了四种方法来实现获取请求中的参数：
+        * req.query是由nodejs默认提供，无需载入中间件，此方法多适用于GET请求，解析GET请求        中的参数,包含在路由中每个查询字符串参数属性的对象，如果没有则为{}
+        * req.body通常用来解析POST请求中的数据,req.body不是nodejs默认提供的，需要载入中间        件body-parser中间件才可以使用req.body
+        * req.params包含映射到指定的路线“参数”属性的对象,例如，如果你有route/user/：	        name，那么“name”属性可作为req.params.name。nodejs默认提供，无需载入其他中间件
+        * req.param()此方法被弃用，请看官方解释
+        */
+       con.query('select name from test_goods', (err, result) => {
+           res.json({
+               status: 200,
+               data: {
+                   list: result,
+                   json: req.body
+               },
+               msg: 'success'
+           });
+       });
    });
    
    /*
@@ -36,7 +59,40 @@
 
 ```js
 // body-parser:使用下列两行代码，大部分场景都够用
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json()); // json请求
+app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
 ```
 
+ post请求要借助body-parser模块。使用后，将可以用req.body得到参数 
+
+4.  定义静态资源路径文件夹(在index.js同级目录下创建一个static的放置静态资源的目录) 
+
+   ```js
+   //定义静态资源路径文件夹
+    app.use('/static',express.static('./static'));
+   ```
+
+5. express.static(root, [options]): shi express中唯一的中间件，负责托管express应用内的静态资源，root为静态资源所在的根目录，options是可选的，支持以下属性
+
+   | 属性         | 描述                                                         | 类型    | 默认值       |
+   | :----------- | :----------------------------------------------------------- | :------ | :----------- |
+   | dotfiles     | 是否响应点文件。供选择的值有"allow"，“deny"和"ignore”        | String  | “ignore”     |
+   | etag         | 使能或者关闭etag                                             | Boolean | true         |
+   | extensions   | 设置文件延期回退                                             | Boolean | true         |
+   | index        | 发送目录索引文件。设置false将不发送。                        | Mixed   | “index.html” |
+   | lastModified | 设置文件在系统中的最后修改时间到`Last-Modified`头部。可能的取值有`false`和`true`。 | Boolean | true         |
+   | maxAge       | 在Cache-Control头部中设置`max-age`属性，精度为毫秒(ms)或则一段[ms format](https://www.npmjs.org/package/ms)的字符串 | Number  | 0            |
+   | redirect     | 当请求的pathname是一个目录的时候，重定向到尾随"/"            | Boolean | true         |
+   | setHeaders   | 当响应静态文件请求时设置headers的方法                        | Funtion |              |
+
+7. `const app = express();`：app对象具有以下方法
+
+   * 路由HTTP请求app.METHOD和app.param这两个例子。
+
+   * 配置中间件；具体请看[app.route](http://expressjs.com/4x/api.html#app.route)。
+   
+   * 渲染HTML视图；具体请看[app.render](http://expressjs.com/4x/api.html#app.render)。
+   
+   * 注册模板引擎；具体请看[app.engine](http://expressjs.com/4x/api.html#app.engine)。
+   
+     
