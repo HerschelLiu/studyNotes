@@ -85,14 +85,46 @@ app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
    | redirect     | 当请求的pathname是一个目录的时候，重定向到尾随"/"            | Boolean | true         |
    | setHeaders   | 当响应静态文件请求时设置headers的方法                        | Funtion |              |
 
-7. `const app = express();`：app对象具有以下方法
+6. `const app = express();`：app对象具有以下方法
 
    * 路由HTTP请求app.METHOD和app.param这两个例子。
-
    * 配置中间件；具体请看[app.route](http://expressjs.com/4x/api.html#app.route)。
-   
    * 渲染HTML视图；具体请看[app.render](http://expressjs.com/4x/api.html#app.render)。
-   
    * 注册模板引擎；具体请看[app.engine](http://expressjs.com/4x/api.html#app.engine)。
+
+7. mysql连接池：断开数据库使用con.end()方法，但是这样就不能查询数据库了，就要加上重连机制，但是这是单线程的，并发量高的时候会顶不住，所以用连接池
+
+   ```js
+   let pool
+   repool();
    
-     
+   function repool() { // 短线重连机制
+       pool = mysql.createPool({
+           ...options,
+           // 以下为常用的三个
+           waitForConnections: true, // 当无连接池可用时，等待（true）还是抛错（false）
+           connectionLimit: 100, // 连接数限制
+           queueLimit: 0 // 最大连接等待数(0为不限制)
+       }); // 创建连接池
+       pool.on('error', err => {
+           err.code === 'PROTOCOL_CONNECTION_LOST' && setTimeout(repool, 2000)
+       });
+   }
+   
+   app.get('/login', (req, res) => {
+       pool.query('SELECT * FROM students', (err, result) => {
+           res.json()
+       }) // 直接使用
+       
+       pool.getConnection((err, conn) => { // 从连接池中拿一个连接
+           conn.query('SELECT * FROM students', (err, result) => {
+               res.json()
+           })
+           conn.release(); // 释放连接池
+       })
+   });
+   
+   // 用完就要释放给别的请求使用，也可以直接使用连接池，具体区别还不知道，猜应该是直接使用连接池就是这个线程专门为这个请求服务，不用别的也不释放，可以用于常用接口，可以减少取连接池的操作。
+   ```
+
+   

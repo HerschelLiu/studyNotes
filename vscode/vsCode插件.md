@@ -169,3 +169,7 @@
 * Document this/Document This Core: 生成jsDoc注释，选中方法 按两次快捷键 ctrl+alt+D 就可以了。这个插件支持 注释比较多，但是只支持html和js文件
 
 * stylus Supremacy：格式化stylue,并进行一下配置: Insert Colons(是否插入冒号),Insert Semicolons(是否插入分号),Insert Braces(是否插入大括号), Insert New Line Around Blocks(两个选择器中是否换行),insertNewLineAroundImports(import之后是否换行)都设置为false;再次格式化时，stylus的风格就不会发现变化了
+
+* PHP IntelliSense(自动补全) + PHP DocBlocker(文档注释) + PHP Debug(代码调试) +  php-cs-fixer (代码格式化): 要在settings.json中配置php.exe的路径,有就改没有就加一个，`"php.validate.executablePath": "C:/phpstudy_pro/Extensions/php/php7.3.4nts/php.exe"`
+
+* git lens:查看每行代码的修改历史。
