@@ -173,3 +173,7 @@
 * PHP IntelliSense(自动补全) + PHP DocBlocker(文档注释) + PHP Debug(代码调试) +  php-cs-fixer (代码格式化): 要在settings.json中配置php.exe的路径,有就改没有就加一个，`"php.validate.executablePath": "C:/phpstudy_pro/Extensions/php/php7.3.4nts/php.exe"`
 
 * git lens:查看每行代码的修改历史。
+
+* github pull requests: 连接github，进行相应操作
+
+* leetcode：如果登陆失败，区网页版登录，然后找到任意一个接口，复制cookie，转到vscode，F1键，找leetcode：sign in by cookie，然后输入邮箱以及cookie

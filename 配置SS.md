@@ -4,7 +4,7 @@
 3. `./shadowsocks-all.sh 2>&1 | tee shadowsocks-all.log`
 4. 选择go语言
 5. 输入密码
-6. 输入端口号，一半默认就行
+6. 输入端口号，一般默认就行
 7. 任意键继续
 8. `$ vim /etc/sysconfig/iptables`
 9. `-A INPUT -p tcp -m state --state NEW -m tcp --dport 你的端口号 -j ACCEPT`

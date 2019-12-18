@@ -72,7 +72,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
     app.use('/static',express.static('./static'));
    ```
 
-5. express.static(root, [options]): shi express中唯一的中间件，负责托管express应用内的静态资源，root为静态资源所在的根目录，options是可选的，支持以下属性
+5. express.static(root, [options]): 是 express中唯一的中间件，负责托管express应用内的静态资源，root为静态资源所在的根目录，options是可选的，支持以下属性
 
    | 属性         | 描述                                                         | 类型    | 默认值       |
    | :----------- | :----------------------------------------------------------- | :------ | :----------- |
@@ -98,7 +98,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
    let pool
    repool();
    
-   function repool() { // 短线重连机制
+   function repool() { // 断线重连机制
        pool = mysql.createPool({
            ...options,
            // 以下为常用的三个
