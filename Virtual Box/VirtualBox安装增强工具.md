@@ -12,6 +12,10 @@ $ bash VBoxLinuxAdditions.run
 
 完成之后就可以了，如果没重启就手动重启，
 
+## 增强工具
+
+其实加载安装增强工具的ios(设备->安装增强供能),双击打开光盘,会法相有很多名字相似的文件,linux系统就双击VBoxLinuxAdditions.run,ios就双击VBoxDarwinAdditions.pkg,window的话,我猜测是点击VBoxWindowsAdditions.exe,剩下那两个应该不用点,,,,注意的是,mac安装增强工具压根没用,因为没有
+
 ## 挂载主机与虚拟机共享文件夹
 
 1. 在virtualbox的设置中找到共享文件夹进行配置，不用选择自动挂载和只读
@@ -28,7 +32,6 @@ $ bash VBoxLinuxAdditions.run
 
 4. 设置自动挂载，如果不想每次都执行挂载命令，就在/etc/fstab下编辑设置自动挂载
 
-   
 
    ```cpp
    share /mnt/shared vboxsf rw,gid=100,uid=1000,auto 0 0
