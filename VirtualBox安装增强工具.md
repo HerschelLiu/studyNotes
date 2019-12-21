@@ -14,14 +14,50 @@ $ bash VBoxLinuxAdditions.run
 
 ## 挂载主机与虚拟机共享文件夹
 
+1. 在virtualbox的设置中找到共享文件夹进行配置，不用选择自动挂载和只读
+
 1. 在主机里新建文件夹（我的叫deepinShare），在deepin系统->系统盘->home->主目录->新建文件夹（winShare）
 
-2. 在此目录下运行终端，输入
+3. 在此目录下运行终端，输入
 
    ```
    sudo mount -t vboxsf deepinShare ./winShare
-   // deepinShare后是deepin共享文件夹的路径
+   // deepinShare是win里创建的共享文件夹，后是deepin共享文件夹的路径，名字要不同
+   不知道deepin的共享文件夹路径，就直接拖动文件到终端就好
    ```
 
-3. 输入密码，就完成了
+4. 设置自动挂载，如果不想每次都执行挂载命令，就在/etc/fstab下编辑设置自动挂载
 
+   
+
+   ```cpp
+   share /mnt/shared vboxsf rw,gid=100,uid=1000,auto 0 0
+   ```
+
+5. 输入密码，就完成了
+
+6. 卸载`sudo umount -f 文件夹路径`
+
+## 安装exe文件（deepin）
+
+### 方法一
+
+打开终端，输入`deepin-wine `空格不能少，然后把exe文件移入终端，回车
+
+### 方法二
+
+1、管理员权限打开 /usr/share/applications/(我是直接在桌面创建的)
+2、新建文本文件 wine.desktop ，并输入以下内容：
+
+```
+[Desktop Entry]
+Name=Deepin-wine
+Exec=deepin-wine %F
+Type=Application
+MimeType=text/plain;
+```
+
+保存退出；
+3、找到任意.exe文件，右键单击 --> 打开方式 --> 选择默认程序 --> (找到 Deepin-wine) --> 选择
+
+以后需要运行exe文件，可直接双击exe文件运行，可以下载windows程序的安装文件，双击直接安装，但装完后要自己找到安装后的主程序，一般在 ～/.wine/下，找到后可直接双击运行，也可右键 --> 发送到桌面 形成桌面图标，双击图标运行l'sh
