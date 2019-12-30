@@ -287,7 +287,6 @@ source ~/.zshrc
 
 ```bash
 cd ~/.oh-my-zsh/plugins/
-mkdir zsh-autosuggestions
 wget https://github.com/zsh-users/zsh-autosuggestions/archive/v0.4.3.tar.gz
 tar xf v0.4.3.tar.gz
 mv zsh-autosuggestions-0.4.3  zsh-autosuggestions
