@@ -6,7 +6,7 @@
 
  <font color="red">标注（成功）的为尝试通过的</font>
 
-## 更换Linux软件源并更新软件（windows的Linux子系统，Ubuntu)（成功）
+# 更换Linux软件源并更新软件（windows的Linux子系统，Ubuntu)（成功）
 
 使用 Ubuntu /debian 系最大的好处就是可以使用「软件源」进行软件安装，使用 Ubuntu 自带的 deb 包管理系统安装软件可以减少直接下载源码编译的麻烦，所以这里就要用到「apt-get」系列命令了。
 
@@ -63,7 +63,7 @@ apt-get update
 
 之后再输入：`apt-get upgrade` 对当前系统的软件和类库进行来更新。如果不出意外系统会自动对现有的软件包进行更新，经过这一系列的操作，目前 Ubuntu 的软件以及类库都是最新的，而系统版本也升级到 Ubuntu 16.04.4 LTS。
 
-## 与 Windows 通讯
+# 与 Windows 通讯
 
 目前 **子系统** 与 **Windows** 之间通过以下两种方式进行通讯
 
@@ -74,6 +74,61 @@ apt-get update
 
 [在任何情况下，请勿使用Windows应用程序，工具，脚本，控制台等创建或修改Linux文件](https://links.jianshu.com/go?to=https%3A%2F%2Fblogs.msdn.microsoft.com%2Fcommandline%2F2016%2F11%2F17%2Fdo-not-change-linux-files-using-windows-apps-and-tools%2F)
 
+# 使用Cmder替换cmd，让开发更高效
+
+## 为什么要更换为cmder
+
+在做项目时，有些时候我想复制控制台上面的代码时，**cmd**有的时候复制粘贴很麻烦，**Cmder**则不会，并且**Cmder**可以分屏多开窗口，可以设置窗口颜色,字体大小，并且很多快捷键和谷歌浏览器操作类似,等等很多功能。
+
+## 官网下载地址:
+
+> [http://cmder.net/](https://links.jianshu.com/go?to=http%3A%2F%2Fcmder.net%2F)
+
+## 关于下载
+
+进入官网以后，有**mini版**和**完整版**，建议完整版，完整版功能更齐全，还可以使用`git`，下载好解压文件包以后就可以使用。
+
+## 关于cmder的一些配置
+
+### 1. 配置环境变量:
+
+在系统属性里面配置环境变量，将`Cmder.exe`所在文件路径添加至`Path`里
+
+### 配置右键快捷启动:
+
+以管理员身份打开`cmd`，执行以下命令即可，完了以后在任意地方点击右键即可使用cmder
+
+```cpp
+// 设置任意地方鼠标右键启动Cmder
+Cmder.exe /REGISTER ALL
+```
+
+### 界面效果的设置
+
+首先使用`windows+alt+p`进入界面设置
+
+### 为多个子系统配置启动
+
+启动-》任务
+
+新建一个，名字叫Ubuntu，勾选新窗口默认任务，任务参数跟{cmd::Cmder}一样就行
+
+```
+set "PATH=%ConEmuBaseDirShort%\wsl;%PATH%" & %ConEmuBaseDirShort%\conemu-cyg-64.exe --wsl --distro-guid={xxxxxxxxxxxxxxxxxxxxxx} -cur_console:pm:/mnt
+```
+
+xxx为子系统唯一标识符，每个人都不一样
+
+在注册表(`regedit`)中查找
+
+**`计算机\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss`**下的
+
+点击通用（general）选择你的启动任务或者带参数的shell，选择刚刚新建的
+
+**提示**
+Shift+Alt+number 快捷启动不同终端
+number 代表数字1、2、3、·····
+
 ### 安装 zsh
 
 ------
@@ -82,123 +137,99 @@ apt-get update
 
 **zsh** 就是一款强大的虚拟终端，网上也都推荐使用 [oh my zsh](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Frobbyrussell%2Foh-my-zsh) 来管理配置 , 不过对我来说还是不够傻瓜。于是，参考一篇 [文章](https://links.jianshu.com/go?to=https%3A%2F%2Fwww.zhihu.com%2Fquestion%2F21418449%2Fanswer%2F300879747) 使用 **zsh** 的 [包管理器 antigen](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fzsh-users%2Fantigen) 来管理所有功能，文章中还给了现成的配置。
 
-- 安装 **zsh**
+### oh-my-zsh配置
 
-```shell
-sudo apt-get -y install zsh
+**安装任何包之前一定要先更新！**
+
+```bash
+sudo apt-get update
 ```
 
-- 设置终端的 **shell** 环境默认为 **zsh**，输入以下命令（ 需要 **重启** ）
+##### 安装zsh
 
-```shell
-# 加 sudo 是修改 root 帐号的默认 shell
-chsh -s `which zsh`
+```bash
+sudo apt-get install zsh
 ```
 
-- 如果上面命令无效，修改 **~/.bashrc** 文件, 在开头添加：
+##### 安装oh-my-zsh
 
-```shell
-if [ -t 1 ]; then
+```
+sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+```
+
+*如果 遇到证书类似问题*
+`apt-get install ca-certificates`
+
+##### 自动启动zsh
+
+```
+vim ~/.bashrc
+```
+在`# If not running interactively, don't do anything`下增加
+```bash
+if test -t 1; then
     exec zsh
 fi
 ```
 
-- 安装 **antigen**
+##### 修改主题
 
-```shell
-# 修改配置 ~/.zshrc（如果切换帐号后无法使用 zsh 则把该用户的配置文件再配一遍）
-curl -L git.io/antigen > antigen.zsh
-
-# 修改主题, 参考：https://github.com/robbyrussell/oh-my-zsh/wiki/themes
-# 如果需要主题一直生效需要添加到 ~/.zshrc 中
-# 使用
-source /path-to-antigen/antigen.zsh
-
-# 加载oh-my-zsh库
-antigen use oh-my-zsh
-
-# Bundles from the default repo (robbyrussell's oh-my-zsh).
-antigen bundle git
-antigen bundle heroku
-antigen bundle pip
-antigen bundle lein
-antigen bundle command-not-found
-
-# 语法高亮
-antigen bundle zsh-users/zsh-syntax-highlighting
-
-# 加载主题
-antigen theme robbyrussell
-
-# 告诉Antigen使用
-antigen apply
+```
+vim ~/.zshrc`
+`ZSH_THEME="agnoster"
 ```
 
-- 如果出现警告：**zsh compinit: insecure directories, run compaudit for list.**
+终端字体补全
+ `sudo apt-get install fonts-powerline`
 
-```shell
-chmod -R 755 ~/.antigen
+客户端字体补
+ 注意： *有些字符在windows 上无法显示，所以需要安装字体*
+ `nerdfonts.com`
+ 选择  `Hack`，下载后安装
+
+还要配置Cmder
+
+通用-》字体 控制台主要字体选择Hack Nerd Font Mono,选择粗体
+
+更新配置 或者重启终端
+`source ~/.zshrc`
+
+# zsh插件安装
+
+##  安装命令提示
+
+安装后，会导致在cmder中，不显示所打字符，没找到解决办法
+
+```bash
+cd ~/.oh-my-zsh/plugins/
+mkdir incr && cd incr
+wget http://mimosa-pudica.net/src/incr-0.2.zsh
+vim ~/.zshrc 在文件末尾添加一句启动命令
+	// source ~/.oh-my-zsh/plugins/incr/incr*.zsh 
+刷新配置
+source ~/.zshrc
 ```
 
-- [按键补齐](https://www.jianshu.com/p/f867f786b584) ( [解决zsh中无法正常使用home和end等键的问题](https://links.jianshu.com/go?to=https%3A%2F%2Fblog.csdn.net%2FPiasy%2Farticle%2Fdetails%2F37347521) )
+**切记是在末尾添加，不然不能生效。**
 
-  在 **~/.zshrc** 文件末尾添加下面的内容
-
-```shell
-# key bindings
-bindkey "\e[1~" beginning-of-line
-bindkey "\e[4~" end-of-line
-bindkey "\e[5~" beginning-of-history
-bindkey "\e[6~" end-of-history
-
-# for rxvt
-bindkey "\e[8~" end-of-line
-bindkey "\e[7~" beginning-of-line
-# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
-bindkey "\eOH" beginning-of-line
-bindkey "\eOF" end-of-line
-# for freebsd console
-bindkey "\e[H" beginning-of-line
-bindkey "\e[F" end-of-line
-# completion in the middle of a line
-bindkey '^i' expand-or-complete-prefix
-
-# Fix numeric keypad  
-# 0 . Enter  
-bindkey -s "^[Op" "0"
-bindkey -s "^[On" "."
-bindkey -s "^[OM" "^M"
-# 1 2 3  
-bindkey -s "^[Oq" "1"
-bindkey -s "^[Or" "2"
-bindkey -s "^[Os" "3"
-# 4 5 6  
-bindkey -s "^[Ot" "4"
-bindkey -s "^[Ou" "5"
-bindkey -s "^[Ov" "6"
-# 7 8 9  
-bindkey -s "^[Ow" "7"
-bindkey -s "^[Ox" "8"
-bindkey -s "^[Oy" "9"
-# + - * /  
-bindkey -s "^[Ol" "+"
-bindkey -s "^[Om" "-"
-bindkey -s "^[Oj" "*"
-bindkey -s "^[Oo" "/"
-```
-
-### 安装 autojump ( [用法参考](https://links.jianshu.com/go?to=https%3A%2F%2Flinux.cn%2Farticle-3401-1.html) )
+### 安装快捷导航(安装 autojump)
 
 ------
 
 > autojump 是一个命令行工具，它允许你可以直接跳转到你喜爱的目录，而不受当前所在目录的限制。意思就是可以让你更快地切换目录，而不用频繁地使用 cd/tab 等命令。
 
-- 安装
+**代码**
 
-```shell
+```bash
 sudo apt-get install autojump
+vim ~/.zshrc
+    plugins=(
+      autojump
+    )
+刷新配置
+source ~/.zshrc
 ```
-
+原来就有plugins，在里面加上autojump就行，换行
 - **zsh** 下运行报错:
 
 ```shell
@@ -212,7 +243,66 @@ and read the post installation instructions.
 
 > 在 `~/.zshrc` 中安装插件 `brew install autojump` 再重新进入 zsh
 
-由于本文使用 **antigen** 作为 **zsh** 的包管理器，所以实际操作是在 `~/.zshrc` 中添加 `antigen bundle autojump`
+**autojump 导航错误**
+
+![img](https:////upload-images.jianshu.io/upload_images/6912209-b33f67ad4c2448d1.png?imageMogr2/auto-orient/strip|imageView2/2/w/577/format/webp)
+
+
+ 当使用传统cd出现如下错误时
+`autojump_chpwd:4: nice(5) failed: operation not permitted`
+
+**代码**
+
+```bash
+vim ~/.zshrc
+添加下面一句
+unsetopt BG_NICE // 在source $ZSH/oh-my-zsh.sh下添加
+刷新配置
+source ~/.zshrc
+```
+## 语法检测（没成功）
+
+**代码**
+
+```bash
+cd ~/.oh-my-zsh/plugins/
+wget https://github.com/zsh-users/zsh-syntax-highlighting/archive/0.6.0.tar.gz
+tar xf 0.6.0.tar.gz
+mv zsh-syntax-highlighting-0.6.0 zsh-syntax-highlighting
+vim ~/.zshrc
+plugins=(
+  zsh-syntax-highlighting
+)
+刷新配置
+source ~/.zshrc
+```
+
+**解决权限问题**
+ 一般启动时会出现zsh-syntax-highlighting权限问题
+ `compaudit | xargs chmod g-w,o-w`
+
+## 自动完成（没成功）
+
+**代码**
+
+```bash
+cd ~/.oh-my-zsh/plugins/
+mkdir zsh-autosuggestions
+wget https://github.com/zsh-users/zsh-autosuggestions/archive/v0.4.3.tar.gz
+tar xf v0.4.3.tar.gz
+mv zsh-autosuggestions-0.4.3  zsh-autosuggestions
+vim ~/.zshrc
+plugins=(
+  zsh-autosuggestions
+)
+刷新配置
+source ~/.zshrc
+```
+提示：
+安装插件流程就是把git压缩包解压到~/.oh-my-zsh/plugins/目录下。
+目录名字改成与plugins=(pluginName)一致就可以。
+注意目录下面不能再有目录，在二级目录下插件不生效。
+如果要求插件包最新状态，可以到git源仓库下复制下载链接，更换wget xxxxx.tar.gz
 
 ## 启用 SSH 并使用SSH 客户端登录（成功）
 
