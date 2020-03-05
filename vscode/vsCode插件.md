@@ -1,5 +1,9 @@
 * Chinese （Simplified）Language Pack for Visual Studio Code中文
 
+* bookma(书签) - visual Studio中的Bookmark能加速代码导航能力。可能有一些代码，需要频繁的相互切换。通常你可能是滚动页面，找到该代码块的。Visual Studio已经提供了通过使用快捷键，非常快速地移动到指定的代码段。这就是代码的书签功能。
+
+* Bookmark\visual Studio中的Bookmark能加速代码导航能力。可能有一些代码，需要频繁的相互切换。通常你可能是滚动页面，找到该代码块的。Visual Studio已经提供了通过使用快捷键，非常快速地移动到指定的代码段。这就是代码的书签功能。
+
 * live-server   预览页面（ctrl+F1）  
 
 * vscode-icons 侧栏的图标，对于一个有视觉强迫症的人是必须要的
