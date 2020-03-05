@@ -39,7 +39,7 @@ const path = require('path')
 module.exports = {
     entry: './src/index.js', // 打包入口：指示 webpack 应该使用哪个模块，来作为构建其内部依赖图的开始
     output: {
-        path: path.resolve(__dirname, 'dist'),// 解析路径为 ./dist
+        path: path.resolve(__dirname, 'dist'),// 解析路径为 ./dist或者直接./dist
         filename: 'bundle.js'
     }, // 出口
     resolve: {}, // 配置解析：配置别名、extensions 自动解析确定的扩展等等
