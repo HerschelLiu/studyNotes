@@ -93,3 +93,42 @@ module.exports = {
 ```
 
 ## `npm run build`运行
+
+**补充一下：**
+ 也可以安装`awesome-typescript-loader`库来代替`ts-loader`库，它俩的功能是一样的，但据说`awesome-typescript-loader`比`ts-loader`编译`.ts`文件速度更快。
+
+- 安装`awesome-typescript-loader`库
+
+
+
+```undefined
+npm install --save-dev awesome-typescript-loader
+```
+
+- 在`webpack.config.js`文件中设置`awesome-typescript-loader`：
+
+```tsx
+const path = require('path');
+const { CheckerPlugin } = require('awesome-typescript-loader')
+
+module.exports = {
+  entry: './src/demo_02.ts',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [{
+      test: /\.tsx?$/,
+      use: 'awesome-typescript-loader',
+      exclude: /node_modules/
+    }]
+  },
+  plugins: [
+    new CheckerPlugin()
+  ],
+  resolve: {
+    extensions: [ '.tsx', '.ts', '.js' ]
+  },
+};
+```
