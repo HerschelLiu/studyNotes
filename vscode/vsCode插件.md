@@ -10,7 +10,9 @@
 
 * HTML Snippets 支持HTML5的标签提示
 
-* 路径自动补齐 Path Autocomplete(vscode自带)
+* Path Autocomplete引入文件时路径提示
+
+* Path Intellisense ：路径自动补齐(vscode自带有路径补全)
 
 * ES6 格式化 JavaScript (ES6) code snippets  
 
@@ -94,7 +96,7 @@
   >
   > 6) 工作空间
   >
-  >  
+  > 
   >
   > **Setting Sync 快捷键：**
   >
@@ -102,17 +104,17 @@
   >
   > 2) 下载： Shift + Alt + D (Sync: Download  Settings)
   >
-  >  如果快捷键有冲突，可Ctrl + K + S快捷键设置配置其它快捷键 或 Ctrl + P / F1 在命令窗口输入 >sync 即会出现相应命令供选择
+  > 如果快捷键有冲突，可Ctrl + K + S快捷键设置配置其它快捷键 或 Ctrl + P / F1 在命令窗口输入 >sync 即会出现相应命令供选择
   >
   > ![img](https://images2017.cnblogs.com/blog/635400/201708/635400-20170824104107261-1046727224.png)
   >
-  >  
+  > 
   >
   > #### Step1. 安装 同步插件"Settings Sync"
   >
   > ![img](https://images2017.cnblogs.com/blog/635400/201708/635400-20170823100639527-466207576.png)
   >
-  >  
+  > 
   >
   > #### Step2. 进入github -> Settings 在左侧 Developer settings -> Personal access tokens 
   >
@@ -126,7 +128,7 @@
   >
   > ![img](https://images2017.cnblogs.com/blog/635400/201708/635400-20170823101243980-1384930832.png)
   >
-  >  图2：
+  > 图2：
   >
   > ![img](https://images2017.cnblogs.com/blog/635400/201708/635400-20170823101418527-2001799760.png)
   >
@@ -136,7 +138,7 @@
   >
   > 记住你自己生成的token值，在VSCode配置上回用得到，最好找个笔记保存下来。
   >
-  >  
+  > 
   >
   > #### Step4. 回到VSCode配置将token配置到本地
   >
@@ -150,13 +152,13 @@
   >
   > 可以将自己的token分享到自己的团队里面去，这样团队可以共用一套设置。 
   >
-  >  
+  > 
   >
   > **Step5. 设置上同步下载设置**
   >
   > (Sync: Download  Settings) Shift + Alt + D 在弹窗里输入你的gist值，稍后片刻便可同步成功
   >
-  >  
+  > 
   >
   > **Step6. 如果要重置同步设置，变更其它token**
   >
@@ -185,3 +187,24 @@
 * Bookmarks：书签
 
 * Remote Development：包含Remote-WSL, Remote-SSH, Remote-Container
+
+* npm相关
+
+  * npm
+  * npm intellisense： 用于在import语句中自动填充npm模块。其实就是npm相关的辅助提示
+
+* TypeScript TSLint Plugin：用于在代码编写阶段检测代码语法准确性，通过编辑tslint.json可以更改默认的配置。配置官方注解地址:https://palantir.github.io/tslint/rules/
+
+* Paste JSON as Code：支持将Json文件生成为对应的模型类，支持的语言有： TypeScript，Python，Go，Ruby，C#，Java，Swift，Rust，Kotlin，C++，Flow，Objective-C，JavaScript，Elm
+
+* JSON Tools：格式化Json文件，再也不用在浏览器上找在线格式化Json文件网站做校验啦~ (注意有文件大小限制，如果json文件太大是不能解析的，具体的阈值是多少忘了
+
+* vscode-fileheader：插入文件头注释，并能自动更新文件修改时间，默认快捷键为 ctrl + alt + i，如果有冲突，到 文件 - 首选项 - 键盘快捷方式中进行修改
+
+* 
+
+  
+
+* 
+
+* 
