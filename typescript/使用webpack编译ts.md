@@ -132,3 +132,5 @@ module.exports = {
   },
 };
 ```
+
+**注意：**配置好之后，编辑器会报错`无法写入文件“c:/projects/start-typescript/src/components/IndexPage.js”，因为它会覆盖输入文件。`出现类似这种错误的原因是在`tsconfig.json`的配置中出现了`allowJs: true`，并且项目中有`js`文件。`ts`编译的目标文件就是`js`文件，而现在`js`文件已经存在，所以报错。这种报错可以不管，不影响项目的开发和打包。
