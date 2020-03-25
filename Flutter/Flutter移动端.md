@@ -129,7 +129,9 @@ didChangeLifecycleState有一个枚举类型的参数AppLifecycleState，它的�
 
 ## 编写页面
 
-### 无状态（StatelessWidget)
+### StatelessWidget和StatefulWidget
+
+#### 无状态（StatelessWidget)
 
 正常编写
 
@@ -198,7 +200,7 @@ class MyList extends StatelessWidget {
 }
 ```
 
-### 有状态（StatefulWidget）
+#### 有状态（StatefulWidget）
 
 ```dart
 import 'package:flutter/material.dart';
@@ -423,7 +425,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
 
   **注：**刚创建完，运行可能会报`no TabController for TabBar`,重新`flutter run`即可
 
-### TabBarView
+#### TabBarView
 
 通过`TabBar`我们只能生成一个静态的菜单，真正的Tab页还没有实现。由于`Tab`菜单和Tab页的切换需要同步，我们需要通过`TabController`去监听Tab菜单的切换去切换Tab页，代码如：
 
@@ -461,6 +463,63 @@ Scaffold(
 ```
 
 `TabBar`和`TabBarView`正是通过同一个`controller`来实现菜单切换和滑动状态同步的
+
+### 抽屉菜单Drawer
+
+`Scaffold`的`drawer`和`endDrawer`属性可以分别接受一个Widget来作为页面的左、右抽屉菜单。如果开发者提供了抽屉菜单，那么当用户手指从屏幕左（或右）侧向里滑动时便可打开抽屉菜单
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(title: 'Flutter Demo', home: MyHome());
+  }
+}
+
+class MyHome extends StatefulWidget {
+  @override
+  _MyHomeState createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        drawer: MyDrawer(),
+        )
+     }
+  }
+
+class MyDrawer extends StatelessWidget {
+  const MyDrawer({Key key}) : super(key: key);
+
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: SafeArea(
+        top: false,
+        child: Container(
+          color: Colors.yellowAccent,
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 50.0 + MediaQuery.of(context).padding.top,
+                color: Colors.blue
+              )
+            ]
+          ),
+        )
+      )
+    );
+  }
+}
+
+```
+
+SafeArea安全区域，`MediaQuery.of(context).padding.top`获取状态栏高度
 
 ### BottomNavigationBar
 
@@ -511,3 +570,98 @@ class _MyHomeState extends State<MyHome> {
 ```
 
 点击事件可以使用一个void的函数，写在Widget build中
+
+#### 使用BottomAppBar和FloatingActionButton实现中间凹陷的导航栏
+
+![](img\1.png)
+
+Material组件库中提供了一个`BottomAppBar` 组件，它可以和`FloatingActionButton`配合实现这种“打洞”效果
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(title: 'Flutter Demo', home: MyHome());
+  }
+}
+
+class MyHome extends StatefulWidget {
+  @override
+  _MyHomeState createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: null
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
+          shape: CircularNotchedRectangle(), // 底部导航栏打一个圆形的洞
+          child: Row(
+            children: <Widget>[
+              IconButton(icon: Icon(Icons.home)),
+              SizedBox(), //中间位置空出
+              IconButton(icon: Icon(Icons.business))
+            ],
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          ),
+        ),
+  }
+}
+```
+
+可以看到，上面代码中没有控制打洞位置的属性，实际上，打洞的位置取决于`FloatingActionButton`的位置，上面`FloatingActionButton`的位置在正中间，所以打洞位置就在正中间。`BottomAppBar`的`shape`属性决定洞的外形，`CircularNotchedRectangle`实现了一个圆形的外形
+
+### 裁剪（Clip）
+
+| 剪裁Widget | 作用                                                     |
+| ---------- | -------------------------------------------------------- |
+| ClipOval   | 子组件为正方形时剪裁为内贴圆形，为矩形时，剪裁为内贴椭圆 |
+| ClipRRect  | 将子组件剪裁为圆角矩形                                   |
+| ClipRect   | 剪裁子组件到实际占用的矩形大小（溢出部分剪裁）           |
+
+```dart
+ClipRect(
+	child: 
+)
+```
+
+
+
+#### 自定义裁剪(CustomClipper)
+
+```dart
+class MyClipper extends CustomClipper<Rect> {
+  @override
+  Rect getClip(Size size) => Rect.fromLTWH(10.0, 15.0, 40.0, 30.0);
+
+  @override
+  bool shouldReclip(CustomClipper<Rect> oldClipper) => false;
+}
+```
+
+- `getClip()`是用于获取剪裁区域的接口，由于图片大小是60×60，我们返回剪裁区域为`Rect.fromLTWH(10.0, 15.0, 40.0, 30.0)`，及图片中部40×30像素的范围。
+- `shouldReclip()` 接口决定是否重新剪裁。如果在应用中，剪裁区域始终不会发生变化时应该返回`false`，这样就不会触发重新剪裁，避免不必要的性能开销。如果剪裁区域会发生变化（比如在对剪裁区域执行一个动画），那么变化后应该返回`true`来重新执行剪裁。
+
+然后再需要的地方使用`MyClipper()`
+
+```dart
+DecoratedBox(
+  decoration: BoxDecoration(
+    color: Colors.red
+  ),
+  child: ClipRect(
+      clipper: MyClipper(), //使用自定义的clipper
+      child: avatar
+  ),
+)
+```
+
