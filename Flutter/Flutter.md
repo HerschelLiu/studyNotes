@@ -769,4 +769,163 @@ class Global {
 }
 ```
 
-共享Theme主题
+### 跨组件状态共享(Provider)
+
+使用provider包
+
+https://pub.dev/packages/provider
+
+1. 有状态组件中的data值可以被多次修改，但是直接修改data值并不会重新被build渲染一遍，而必须调用setState()函数才能重新渲染。`setState((){...})`
+2. 每渲染一次，都会调用一次build函数，也都会调用一次这个生命周期函数didUpdateWidget()。
+3. 每次didUpdateWidget()的调用，都意味着MyStatefulWidget整个有状态组件将被重新渲染一遍。
+4. 正如第3条所理解，这意味着，如果Column容器中有无数个Text(data)的兄弟组件，每次didUpdateWidget()的调用，都会将其所有组件重新渲染一遍，这对性能有一定的影响。
+5. 然而，我们只是修改了Text(data)中的data数据，没必要带上其他的组件一起渲染吧，那么如何解决这问题呢？**这回Provider包就起作用了**。
+
+这里的 Model 实际上就是我们的状态，它不仅储存了我们的数据模型，而且还包含了更改数据的方法，并暴露出它想要暴露出的数据。
+
+```dart
+import 'package:flutter/material.dart';
+
+class CounterModel with ChangeNotifier { // 这里使用了 mixin 混入了 ChangeNotifier，这个类能够帮驻我们自动管理所有听众。
+  int _count = 0;
+  int get value => _count; // 下划线代表私有。通过 get value 把 _count 值暴露出来
+
+  void increment() {
+    _count++;
+    notifyListeners(); // 当调用 notifyListeners() 时，它会通知所有听众进行刷新。
+  }
+}
+```
+
+**1.创建顶层共享数据**
+
+我们在 main 方法中初始化全局数据。
+
+```dart
+void main() {
+  final counter = CounterModel();
+  final textSize = 48;
+
+  runApp(
+    Provider<int>.value(
+      value: textSize,
+      child: ChangeNotifierProvider.value(
+        value: counter,
+        child: MyApp(),
+      ),
+    ),
+  );
+}
+```
+
+通过 `Provider<T>.value` (<T>代表数据类型，可省略)能够管理一个恒定的数据，并提供给子孙节点使用。我们只需要将数据在其 value 属性中声明即可。
+
+而 `ChangeNotifierProvider.value` 不仅能够提供数据供子孙节点使用，还可以在数据改变的时候通知所有听众刷新。(通过之前我们说过的 `notifyListeners`)
+
+除了上述几个属性之外 `Provider.value` 还提供了 `UpdateShouldNotify` Function，用于控制刷新时机。
+
+**2.在子页面中获取状态**
+
+第一种方式`Provider.of(context);`
+
+```dart
+class FirstScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final _counter = Provider.of<CounterModel>(context);
+    final textSize = Provider.of<int>(context).toDouble();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('FirstPage'),
+      ),
+      body: Center(
+        child: Text(
+          'Value: ${_counter.value}',
+          style: TextStyle(fontSize: textSize),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => SecondPage())),
+        child: Icon(Icons.navigate_next),
+      ),
+    );
+  }
+}
+
+///作者：Vadaski
+///链接：https://juejin.im/post/5d00a84fe51d455a2f22023f
+///来源：掘金
+///著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+获取顶层数据最简单的方法就是 `Provider.of(context);`<T> 指定了获取 **FirstScreen** 向上寻找最近的储存了 T 的祖先节点的数据。我们通过这个方法获取了顶层的 CounterModel 及 textSize。并在 Text 组件中进行使用。
+
+第二种方式Consumer
+
+```dart
+class SecondPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Second Page'),
+      ),
+      body: Consumer2<CounterModel,int>(
+        builder: (context, CounterModel counter, int textSize, _) => Center(
+              child: Text(
+                'Value: ${counter.value}',
+                style: TextStyle(
+                  fontSize: textSize.toDouble(),
+                ),
+              ),
+            ),
+      ),
+      floatingActionButton: Consumer<CounterModel>(
+        builder: (context, CounterModel counter, child) => FloatingActionButton(
+              onPressed: counter.increment,
+              child: child,
+            ),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+作者：Vadaski
+链接：https://juejin.im/post/5d00a84fe51d455a2f22023f
+来源：掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+在这个页面中，我们有两处使用到了公共 Model。
+
+- 应用中心的文字：使用 CounterModel 在 Text 中展示文字，以及通过 textSize 定义自身的大小。一共使用到了两个 Model。
+- 浮动按钮：使用 CounterModel 的 `increment` 方法触发计数器的值增加。使用到了一个 Model。
+
+Consumer 的 builder 实际上就是一个 Function，它接收三个参数 `(BuildContext context, T model, Widget child)`。
+
+`Consumer` 就是通过 `Provider.of(context)` 来实现的。但是从实现来讲 `Provider.of(context)` 比 `Consumer` 简单好用太多，为啥我要搞得那么复杂捏。
+
+实际上 `Consumer` 非常有用，它的经典之处在于能够在复杂项目中，**极大地缩小你的控件刷新范围**。`Provider.of(context)` 将会把调用了该方法的 context 作为听众，并在 `notifyListeners` 的时候通知其刷新。
+
+**优雅地处理多个 Provider**
+
+```dart
+void main() {
+  final counter = CounterModel();
+  final textSize = 48;
+
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider.value(value: textSize),
+        ChangeNotifierProvider.value(value: counter)
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+```
+
