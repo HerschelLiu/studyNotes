@@ -693,6 +693,66 @@ https://book.flutterchina.club/chapter11/http.html
 
 https://book.flutterchina.club/chapter11/dio.html
 
+dio是一个强大的Dart Http请求库，支持Restful API、FormData、拦截器、请求取消、Cookie管理、文件上传/下载、超时等...
+
+```dart
+// 简单的例子
+import 'package:dio/dio.dart';
+Dio dio = new Dio();
+Response response=await dio.get("https://www.google.com/?传参"); // get
+response=await dio.post("/test",data:{"id":12,"name":"wendu"}) // post
+response= await Future.wait([dio.post("/info"),dio.get("/token")]); // 多个并发请求
+response=await dio.download("https://www.google.com/","./xx.html") // 下载
+print(response.data);
+```
+
+发送 FormData:
+
+```dart
+FormData formData = new FormData.from({
+   "name": "wendux",
+   "age": 25,
+});
+response = await dio.post("/info", data: formData)
+```
+
+通过FormData上传多个文件:
+
+```dart
+FormData formData = new FormData.from({
+   "name": "wendux",
+   "age": 25,
+   "file1": new UploadFileInfo(new File("./upload.txt"), "upload1.txt"),
+   "file2": new UploadFileInfo(new File("./upload.txt"), "upload2.txt"),
+     // 支持文件数组上传
+   "files": [
+      new UploadFileInfo(new File("./example/upload.txt"), "upload.txt"),
+      new UploadFileInfo(new File("./example/upload.txt"), "upload.txt")
+    ]
+});
+response = await dio.post("/info", data: formData)
+```
+
+你可以使用默认配置或传递一个可选 `Options`参数来创建一个Dio实例 :
+
+```dart
+Dio dio = new Dio; // 使用默认配置
+
+// 配置dio实例
+dio.options.baseUrl="https://www.xx.com/api"
+dio.options.connectTimeout = 5000; //5s
+dio.options.receiveTimeout=3000;
+
+// 或者通过传递一个 `options`来创建dio实例
+Options options= new Options(
+    baseUrl:"https://www.xx.com/api",
+    connectTimeout:5000,
+    receiveTimeout:3000
+);
+Dio dio = new Dio(options);
+response=await request("/test", data: {"id":12,"name":"xx"}, new Options(method:"GET"));
+```
+
 ## 实操
 
 在项目根目录下分别创建“imgs”和“fonts”文件夹，前者用于保存图片，后者用于保存Icon文件。由于在网络数据传输和持久化时，我们需要通过Json来传输、保存数据；但是在应用开发时我们又需要将Json转成Dart Model类，所以，我们需要在根目录下再创建一个用于保存Json文件的“jsons”文件夹。
@@ -756,6 +816,69 @@ lib
 └── test
 ```
 
+## 路由
+
+```dart
+// 打开新页面：（入栈）
+Navigator.push( context,
+	MaterialPageRoute(builder: (context) {
+		return 新页面组件(传值);
+	})
+);
+
+// 或
+Navigator.of(context).push()
+// 同理，返回则是pop：（出站）
+```
+
+### 命名路由
+
+```dart
+// 在main中的MaterialApp中设置
+routes: {
+    "/": (context) => 新页面组件(), // home页
+    "路由名": (context) => 新页面组件()
+}
+// 通过路由名打开新路由页
+Navigator.pushNamed(context, "路由名", {/*参数*/})
+// 获取参数
+var args = ModalRoute.of(context).settings.参数名;
+// 在设置路由时传递
+routes: {
+    "路由名": (context) => 新页面组件(参数: ModalRoute.of(context).settings.参数)
+}
+// 路由替换
+Navigator.of(context).pushReplacementNamed('路由名')
+// 回退到某页并关闭中间所有页面
+// pushNamedAndRemoveUntil 接受两个参数，第一个是路由名，（这里我们使用了根路由）第二个则是对堆栈中的 route 的处理：下面的处理中我们清空了 route 全部置为 null，则会路由到 '/' 根路由前的所有 route 都被干掉。
+Navigator.of(context).pushNamedAndRemoveUntil('路由名'，(route) => route == null)
+```
+
+### 路由生成钩子
+
+假设我们要开发一个电商APP，当用户没有登录时可以看店铺、商品等信息，但交易记录、购物车、用户个人信息等页面需要登录后才能看。为了实现上述功能，我们需要在打开每一个路由页前判断用户登录状态！如果每次打开路由前我们都需要去判断一下将会非常麻烦
+
+`MaterialApp`有一个`onGenerateRoute`属性，它在打开命名路由时可能会被调用，之所以说可能，是因为当调用`Navigator.pushNamed(...)`打开命名路由时，如果指定的路由名在路由表中已注册，则会调用路由表中的`builder`函数来生成路由组件；如果路由表中没有注册，才会调用`onGenerateRoute`来生成路由
+
+有了`onGenerateRoute`回调，要实现上面控制页面权限的功能就非常容易：我们放弃使用路由表，取而代之的是提供一个`onGenerateRoute`回调，然后在该回调中进行统一的权限控制，如：
+
+```dart
+MaterialApp(
+  ... //省略无关代码
+  onGenerateRoute:(RouteSettings settings){
+      return MaterialPageRoute(builder: (context){
+           String routeName = settings.name;
+          组件(context, 参数) // 参数用settings.arguments获取
+       // 如果访问的路由页需要登录，但当前未登录，则直接返回登录页路由，
+       // 引导用户登录；其它情况则正常打开路由。
+     }
+   );
+  }
+);
+```
+
+> 注意，`onGenerateRoute`只会对命名路由生效。
+
 ## 全局共享数据
 
 在任意目录（一般是lib或根目录）创建common文件夹，并创建global.dart
@@ -769,7 +892,7 @@ class Global {
 }
 ```
 
-### 跨组件状态共享(Provider)
+### 跨组件状态共享(Provider) (没搞懂)
 
 使用provider包
 
