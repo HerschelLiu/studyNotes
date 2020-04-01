@@ -744,7 +744,7 @@ dio.options.connectTimeout = 5000; //5s
 dio.options.receiveTimeout=3000;
 
 // 或者通过传递一个 `options`来创建dio实例
-Options options= new Options(
+BaseOptions options= new BaseOptions(
     baseUrl:"https://www.xx.com/api",
     connectTimeout:5000,
     receiveTimeout:3000
@@ -842,10 +842,10 @@ routes: {
 // 通过路由名打开新路由页
 Navigator.pushNamed(context, "路由名", {/*参数*/})
 // 获取参数
-var args = ModalRoute.of(context).settings.参数名;
+var args = ModalRoute.of(context).settings.arguments;
 // 在设置路由时传递
 routes: {
-    "路由名": (context) => 新页面组件(参数: ModalRoute.of(context).settings.参数)
+    "路由名": (context) => 新页面组件(参数: ModalRoute.of(context).settings.arguments)
 }
 // 路由替换
 Navigator.of(context).pushReplacementNamed('路由名')
