@@ -73,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 以上为起始
-        // setContentView(R.layout.activity_main); // 关联layout下的activity_main的xml文件，给当前活动加载一个布局
+        setContentView(R.layout.activity_main); // 关联layout下的activity_main的xml文件，给当前活动加载一个布局
     }
 }
 
@@ -273,3 +272,13 @@ public class MainActivity extends AppCompatActivity {
 ### 销毁活动
 
 只需要按下`back`键就可以销毁当前活动，或者在代码中加入`finish()`
+
+
+
+## 新建第二个活动
+
+每个活动即每个`onCreate`都是单独一个java文件，**所有活动都要在<Application>**里注册。不是主活动就不用设置`<intent-filter>`中的内容
+
+### 使用`Intent`在活动中穿梭
+
+`intent`是Android程序中各组件之间进行交互的一种重要方式，不仅可以指明当前组件想要执行的动作，还可以在各组件之间传递数据。一般可用于**启动活动**、**启动服务**、**发送广播**等场景。用法分为**显示**和**隐式**
