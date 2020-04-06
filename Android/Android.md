@@ -282,3 +282,166 @@ public class MainActivity extends AppCompatActivity {
 ### 使用`Intent`在活动中穿梭
 
 `intent`是Android程序中各组件之间进行交互的一种重要方式，不仅可以指明当前组件想要执行的动作，还可以在各组件之间传递数据。一般可用于**启动活动**、**启动服务**、**发送广播**等场景。用法分为**显示**和**隐式**
+
+```java
+// 显示
+Button button1 = (Button) findViewById(R.id.button_1);
+        button1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
+            }
+        });
+```
+
+构建Intent，传入`MainActivity.this`作为上下文, `SecondActivity.class`作为目标活动，即在`MainActivity`这个活动基础上打开`SecondActivity`这个活动，然后通过`startActivity()`方法执行这个Intent
+
+**隐式**
+
+不明确指出想要启动哪一个活动，而是指定了一系列更为抽象的`action`和`category`等信息，然后交由系统去分析这个Intent，并帮我们找出合适的活动去启动
+
+```
+// AndroidManifest.xml
+<activity android:name=".SecondActivity">
+    <intent-filter>
+        <action android:name="com.example.helloworld.ACTION_START"></action>
+        <category android:name="android.intent.category.DEFAULT"></category>
+    </intent-filter>
+</activity>
+
+//MainActivity.java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button button1 = (Button) findViewById(R.id.button_1);
+        button1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.example.helloworld.ACTION_START");
+                startActivity(intent);
+            }
+        });
+    }
+```
+
+`android.intent.category.DEFAULT`是一种默认的`category`，在调用`startActivity()`会自动将这个`category`添加进Intent
+
+每个Intent只能指定一个action，但是能指定多个category
+
+```diff
+// AndroidManifest.xml
+<activity android:name=".SecondActivity">
+    <intent-filter>
+        <action android:name="com.example.helloworld.ACTION_START"></action>
+        <category android:name="android.intent.category.DEFAULT"></category>
++	    <category android:name="com.example.helloworld.MT_CATEGORY"></category>  
+    </intent-filter>
+</activity>
+
+//MainActivity.java
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Button button1 = (Button) findViewById(R.id.button_1);
+        button1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.example.helloworld.ACTION_START");
++               intent.addCategory("com.example.helloworld.MT_CATEGORY");
+                startActivity(intent);
+            }
+        });
+    }
+```
+
+#### 向下个活动传递数据
+
+```diff
+// MainActivity.java
+button1.setOnClickListener(new View.OnClickListener(){
+    @Override
+    public void onClick(View v) {
+        String data = "Hello SecondActivity";
+        Intent intent = new Intent("com.example.helloworld.ACTION_START");
++       intent.putExtra("extra_data", data);
+        startActivity(intent);
+    }
+});
+// onCreate下
++ @Override
++ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
++ 	switch(requestCode) {
++ 		case 1:
++ 			if (resultCode == RESULT_OK) {
++ 				String returnedData = data.getStringExtra("data_return");
++ 				Log.d("mainActivity", returnedData);
++ 			}
++ 		default: break;
++ 	}
++ }
+
+// SecondActivity.java
+public class SecondActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.second_layout);
++       Intent intent = getIntent();
++       String data = intent.getStringExtra("extra_data");
+        Log.d("SecondActivity", data);
+    }
+```
+
+`getStringExtra`获取字符串数据，`getIntExtra`获取整型数据，`getBooleanExtra`获取布尔型数据，以此类推
+
+#### 返回数据给上一个活动
+
+`startActivityForResult()`第一个参数是Intent，第二个参数是请求码
+
+```diff
+// MainActivity.java
+button1.setOnClickListener(new View.OnClickListener(){
+    @Override
+    public void onClick(View v) {
++      Intent intent = new Intent("com.example.helloworld.ACTION_START");
++      startActivityForResult(intent, 1); // 这个1就是requestCode
+    }
+});
+
+// SecondActivity.java
+// 通过点击按钮返回
+protected void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	requestWindowFeature(Window.FEATURE_NO_TITLE);
+	setContentView(R.layout.second_layout);
+	Button button2 = (Button) findViewById(R.id.button_2);
+	button2.setOnClickListener(new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
++  			Intent intent = new Intent();
++			intent.putExtra("data_return", "Hello MainActivity");
++			setResult(RESULT_OK, intent);
+			finish();
+		}
+	});
+}
+
+// 通过back键返回
++ @Override
++ public void onBackPressed() {
++ 	 Intent intent = new Intent();
++ 	 intent.putExtra("data_return", "Hello MainActivity");
++ 	 setResult(RESULT_OK, intent);
++ 	 finish();
++ }
+```
+
+setResult第一个参数一般只用`RESULT_OK`或`RESULT_CANCELED`这两个
