@@ -328,6 +328,8 @@ public class MainActivity extends AppCompatActivity {
     }
 ```
 
+**`com.example.helloworld`是包名**
+
 `android.intent.category.DEFAULT`是一种默认的`category`，在调用`startActivity()`会自动将这个`category`添加进Intent
 
 每个Intent只能指定一个action，但是能指定多个category
@@ -338,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
     <intent-filter>
         <action android:name="com.example.helloworld.ACTION_START"></action>
         <category android:name="android.intent.category.DEFAULT"></category>
-+	    <category android:name="com.example.helloworld.MT_CATEGORY"></category>  
++	    <category android:name="com.example.helloworld.MY_CATEGORY"></category>  
     </intent-filter>
 </activity>
 
@@ -354,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent("com.example.helloworld.ACTION_START");
-+               intent.addCategory("com.example.helloworld.MT_CATEGORY");
++               intent.addCategory("com.example.helloworld.MY_CATEGORY");
                 startActivity(intent);
             }
         });
@@ -374,18 +376,6 @@ button1.setOnClickListener(new View.OnClickListener(){
         startActivity(intent);
     }
 });
-// onCreate下
-+ @Override
-+ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-+ 	switch(requestCode) {
-+ 		case 1:
-+ 			if (resultCode == RESULT_OK) {
-+ 				String returnedData = data.getStringExtra("data_return");
-+ 				Log.d("mainActivity", returnedData);
-+ 			}
-+ 		default: break;
-+ 	}
-+ }
 
 // SecondActivity.java
 public class SecondActivity extends Activity {
@@ -416,6 +406,19 @@ button1.setOnClickListener(new View.OnClickListener(){
     }
 });
 
+// onCreate下
++ @Override
++ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
++ 	switch(requestCode) {
++ 		case 1:
++ 			if (resultCode == RESULT_OK) {
++ 				String returnedData = data.getStringExtra("data_return");
++ 				Log.d("mainActivity", returnedData);
++ 			}
++ 		default: break;
++ 	}
++ }
+
 // SecondActivity.java
 // 通过点击按钮返回
 protected void onCreate(Bundle savedInstanceState) {
@@ -445,3 +448,98 @@ protected void onCreate(Bundle savedInstanceState) {
 ```
 
 setResult第一个参数一般只用`RESULT_OK`或`RESULT_CANCELED`这两个
+
+## 活动的生命周期
+
+### 活动的生存期
+
+Activity类中定义了七个回调方法，覆盖了活动生命周期的每个环节。
+
+* 完整生存期
+  + `onCreate()`: 每个活动中都会重写这个方法，他会在活动第一次被创建的时候调用
+
+  + `onDestroy()`: 在活动销毁之前调用，之后状态变为销毁状态
+
+* 可见生存期
+
+  + `onStart()`：活动由不可见变为可见的时候调用
+
+  + `onStop()`: 在活动完全不可见的时候调用。与`onPause()`不同在于，如果启动的新活动是一个对话框式的活动，会运行`onPause()`
+
+* 前台生存期
+
+  + `onResume()`: 在活动准备好和用户进行交互的时候调用。此活动一定位于返回栈的栈顶，并且处于运行状态
+  + `onPause()`: 在系统准备去启动或者恢复另一个活动时调用。
+
+* `onRestart()`: 在活动由停止状态变为运行状态之前调用
+
+```java
+@Override
+protected void onStart() {
+    super.onStart();
+    Log.d(TAG, "onStart");
+}
+```
+
+**其他方法相同**
+
+#### 活动被回收的怎么办
+
+A打开B，如果内存不足，A会被回收，此时B返回，A会重新调用`onCreate（）`，但是A的临时数据和状态都没了，可以使用**`onSaveInstanceState()`**，这个方法会保证一定在活动被回收之前调用，因此我们可以通过这个方法来解决活动被回收时
+
+`onSaveInstanceState()`方法会携带一个 `Bundle` 类型的参数，`Bundle` 提供了一系列的方法
+用于保存数据，比如可以使用 `putString()`方法保存字符串，使用 `putInt()`方法保存整型数据，以此类推。每个保存方法需要传入两个参数，第一个参数是键，用于后面从 Bundle 中取值，
+第二个参数是真正要保存的内容。
+
+```java
+// MainActivity.java
+@Override
+protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    String tempData = "Something you just typed";
+    outState.putString("data_key", tempData);
+}
+```
+
+`onCreate()`也有一个Bundle类型参数
+
+```java
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    Log.d(TAG, "onCreate");
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
+    setContentView(R.layout.activity_main);
+    if (savedInstanceState != null) {
+        String tempData = savedInstanceState.getString("data_key");
+        Log.d(TAG, tempData);
+    }
+}
+```
+
+## 活动的启动模式
+
+启动模式一共有四种，分别是 `standard`、``singleTop`、`singleTask` 和 `singleInstance` ，可以 在`AndroidManifest.xml`中通过给 `<activity>`标签指定`android:launchMode` 属性来选择启动模式。
+
+### standard
+
+默认的启动模式。对于使用``standard`模式的活动，系统不会在乎这个活动是否已经在返回栈中存在，每次启动都会创建该活动的一个新的实例。**即一直入栈**
+
+### singleTop
+
+如果启动的活动就是返回栈的**栈顶**，直接使用，不会再创建新的活动实例，不是栈顶还是会新建
+
+### singleTask
+
+活动在整个应用程序的上下文中**只存在一个**实例。如果发现已经存在则直接使用该实例，并把在这
+个活动之上的**所有活动统统出栈**，如果没有发现就会创建一个新的活动实例。
+
+### singleInstance
+
+在这种模式下会有一个单独的返回栈来管理这个活动，不管是哪个应用程序来访问这个活动，都共用的同一个返回栈，也就解决了共享活动实例的问题。
+
+**返回问题：**1，2，3共3个活动，栈A有1，3两个活动，栈B有2活动，因为3是栈A的，所以栈A在栈B上面，点击返回的话则是3 -> 1 -> 2 -> 退出
+
+### 随时随地退出程序
+
+如果返回栈中有很多栈，退出程序只能一次次点返回，可以用一个专门的集合类对所有的活动进行管理
