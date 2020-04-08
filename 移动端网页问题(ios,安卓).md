@@ -31,7 +31,7 @@ body {
 }
 ```
 
-**4.**  **禁止 ios 长按时不触发系统的菜单，禁止 ios&android 长按时下载图片**
+**4.**  **禁止 ios 长按时不触发系统的菜单，禁止 ios&android 长按时下载图片**（3D Touch或Haptic Touch 功能触发的系统菜单也是这个）
 
 ```css
 body {
