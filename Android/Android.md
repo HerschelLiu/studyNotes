@@ -543,3 +543,69 @@ protected void onCreate(Bundle savedInstanceState) {
 ### 随时随地退出程序
 
 如果返回栈中有很多栈，退出程序只能一次次点返回，可以用一个专门的集合类对所有的活动进行管理
+
+```java
+    public class Activitycollector {
+        public static List<Activity> activities = new ArrayList<Activity>();
+        public static void addActivity(Activity activity) {
+            activities.add(activity);
+        }
+
+        public static void removeActivity(Activity activity) {
+            activities.remove(activity);
+        }
+
+        public static void finishAll() {
+            for(Activity activity : activities) {
+                if(!activity.isFinishing()) {
+                    activity.finish();
+                }
+            }
+        }
+    }
+```
+
+修改`MainActivity`
+
+```java
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ActivityCollector.addActivity(this);
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
+    }
+}
+```
+
+### 启动活动的最佳写法
+
+使用`Intent`来进行活动的启动十分有效，但是，项目开发中，可能整个程序交由不同的人实现，比如自己需要跳转到`SecondActivity`活动，但是不是自己写的，这种情况下使用`Intent`，传值之类的功能就需要去看代码。只需要换种写法就可以了
+
+```java
+// SecondActivity
+public class SecondActivity extends Activity {
+    public static void actionStart(Context context, String data1, String data2) {
+        Intent intent = new Intent(context, SecondActivity.class);
+        intent.putExtra("param1", data1);
+        intent.putExtra("param2", data2);
+        context.startActivity(intent);
+    }
+}
+```
+
+这么些还简化了启动活动的代码，现在只需要一行代码
+
+```java
+button1.setOnClickListener(new OnClickLitener() {
+    @Override
+    public void onClick(View v) {
+        SecondActivity.actionStart(FirstActivity.this, "data1", "data2");
+    }
+});
+```
+
