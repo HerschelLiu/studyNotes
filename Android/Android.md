@@ -11,8 +11,6 @@
 * 在XML中通过`@string/app_name`获取
   * `string`部分可替换，图片资源就`drawable`，布局文件就`layout`，以此类推
 
-PS：《第一行代码》中说的，但是书里的时安卓4.4，现在是安卓10.0，看目录结构发现，`mipmap`下是图片，`drawable`下是同名的xml文件，不知道是不是现在图片资源都放在`mipmap`下
-
 ## 日志工具Log
 
 在调试代码的时候我们需要查看调试信息，那我们就需要用Android Log类。
@@ -115,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
 </activity>
 ```
 
-* `android:name`指定具体注册哪个活动，其值`.FirstActivity`是`包名.FirstActivity`的缩写(com.example.helloworld.FirstActivity)，由于最外层`<manifest>`的属性`package`的值已经设置了包名`com.example.helloworld`，所以可以缩写
-* `android:label`指定活动中标题栏(appBar)的内容，如果没有这个属性，标题栏的文字就会变成活动名`com.example.helloworld.FirstActivity`,**给主活动指定的label，不仅会成为标题栏中的内容，还会成为启动器中应用程序显示的名称**
+* `android:name`指定具体注册哪个活动，其值`.FirstActivity`是`包名.FirstActivity`的缩写(`com.example.helloworld.FirstActivity`)，由于最外层`<manifest>`的属性`package`的值已经设置了包名`com.example.helloworld`，所以可以缩写
+* `android:label`指定活动中标题栏(``appBar`)的内容，如果没有这个属性，标题栏的文字就会变成活动名`com.example.helloworld.FirstActivity`,**给主活动指定的label，不仅会成为标题栏中的内容，还会成为启动器中应用程序显示的名称**
 * `<intent-filter>`标签里添加` <action android:name="android.intent.action.MAIN" />`和`<category android:name="android.intent.category.LAUNCHER" />`两个声明，如果想让`FirstActivity`成为主活动，即点击桌面应用图标，首先打开的活动，那就一定要**加上这两个声明**
 
 ### 去掉标题栏
@@ -131,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 1. 将继承的`AppCompatActivity`改为`Activity`
 
-2. 在onCreate()方法中加入如下代码：
+2. 在`onCreate()`方法中加入如下代码：
 
     ```java
     if (getSupportActionBar() != null){
@@ -607,5 +605,92 @@ button1.setOnClickListener(new OnClickLitener() {
         SecondActivity.actionStart(FirstActivity.this, "data1", "data2");
     }
 });
+```
+
+## UI控件
+
+### Button
+
+实现点击事件有两种方法
+
+```java
+// 1
+public class MainActivity extends Activity {
+    private Button button;
+    
+    @Override
+    protected void onCreate(Bundle SavedInstanceState) {
+        super.onCreate(SavedInstanceState);
+        setContentView(R.layout.activity_main);
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {}
+        });
+    }
+}
+
+// 2
+public class MainActivity extends Activity implements OnClickListener {
+    private Button button;
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(this);
+    }
+    
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()) {
+            case R.id.button: 
+                break;
+            default: 
+                break;
+        }
+    }
+}
+```
+
+## 广播
+
+注册广播一般有两种方式：在代码中注册（动态注册）和在`AndroidManifest.xml`（静态注册）中注册。
+
+只要新建一个类，继承自`BroadcastReceiver`，并重写父类的`onReceiver()`
+
+```java
+public class BootCompleteReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+    	Toast.makeText(context, "Boot Complete", Toast.LENGTH_LONG).show();
+    }
+}
+```
+
+静态注册
+
+```xml
+// AndroidManifest.xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.broadcasttest"
+    android:versionCode="1"
+    android:versionName="1.0" > ……
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+        <application
+			android:allowBackup="true"
+             android:icon="@drawable/ic_launcher"
+             android:label="@string/app_name"
+             android:theme="@style/AppTheme" > ……
+                <receiver android:name=".BootCompleteReceiver" >
+                    <intent-filter>
+                    	<action android:name="android.intent.action.BOOT_COMPLETED" />
+
+                    </intent-filter>
+                </receiver>
+        </application>
+</manifest>
 ```
 

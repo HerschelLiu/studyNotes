@@ -1,3 +1,11 @@
+## 主题
+
+* Atom One Dark Theme :atom主题
+* Material Icon Theme： 图标主题
+* 
+
+## 其他
+
 * Chinese （Simplified）Language Pack for Visual Studio Code中文
 
 * bookma(书签) - visual Studio中的Bookmark能加速代码导航能力。可能有一些代码，需要频繁的相互切换。通常你可能是滚动页面，找到该代码块的。Visual Studio已经提供了通过使用快捷键，非常快速地移动到指定的代码段。这就是代码的书签功能。
@@ -58,13 +66,13 @@
 
 * Regex Previewer:这是一个用于实时测试正则表达式的实用工具。它可以将正则表达式模式应用在任何打开的文件上，并高亮所有的匹配项。
 
-* **Atom One Dark Theme** :atom主题
-
 * **Beautify** 美化vscode代码
 
 * **Bracket Pair Colorizer** 每一对括号用不同颜色区别 （括号强迫症必备）
 
 * **cssrem** 将css中的px自动转换为rem.再也不用计算器了（大漠大神推介）
+
+* px-to-vw: px转vw，Alt + Z
 
 * **HTML CSS Support** vscode对html，css文件支持，便于你快速书写属性
 
@@ -205,3 +213,19 @@
 * Code Spell Checker：我们日常敲代码很多命名都是使用英文单词，粗心的小伙伴可能会拼错，这个插件就是单词拼写错时的拯救神器，它可以标志错的单词，还可以提示单词的正确拼法。有了它，就再也不用因为单词拼错找半天的 bug 了
 
 * indent-rainbow：写代码的时候，能提示我们的缩进是否到位，每步交替四种不同的颜色，没有到位的话颜色变红，看着代码整整齐齐的就很舒心。
+
+* codelf：变量命名神器
+
+* Local History：每次修改保存文件，都会在根目录生成一个`.history`目录，里面是修改的记录
+
+* Better Comments：编写更加人性化的注释，征程使用注释就好，不同样式会变色，比如todo
+
+* Terminal：可以在编辑器底边栏添加一个控制台按钮，便于鼠标快速访问
+
+* Polacode: 生成代码截图。使用：F1-> 输入Polacode（会在代码右侧出现新标签页） -> 在左侧选中代码 -> 点击Polacode标签页中，图片下方的按钮保存图片
+
+* any-rule: 正则插件
+
+* Image preview：悬停时显示图像预览
+
+* Version Lens: 显示package.json文件中每个软件包的最新版本
