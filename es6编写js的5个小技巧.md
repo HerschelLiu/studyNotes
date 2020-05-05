@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 [2019 年编写现代 JavaScript 代码的5个小技巧(作者：廖振廷)]: https://zhuanlan.zhihu.com/p/54758068
 
 ## 1 Array.includes 与条件判断

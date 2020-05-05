@@ -16,8 +16,6 @@
 ---------------------------
 # 3.0 安装+创建
 
-* `npm install -g vue-cli`
-
 * `npm install -g @vue/cli`
 
 * 如果需要旧版本init功能:

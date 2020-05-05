@@ -226,6 +226,4 @@
 
 * any-rule: 正则插件
 
-* Image preview：悬停时显示图像预览
-
 * Version Lens: 显示package.json文件中每个软件包的最新版本
