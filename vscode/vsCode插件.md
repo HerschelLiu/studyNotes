@@ -1,8 +1,19 @@
-## 主题
+## IDE主题
 
 * Atom One Dark Theme :atom主题
 * Material Icon Theme： 图标主题
-* 
+
+## 
+
+## 
+
+## 
+
+## 颜色相关
+
+* Color Info:这个便捷的插件，将为你提供你在 CSS 中使用颜色的相关信息。你只需在颜色上悬停光标，就可以预览色块中色彩模型的（HEX、 RGB、HSL 和 CMYK）相关信息了。
+* **Bracket Pair Colorizer2** 每一对括号用不同颜色区别 （括号强迫症必备）
+* **Color Highlight**：在十六进制颜色值添加所代表的颜色的背景
 
 ## 其他
 
@@ -52,8 +63,6 @@
 
 * Prettier:Prettier 是目前 Web 开发中最受欢迎的代码格式化程序。安装了这个插件，它就能够自动应用 Prettier，并将整个 JS 和 CSS 文档快速格式化为统一的代码样式。如果你还想使用 ESLint，那么还有个 Prettier – Eslint 插件，你可不要错过咯！
 
-* Color Info:这个便捷的插件，将为你提供你在 CSS 中使用颜色的相关信息。你只需在颜色上悬停光标，就可以预览色块中色彩模型的（HEX、 RGB、HSL 和 CMYK）相关信息了。
-
 * SVG Viewer:此插件在 Visual Studio 代码中添加了许多实用的 SVG 程序，你无需离开编辑器，便可以打开 SVG 文件并查看它们。同时，它还包含了用于转换为 PNG 格式和生成数据 URI 模式的选项。
 
 * TODO Highlight:这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
@@ -67,8 +76,6 @@
 * Regex Previewer:这是一个用于实时测试正则表达式的实用工具。它可以将正则表达式模式应用在任何打开的文件上，并高亮所有的匹配项。
 
 * **Beautify** 美化vscode代码
-
-* **Bracket Pair Colorizer** 每一对括号用不同颜色区别 （括号强迫症必备）
 
 * **cssrem** 将css中的px自动转换为rem.再也不用计算器了（大漠大神推介）
 
@@ -227,3 +234,5 @@
 * any-rule: 正则插件
 
 * Version Lens: 显示package.json文件中每个软件包的最新版本
+
+  
