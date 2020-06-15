@@ -223,7 +223,7 @@
 
 * codelf：变量命名神器
 
-* Local History：每次修改保存文件，都会在根目录生成一个`.history`目录，里面是修改的记录
+* Local History：每次修改保存文件，都会在根目录生成一个`.history`目录，里面是修改的记录,可以修改历史文件的保存路径
 
 * Better Comments：编写更加人性化的注释，征程使用注释就好，不同样式会变色，比如todo
 
