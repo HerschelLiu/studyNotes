@@ -2,7 +2,7 @@ windows命令行工具，在windows商店直接可以下载
 
 ## 加入右键菜单
 
-1. 测试后续要用的两个常量是否正常
+1. 测试后续要用的两个常量是否正常(用cmd输入才能看见，powershell只能原样输出)
 
    ```text
    echo %USERPROFILE%
