@@ -38,21 +38,23 @@
   
   SigLevel = Optional TrustAll
   
-  # 官方源
+  # 清华大学
   
-  Server = http://repo.archlinuxcn.org/$arch
+  Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
   
-  # 163源
+  ## 163
   
-  Server = http://mirrors.163.com/archlinux-cn/$arch
+  Server = http://mirrors.163.com/archlinux/$repo/os/$arch
   
-  # 清华大学（选的这个）
+  ## aliyun
   
-  Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
+  Server = http://mirrors.aliyun.com/archlinux/$repo/os/$arch
   
   
   
-  注意：以上源，只能添加一个
+  
+  
+  注意：使用顺序，从上往下优先级越来越低，越靠上，优先级越高
   ```
 
 * 修改好上述两个部分后，终端执行下面的指令：`sudo pacman -Syy && sudo pacman -S archlinuxcn-keyring`.<font color="red">**注意**，你在执行更新命令时可能会报错，这时你只需再执行一遍即可。我也不知道这是什么神仙bug。</font>这一条命令`sudo pacman -Syy`是用来刷新更新缓存的，有事没事的时候都可以刷两下！建议每次打开终端的时候都可以刷下！
