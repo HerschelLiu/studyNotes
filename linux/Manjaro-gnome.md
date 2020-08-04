@@ -29,34 +29,31 @@
 * 在打开的文件的末尾添加如下内容：(也是中科大的源)
 
   ```
-  [archlinuxcn]
-  [archlinuxcn]
-  
   # The Chinese Arch Linux communities packages.
   
   # SigLevel = Optional TrustedOnly
   
   SigLevel = Optional TrustAll
   
+  # 官方源
+  
+  Server = http://repo.archlinuxcn.org/$arch
+  
+  # 163源
+  
+  Server = http://mirrors.163.com/archlinux-cn/$arch
+  
   # 清华大学
   
-  Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
-  
-  ## 163
-  
-  Server = http://mirrors.163.com/archlinux/$repo/os/$arch
-  
-  ## aliyun
-  
-  Server = http://mirrors.aliyun.com/archlinux/$repo/os/$arch
+  Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch
   
   
   
+  注意：以上源，只能添加一个
   
   
-  注意：使用顺序，从上往下优先级越来越低，越靠上，优先级越高
   ```
-
+  
 * 修改好上述两个部分后，终端执行下面的指令：`sudo pacman -Syy && sudo pacman -S archlinuxcn-keyring`.<font color="red">**注意**，你在执行更新命令时可能会报错，这时你只需再执行一遍即可。我也不知道这是什么神仙bug。</font>这一条命令`sudo pacman -Syy`是用来刷新更新缓存的，有事没事的时候都可以刷两下！建议每次打开终端的时候都可以刷下！
 
 * **最后，你需要更新一下系统**。`sudo pacman -Syyu`
@@ -214,3 +211,7 @@ sudo pacman -Scc
 ```
 sudo pacman -Syu
 ```
+
+### 无法读取数据库（Damaged tar archive）
+
+把`/etc/pacman.d/mirrorlist`中`https`改为`http`即可。网上大多数教程的源都是`https`这在20年年初还有以前都没有出过问题，但不知为何最近只要用了`https`的源就会报这个错，估计是验证方式有所变更。

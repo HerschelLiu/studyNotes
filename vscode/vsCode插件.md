@@ -1,7 +1,24 @@
-## IDE主题
+## 美化
+
+### IDE主题
 
 * Atom One Dark Theme :atom主题
+
 * Material Icon Theme： 图标主题
+
+* Vibrancy：毛玻璃效果。安装好主体后，你需要按`F1`键,打开命令输入框，然后输入`Reload Vibrancy`后回车。如果不起作用，你就重新启动一下VSCode.
+
+  需要注意的一点是，这个插件每次更新VSCode就要重新运行`Reload Vibrancy`。这个插件还支持透明度和两款主题样式的设置。设置方法是在VSCode中使用快捷键`Ctrl + ,`,打开设置界面，在左边找到`Extensions` ，然后再找到`Vibrancy Effect`进行设置。
+
+  一共有三项设置：
+
+  - Opacity：透明度设置，这个数值默认为-1，你可以输入自己喜欢的值0-1之间，比如0.8.
+  - Theme： 毛玻璃的样式设置，一共有三个样式可选，以后可能还会增加。
+  - Type： 这个有很多选项，你可以具体进行测试。
+
+* Windows opacity:透明。现在的透明度可能看片还是有一点问题的，那我们就把透明度调的高一点。在VSCode中使用快捷键`Ctrl + ,`,打开设置界面，在左边找到`Extensions`选项卡，然后找到`Windows opacity`进行设置。
+
+  这里边只有一个设置项，就是`Opacity`，也就是我们要设置的透明度，值从`0-255`,数值越小透明度越高，数值越大透明度越低。我一般摸鱼的透明度在230左右，再小就容易被发现了。
 
 ## 
 
@@ -204,6 +221,7 @@
 * Remote Development：包含Remote-WSL, Remote-SSH, Remote-Container
 
 * npm相关
+
   * npm
   * npm intellisense： 用于在import语句中自动填充npm模块。其实就是npm相关的辅助提示
 
@@ -213,7 +231,7 @@
 
 * JSON Tools：格式化Json文件，再也不用在浏览器上找在线格式化Json文件网站做校验啦~ (注意有文件大小限制，如果json文件太大是不能解析的，具体的阈值是多少忘了
 
-* vscode-fileheader：插入文件头注释，并能自动更新文件修改时间，默认快捷键为 ctrl + alt + i，如果有冲突，到 文件 - 首选项 - 键盘快捷方式中进行修改
+* vscode-fileheader：插入文件头注释，并能自动更新文件修改时间，默认快捷键为 ctrl + alt + i，如果有冲突，到 文件 - 首选项 - 键盘快捷方式中进行修改（下面有更好用的）
 
 * Image preview：光标悬浮在图片路径上时，显示图片预览，这样我们在敲代码的时候一下子就能知道有没有引用了正确的图片或图标。
 
@@ -235,4 +253,60 @@
 
 * Version Lens: 显示package.json文件中每个软件包的最新版本
 
+* Browser Preview：vscode直接预览效果.现在的默认地址确实烦人，每次都要重新输入，这是一个有贞操的程序员所不能忍受的。所以我们按住`ctrl + ,`打开设置，然后找到`Extensions`,再找到`Browser Preview`,找到`Start Url`写上你默认打开的地址就可以了。
+
+* javascript Booster: 你有没有怀疑过你写的`JavaScript`代码？如何让自己的代码更专业？VSCode中的`JavaScript Booster`可以快速提升你的代码专业度。插件会帮助你在你写的不合理的地方显示黄色感叹号，单击黄色感叹号后，就会跟我们变成更好的代码。
+
+* REST Client：vscode中调试接口。简单的使用
+
+  1. 创建一个 `.http`文件
+
+  你可以在任意你喜欢的地方新建一个接口测试文件，
+
+  1. 编写测试接口文件
+
+  最简单的方法，就是直接写上请求方式和要请求的地址，例如下面的就可以请求到我博客首页的数据列表。
+
+  ```
+  GET https://apiblog.jspang.com/default/getArticleList  
+  ```
+
+  当然你也可以再增加一些内容，让你的请求更标准些。比如加入HTTP传输协议版本，还比如你提交的是一个POST数据表达，你可以要求表达的数据是以`json`的形式提交，你就可以加入下面的代码。
+
+  ```
+  GET https://apiblog.jspang.com/default/getArticleList  HTTP/1.1
   
+  content-type: application/json
+  
+  {
+      "data":"胖哥是最帅的"
+  }
+  ```
+
+  1. 发送请求，测试接口
+
+  点击`Send Request`，或者右键选择`Send Request`,都可以发送请求，如果一切顺利就会得到请求的结果。
+  
+* koroFileHeader：作为一个有思想有个性的程序员写的代码一定是要有风格的，比如什么`佛祖保佑永无Bug`、`神兽护体`等形式的注释，既有趣又个性。这个插件目前有1300+Star,全五星好评，8万次下载，所以是个非常不错的插件。插件的作用是生成文件头部注释和函数注释。如果你是windows电脑，使用`ctrl+shift+p`键,Mac电脑使用`shift+command+p`键，然后输入`codeDesign`插件里边的图案有`佛祖`、`佛曰`、`美女`、`龙图腾`......等等，你可以下载下来自己测试一下。其实这个"骚注释"只是插件的功能之一，更多的应用是自动根据我们的需求快速生成注释，比如在`test.js`中点击快捷键`ctrl+alt+i`（Windows）,如果你是Mac电脑点击`ctrl+cmd+i`.就会快速生成这样的代码注释(我这里以JS代码注释为例，但这个插件可以支持所有主流语言，支持自定义语言).这时候你会发现这里的`Author`是需要配置的，其实配置这个也非常的容易，我们简单配置一下。在`VSCode`菜单栏点击`File`-`Preferences`-`Settings`-`Extensions`里找到`File header Configuration`，在文件头部模块中(Fileheader)点击`Edit in settings.json`在光标处添加函数注释：windows:`ctrl+alt+t`,mac:"ctrl+cmd+t"
+
+  ```json
+  {
+      "fileheader.configObj": {
+  
+      },
+      "fileheader.customMade": {
+          "Author": "技术胖",
+          "Date": "Do not edit", // 文件创建时间(不变)
+          "LastEditors": "技术胖", // 文件最后编辑者
+          "LastEditTime": "Do not edit", // 文件最后编辑时间
+          "FilePath": "Do not edit" ,// 增加此项配置即可
+      } 
+  
+  
+  }
+  ```
+  
+  
+  
+  
+
