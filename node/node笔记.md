@@ -75,3 +75,35 @@ main(process.argv.slice(2));
 ```
 
 以上程序使用`fs.createReadStream`创建了一个源文件的只读数据流，并使用`fs.createWriteStream`创建了一个目标文件的只写数据流，并且用`pipe`方法把两个数据流连接了起来。连接起来后发生的事情，说得抽象点的话，水顺着水管从一个桶流到了另一个桶。
+
+## Path（路径）
+
+### `path.normalize`
+
+将传入的路径转换成标准路径，具体讲的话，除了解析路径中的`.`与`..`外，还能去掉多余的斜杠。如果有程序需要使用路径作为某些数据的索引，但又允许用户随意输入路径时，就需要使用该方法保证路径的唯一性。
+
+```js
+let cache = [];
+function store(key, value) {
+    cache[path.normalize(key)] = value;
+}
+
+store('foo/bar', 1);
+store('foo//bar//..//bar', 2);
+console.log(cache);
+```
+
+## 网络操作
+
+Nodejs本来的用途是编写高性能Web服务器。官方文档里的例子，使用http模块简单实现一个HTTP服务器
+
+```js
+const http = require('http');
+
+http.createServer((request, response) => {
+    response.writeHead(200, {'Content-Type', 'text-plain'});
+    response.end('Hello World!');
+}).listen(8124);
+```
+
+以上程序创建了一个HTTP服务器并监听`8124`端口，打开浏览器访问该端口`http://127.0.0.1:8124/`就能够看到效果。
