@@ -15,7 +15,7 @@
    cd 项目
    express 项目名称
    cd 项目跟目录
-   npminstall
+   npm install
    ```
 
    要使用cmd，powershell需要管理员权限
