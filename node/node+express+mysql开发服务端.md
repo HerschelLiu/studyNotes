@@ -104,5 +104,92 @@ router.get('/getUserInfo', (request, response, next) => {
 });
 ```
 
+##
+
+## 数据库（mysql）
+
+```bash
+npm install mysql --save
+```
+
+新建`util/db.js`封装连接mysql
+
+```js
+const mysql = require('mysql');
+
+// 新建mysql连接池
+const pool = mysql.createPool({
+  host: 'localhost',
+  port: '3306',
+  user: 'root',
+  password: '123',
+  database: 'db_test'
+})
+
+// 连接数据库并查询
+let query = function( sql, values ) {
+  return new Promise(( resolve, reject ) => {
+    pool.getConnection(function(err, connection) {
+      if (err) {
+        reject( err )
+      } else {
+        connection.query(sql, values, ( err, rows) => {
+          if ( err ) {
+            reject( err )
+          } else {
+            resolve( rows )
+          }
+          connection.release()
+        })
+      }
+    })
+  })
+}
+
+module.exports = { query }
+```
 
 
+
+## 注意事项
+
+### linux子系统node+express
+
+* 启动的网址还是localhost
+* 最好给读写权限，不然不能创建文件夹`chmod -R 777 文件夹`
+
+### post数据
+
+使用body-parser解析post的数据
+
+```bash
+npm install body-parser --save
+```
+
+```js
+// app.js
+var bodyParser = require('body-parser')
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false}));
+```
+
+这样我们就可以通过 request.body 来拿到post 请求过来的 数据了
+
+**注意：**如果是用express命令生成的，不需要它
+
+### res.render、res.send、res.json
+
+* res.json是先把对象序列化成了字符串类型然后在通过res.send发送出去，所以在数据处理中，res.json相对更全面！
+* res.render应该是运行html模板的
+
+### 解决跨域问题
+
+```js
+// CORS模块，处理web端跨域问题
+const cors = require('cors')
+app.use(cors())
+```
+
+### node热更新
+
+安装热更新nodemon。安装完了之后关闭进程，输入nodemon app.js 开启nodemon
