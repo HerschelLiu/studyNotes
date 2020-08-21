@@ -20,7 +20,13 @@
 
   这里边只有一个设置项，就是`Opacity`，也就是我们要设置的透明度，值从`0-255`,数值越小透明度越高，数值越大透明度越低。我一般摸鱼的透明度在230左右，再小就容易被发现了。
 
-## 
+## Flutter
+
+* 运行调试插件：Dart、Flutter
+* 代码片段：Flutter Widget Snippets、Awesome Flutter Snippets
+* 高亮：Bracket Pair Colorizer
+* api提示：flutter-stylizer
+* 导包：Pubspec Assist：所有你需要做的就是打开你的pubspec.yaml文件，打开命令面板，选择“pubspec assist：add dependency”并输入你需要的依赖项的名称。您将自动将其添加到pubspec.yaml文件中，更新到最新版本，所有这些都不会留下代码。
 
 ## 
 
