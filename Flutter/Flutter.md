@@ -33,6 +33,10 @@ FLUTTER_STORAGE_BASE_URL  ->  https://storage.flutter-io.cn
 PUB_HOSTED_URL  ->   https://pub.flutter-io.cn
 ```
 
+(3).右键电脑->属性->高级->环境变量->系统变量
+
+在弹出的窗口，下面的 “系统变量” 那部分点击 “新建”,给新建的环境变量命名为 “FLUTTER_HOME” ，将复制的flutter的安装路径粘贴进去;点击 “确定” 保存新建的环境变量，然后找到 “Path” 那一栏，点击 “编辑” ，在弹出的窗口中 “新建” ，将上一步创建的环境变量用两个 “%” 包裹起来填进框内，点击 “确定”.剩下的窗口全部点击 “确定” ，至此，就成功将flutter添加到系统环境变量中了
+
 *Linux*
 
 (1). 打开bashrc文件：
@@ -52,6 +56,10 @@ export PUB_HOSTED_URL=https://pub.flutter-io.cnexport FLUTTER_STORAGE_BASE_URL=h
 ```
 source ~/.bashrc
 ```
+
+> 这里有个坑点要注意：
+> 可能会发现配置完后每次重新打开终端都要重新`source ~/.bash_profile`才可以正常使用`flutter`命令；这是因为`zsh`加载的是 `~/.zshrc`文件，而`.zshrc`文件中并没有定义任务环境变量。
+>  解决办法是在`.zshrc`里面加入一行`source ~/.bash_profile`。配置方法跟上面相同。
 
 MacOS
 
