@@ -1,4 +1,5 @@
 # 安装 #
+
 + npm install -g vue
   
   >全局安装vue

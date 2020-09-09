@@ -29,6 +29,8 @@
 * 在打开的文件的末尾添加如下内容：(也是中科大的源)
 
   ```
+  [archlinuxcn]
+  
   # The Chinese Arch Linux communities packages.
   
   # SigLevel = Optional TrustedOnly
@@ -62,7 +64,26 @@
 
 * 如果你要安装某个软件，终端输入`sudo pacman -S [name]`
 
+## 解压deb包
 
+需要使用debtap工具，直接在软件包管理器搜，没有的话用别的（以yay为例）
+
+```bash
+# 查看是否安装过
+sudo pacman -Q debtap 
+# 安装yay工具
+sudo pacman -S yay
+# 安装解包打包工具dabtap
+yay -S debtap
+# 升级debtap
+sudo debtap -u
+# 解包
+sudo debtap  xxxx.deb
+# 安装
+sudo pacman -U x.tar.xz
+```
+
+注：解压zst包`tar -I zstd -xvf file.tar.zst`
 
 ## Manjaro安装必备软件
 
@@ -215,3 +236,7 @@ sudo pacman -Syu
 ### 无法读取数据库（Damaged tar archive）
 
 把`/etc/pacman.d/mirrorlist`中`https`改为`http`即可。网上大多数教程的源都是`https`这在20年年初还有以前都没有出过问题，但不知为何最近只要用了`https`的源就会报这个错，估计是验证方式有所变更。
+
+### `sudo pacman -Syyu`更新系统，错误，有冲突
+
+找到冲突的文件，直接删除
