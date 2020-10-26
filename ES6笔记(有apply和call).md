@@ -120,7 +120,7 @@ var maxInNumbers = Math.max.apply(Math, numbers),   //458
     maxInNumbers = Math.max.call(Math,5, 458 , 120 , -215); //458
 ```
 
-numbers没有max方法，但是Math，有，就可以用这俩方法让numbers使用上Math.max方法。就相当于我（numbers）借用了邻居家（Math）的秤（max方法）去称重。
+numbers没有max方法，但是Math有，就可以用这俩方法让numbers使用上Math.max方法。就相当于我（numbers）借用了邻居家（Math）的秤（max方法）去称重。
 
 比较常用的就是类（伪）数组使用数组方法
 
