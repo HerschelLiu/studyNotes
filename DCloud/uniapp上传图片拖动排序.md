@@ -18,10 +18,10 @@
                     :style="{ width: viewWidth + 'px', height: viewWidth + 'px', 'z-index': item.zIndex, opacity: item.opacity }"
                 >
                     <view class="area-con" :style="{ width: childWidth, height: childWidth, transform: 'scale(' + item.scale + ')' }">
-                        <image class="pre-image" :src="item.src" mode="aspectFill" v-if="custom"></image>
-                        <image class="pre-image" :src="item.src" mode="aspectFill" v-else></image>
+                        <image class="pre-image" :src="item.src" mode="aspectFill"></image>
                         <view
                             class="del-con_custom"
+                            :style="customDelImgSize"
                             @click="delImage(item, index)"
                             @touchstart.stop="delImageMp(item, index)"
                             @touchend.stop="nothing()"
@@ -34,14 +34,17 @@
                         </view>
                         <view
                             class="del-con"
+                            style="top: -16rpx;right: -16rpx;"
                             @click="delImage(item, index)"
                             @touchstart.stop="delImageMp(item, index)"
                             @touchend.stop="nothing()"
                             @mousedown.stop="nothing()"
                             @mouseup.stop="nothing()"
-                            v-if="delBtnType == 1"
+                            v-else-if="delBtnType == 1"
                         >
-                            <view class="del-wrap"><image class="del-image" :src="src + 'delUpLoadImage.png'"></image></view>
+                            <view class="del-wrap" style="border-radius: 0;background-color: rgba(0, 0, 0, 0);" :style="customDelImgSize">
+                                <image class="del-image" :src="src + 'delUpLoadImage.png'" style="width: 100%;height: 100%"></image>
+                            </view>
                         </view>
                         <view
                             class="del-con"
@@ -66,10 +69,7 @@
             <block v-if="imgType == 3">
                 <view class="add" v-if="imageList.length < number" :style="{ top: add.y, left: add.x, width: viewWidth + 'px', height: viewWidth + 'px' }" @click="addImages">
                     <view class="add-wrap" :style="{ width: childWidth, height: childWidth, backgroundColor: custom ? 'rgba(0, 0, 0, 0)' : '#eeeeee' }">
-                        <image
-                            style="width: 100%;height: 100%;"
-                            :src="src + 'icon-camera.png'"
-                        ></image>
+                        <image style="width: 100%;height: 100%;" :src="src + 'icon-camera.png'"></image>
                     </view>
                 </view>
             </block>
@@ -179,7 +179,11 @@ export default {
         imgType: {
             type: [String, Number],
             default: 1 // 1：只有加号 2：三张图片 3：照相机 4：订制需求
-        }
+        },
+        customDelImgSize: { // 自定义删除图片按钮大小
+            type: String,
+            default: 'width: 53rpx;height: 53rpx;'
+        },
     },
     computed: {
         areaHeight() {
@@ -286,11 +290,11 @@ export default {
         },
         touchend(item, index) {
             if (this.custom) {
-                this.previewImage(item);
-            } else{
                 this.imgPreview(index);
+            } else {
+                this.previewImage(item);
             }
-            
+
             item.scale = 1;
             item.opacity = 1;
             item.x = item.oldX;
@@ -421,7 +425,7 @@ export default {
                         errImgNum++;
                     }
                 });
-                
+
                 uni.hideLoading();
                 if (errImgNum > 0) {
                     uni.showToast({
