@@ -408,7 +408,8 @@ export default {
             // 自己修改的
             let imgPathArr = res.tempFilePaths;
             uni.showLoading({
-                title: '审核图片中'
+                title: '审核图片中',
+                mask: true
             });
             Promise.all(
                 res.tempFilePaths.map(item => {
