@@ -15,6 +15,7 @@
                     @mousedown="touchstart(item)"
                     @touchend="touchend(item, index)"
                     @mouseup="touchend(item, index)"
+                    @tap="preview(item, index)"
                     :style="{ width: viewWidth + 'px', height: viewWidth + 'px', 'z-index': item.zIndex, opacity: item.opacity }"
                 >
                     <view class="area-con" :style="{ width: childWidth, height: childWidth, transform: 'scale(' + item.scale + ')' }">
@@ -29,8 +30,7 @@
                             @mouseup.stop="nothing()"
                             v-if="delBtnType == 2"
                         >
-                            <image class="del-image" :src="src + 'delUpLoadImage.png'"></image>
-                            <!-- <image class="del-image" :src="delImgTwo"></image> -->
+                            <image class="del-image" :src="imgs.delImgTwo"></image>
                         </view>
                         <view
                             class="del-con"
@@ -66,7 +66,14 @@
                 </movable-view>
             </block>
             <!-- 添加 -->
-            <block v-if="imgType == 3">
+            <block v-if="imgType == 4">
+                <view class="add" v-if="imageList.length < number" :style="{ top: add.y, left: add.x, width: viewWidth + 'px', height: viewWidth + 'px' }" @click="addImages">
+                    <view class="add-wrap" :style="{ width: childWidth, height: childWidth, backgroundColor: custom ? 'rgba(0, 0, 0, 0)' : '#eeeeee' }">
+                        <image style="width: 100%;height: 100%;" :src="imgs.upload"></image>
+                    </view>
+                </view>
+            </block>
+            <block v-else-if="imgType == 3">
                 <view class="add" v-if="imageList.length < number" :style="{ top: add.y, left: add.x, width: viewWidth + 'px', height: viewWidth + 'px' }" @click="addImages">
                     <view class="add-wrap" :style="{ width: childWidth, height: childWidth, backgroundColor: custom ? 'rgba(0, 0, 0, 0)' : '#eeeeee' }">
                         <image style="width: 100%;height: 100%;" :src="src + 'icon-camera.png'"></image>
@@ -114,7 +121,10 @@ export default {
             preStatus: true,
             // 以下为自己修改部分
             src: '',
-            delImgTwo: `${common.imgUrl}/static/img/privateCustom/icon-delImgBtn.png`
+            imgs: {
+                delImgTwo: `${common.imgUrl}/static/img/privateCustom/icon-delImgBtn.png`,
+                upload: `${common.imgUrl}/static/img/privateCustom/img-uploadImg-6.png`,
+            },
         };
     },
     props: {
@@ -288,13 +298,14 @@ export default {
                 this.timer = null;
             }, 200);
         },
-        touchend(item, index) {
+        preview(item, index) {
             if (this.custom) {
                 this.imgPreview(index);
             } else {
                 this.previewImage(item);
             }
-
+        },
+        touchend(item, index) {
             item.scale = 1;
             item.opacity = 1;
             item.x = item.oldX;
