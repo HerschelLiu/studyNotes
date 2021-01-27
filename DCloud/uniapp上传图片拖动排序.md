@@ -15,7 +15,7 @@
                     @mousedown="touchstart(item)"
                     @touchend="touchend(item, index)"
                     @mouseup="touchend(item, index)"
-                    @tap="preview(item, index)"
+                    @tap.stop="preview(item, index)"
                     :style="{ width: viewWidth + 'px', height: viewWidth + 'px', 'z-index': item.zIndex, opacity: item.opacity }"
                 >
                     <view class="area-con" :style="{ width: childWidth, height: childWidth, transform: 'scale(' + item.scale + ')' }">
@@ -23,7 +23,7 @@
                         <view
                             class="del-con_custom"
                             :style="customDelImgSize"
-                            @click="delImage(item, index)"
+                            @click.stop="delImage(item, index)"
                             @touchstart.stop="delImageMp(item, index)"
                             @touchend.stop="nothing()"
                             @mousedown.stop="nothing()"
@@ -35,7 +35,7 @@
                         <view
                             class="del-con"
                             style="top: -16rpx;right: -16rpx;"
-                            @click="delImage(item, index)"
+                            @click.stop="delImage(item, index)"
                             @touchstart.stop="delImageMp(item, index)"
                             @touchend.stop="nothing()"
                             @mousedown.stop="nothing()"
@@ -48,7 +48,7 @@
                         </view>
                         <view
                             class="del-con"
-                            @click="delImage(item, index)"
+                            @click.stop="delImage(item, index)"
                             @touchstart.stop="delImageMp(item, index)"
                             @touchend.stop="nothing()"
                             @mousedown.stop="nothing()"
