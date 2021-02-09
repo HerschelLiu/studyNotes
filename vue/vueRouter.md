@@ -68,7 +68,7 @@ export default router
 3. console.log(this.$route.query.id);
 ```
 
-> 重复点击路由或者刷新会导致报错（Uncaught (in promise) NavigationDuplicated: Avoided redundant navigation to current location: "/guide/456".），但是报错不影响代码运行
+> 重复点击路由或者刷新会导致报错（`Uncaught (in promise) NavigationDuplicated: Avoided redundant navigation to current location: "/guide/456"`），但是报错不影响代码运行
 >
 > 解决办法https://blog.juanertu.com/archives/721f45a5
 >
