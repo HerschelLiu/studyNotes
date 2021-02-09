@@ -4,29 +4,18 @@
   
   >全局安装vue
   
-+ npm install -g vue-cli
++ npm install -g vue-cli(旧版，弃用)
   
   >全局安装vue-cli
 
 + 3.0安装`npm install -g @vue/cli`
 
-+ 3.0安装需要单独安装`安装工具`
++ 3.0如果需要旧版本init功能:
 
   > npm install -g @vue/cli-init
 
 ---------------------------
 # 3.0 安装+创建
-
-* `npm install -g @vue/cli`
-
-* 如果需要旧版本init功能:
-
-  ```
-  npm install -g @vue/cli-init
-  vue init webpack my-project
-  ```
-
-* `vue create hello-world`-出现选项:默认模板(default),手动(Manually),上次存储的模板
 
   * 配置:看个人项目需求, **注意，空格键是选中与取消，A键是全选**
 
@@ -70,12 +59,4 @@
 	  > 可以用cnpm
 	-npm run dev
 	  > 把地址复制进浏览器就好
---------------------------------------------
 
-# 网页的文件要放在src文件夹中
-# 运行项目就是 npm run dev,并且要注意，命令行窗口不能关
-
-# 下载webpack（手动配置自己webpack，webpack+vue-loader）
-在你想要的位置
-`(c)npm install webpack webpack-dev-server`
-这其实是两条命命令下载两个东西。这么写就直接两个都下在了
