@@ -1,0 +1,1 @@
+将使用方式从`Vue.use(Message)`变为`Vue.component(Message.name,Message)`或者`Vue.prototype.$message = Message`
