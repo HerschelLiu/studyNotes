@@ -23,12 +23,19 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home,
-    redirect: '/guide', // 路由重定向，及如果地址是http://localhost:8080/#/页面会直接变成http://localhost:8080/#/guide
+    redirect: '/home/guide', // 路由重定向，即如果地址是http://localhost:8080/#/home页面会直接变成http://localhost:8080/#/guide
 //或redirect: { name: 'Guide' }
     children: [{ // 这么写就是guide页面及这里配置的其他页面会显示在Home页的<router-view />处
-      path: 'guide/:id',
+      path: 'guide',
+    //path: 'guide/:id', // 传参
       name: 'Guide',
-      component: Guide
+      props: true, // route.params 将会被设置为组件属性。请尽可能保持 props 函数为无状态的，因为它只会在路由发生变化时起作用。
+    //props: { newsletterPopup: false }, // 如果 props 是一个对象，它会被按原样设置为组件属性。
+    //props: (route) => ({ query: route.query.q }), //你可以创建一个函数返回 props。这样你便可以将参数转换成另一种类型，将静态值与基于路由的值结合等等。
+      component: Guide,
+      meta: { // 路由元数据
+          needLogin: true // 键值对
+      }
     }]
   },
 ]
@@ -40,7 +47,7 @@ const router = new VueRouter({
 export default router
 ```
 
-**注意：**`this.$router.push('')`中是path值不是name值
+**注意：**`this.$router.push/replace('')`中是path值不是name值，而是path值
 
 ## 动态路由匹配
 
@@ -85,9 +92,54 @@ export default router
 
 ### 页面传值（不设置:id）
 
-* 使用`his.$router.push({ name: 'Guide', params: { id: 456 } });`传值地址栏不会带参数；刷新**会**丢失传值；**注意:params传参，push里面只能是 name:'xxxx',不能是path:'/xxx',因为params只能用name来引入路由，如果这里写成了path，接收参数页面会是undefined！！！**
+* 使用`this.$router.push({ name: 'Guide', params: { id: 456 } });`传值地址栏不会带参数；刷新**会**丢失传值；**注意:params传参，push里面只能是 name:'xxxx',不能是path:'/xxx',因为params只能用name来引入路由，如果这里写成了path，接收参数页面会是undefined！！！**
 
-* 使用`his.$router.push({ name: 'Guide', query: { id: 456 } });`会带参数；刷新**不会**丢失传值
+* 使用`this.$router.push({ name: 'Guide', query: { id: 456 } });`会带参数；刷新**不会**丢失传值
+
+
+
+## 路由元信息
+
+定义路由的时候可以配置 `meta` 字段。
+
+可以遍历`$route.matched/(导航守卫中的路由对象).matched`。内容为当前路由所有的路由记录，比如`/home/guide`，log出的结果为
+
+```js
+[
+    {
+        "path": "/home",
+        "name": "Home",
+        "redirect": "/home/guide",
+        "meta": {},
+        ...
+    },
+    {
+        "path": "/home/guide",
+        "name": "Guide",
+        "parent": { ... },
+        "meta": {
+            "needLogin": true
+        },
+        ...
+    }
+]
+```
+
+可以使用这种方法来进行登录
+
+```js
+// router/index.js new VueRouter后
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.needLogin)) { 
+    if (!store.state.token) {
+      next({ name: 'Login' })
+    }
+    else next()
+  } else { 
+    next()
+  }
+})
+```
 
 
 
@@ -120,7 +172,7 @@ const router = new VueRouter({
 
 ### 别名
 
-“重定向”的意思是，当用户访问 `/a`时，URL 将会被替换成 `/b`，然后匹配路由为 `/b`，<code>/a</code> 的别名是 <code>/b</code>，意味着，当用户访问 <code>/b</code> 时，URL 会保持为 <code>/b</code>，但是路由匹配则为 <code>/a</code>，就像用户访问 <code>/a</code> 一样。
+“重定向”的意思是，当用户访问 `/a`时，URL 将会被替换成 `/b`，然后匹配路由为 `/b`；<code>/a</code> 的别名是 <code>/b</code>，意味着，当用户访问 <code>/b</code> 时，URL 会保持为 <code>/b</code>，但是路由匹配则为 <code>/a</code>，就像用户访问 <code>/a</code> 一样。
 
 上面对应的路由配置为：
 

@@ -1,0 +1,251 @@
+[TOC]
+
+# vite-1.0.0-rc.13+vue3.0(alpha)
+
+## 快速上手
+
+1. Vite 官方目前提供了一个比较简单的脚手架：create-vite-app，可以使用这个脚手架快速创建一个使用 Vite 构建的 Vue.js 应用
+
+   ```bash
+   npm init vite-app <project-name>
+   cd <project-name>
+   npm install
+   npm run dev
+   ```
+
+**注：Vite 目前只支持 Vue.js 3.0 版本**。
+
+## 开箱即用
+
+- TypeScript - 内置支持
+- less/sass/stylus/postcss - 内置支持（需要单独安装所对应的编译器）
+
+## 配置
+
+新建`vite.config.js`(相当于`vue.config.js`)
+
+```js
+const path = require('path');
+// import path from 'path'; 此种写法会使npm run dev不能运行，不知道vue.config,js是否也如此
+
+module.exports = {
+    base: './', //在生产中服务时的基本公共路径。@default '/'
+    alias: {
+        '/@/': path.resolve(__dirname, './src'),
+        '/@views/': path.resolve(__dirname, './src/views'),
+        '/@components/': path.resolve(__dirname, './src/components'),
+    },
+    outDir: 'dist', //构建输出将放在其中。如果目录存在，它将在构建之前被删除。@default 'dist'
+    minify: 'esbuild', //压缩
+    hostname: 'localhost', //ip地址
+    port: 8888, //端口号
+    open: false, //是否自动在浏览器打开
+    https: false, //是否开启 https
+    ssr: false, //是否服务端渲染
+    optimizeDeps: {
+        // 引入第三方的配置
+        include: ['lodash'],
+    },
+    proxy: {
+        //配置代理
+        // 如果是 /lsbdb 打头，则访问地址如下
+        // '/lsbdb': 'http://10.192.195.96:8087',
+        // 如果是 /lsbdb 打头，则访问地址如下
+        // '/lsbdb': {
+        //   target: 'http://10.192.195.96:8087/',
+        //   changeOrigin: true,
+        //   // rewrite: path => path.replace(/^\/lsbdb/, '')
+        // }
+        '/api': {
+            target: 'http://10.0.11.7:8090',
+            changeOrigin: true,
+            ws: true,
+            rewrite: (path: string) => path.replace(/^\/api/, ''),
+        },
+    },
+};
+```
+
+
+
+## 搭配 Typescript(index.html只要把main的后缀改为ts就不能运行)
+
+* 全局安装`Typescript`， `npm install typescript -g`
+
+* 根目录创建tsconfig.json`tsc --init`
+
+  ```json
+  {
+    "compilerOptions": {
+      ...// 其他配置
+      "paths": {
+        "/@/*": [
+          "./src/*"
+        ]
+      },
+      "lib": [
+        "esnext",
+        "dom",
+        "dom.iterable",
+        "scripthost"
+      ]
+    },
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.vue",
+      "src/types/images.d.ts",
+      "tests/**/*.ts",
+      "tests/**/*.tsx"
+    ],
+    "exclude": [
+      "node_modules"
+    ]
+  }
+  ```
+
+* src 目录下新建 types 文件夹，里面需要配置 ts 的类型
+
+  * 新建`shims-vue.d.ts`
+
+    ```typescript
+    declare module '*.vue' { // 在项目根目录或 src 文件夹下新建`shims-vue.d.ts`解决 VSCode 找不到 vue 模块问题
+      import { ComponentOptions } from 'vue'
+      const componentOptions: ComponentOptions
+      export default componentOptions
+    }
+    ```
+
+  * `images.d.ts`
+
+    ```typescript
+    declare module '*.svg'
+    declare module '*.png'
+    declare module '*.jpg'
+    declare module '*.jpeg'
+    declare module '*.gif'
+    declare module '*.bmp'
+    declare module '*.tiff'
+    ```
+
+* 将`main.js`改为`main.ts`，并将 `index.html` 中引入的 `main.js` 改为 `main.ts`。
+
+  ```typescript
+  // main
+  // 3.0支持链式语法
+  createApp(App).use(xxx).mount('#app')
+  // 也可以
+  const app = createApp(App)
+  app.use(xxx)
+  app.mount('#app')
+  ```
+
+  
+
+* 将 `App.vue` 的 `<script>` 修改为 `<script lang="ts">`，就可以编写 `TypeScript `语法。
+
+## Router
+
+下载预览版
+
+```dash
+(c)npm install vue-router@next
+```
+
+在 src 下新建 router 文件夹，并在文件夹内创建 index.js
+
+```js
+import { createRouter, createWebHistory } from 'vue-router'
+
+const routes = [{
+    path: '/',
+    name: 'index',
+    redirect: '/home'
+}, {
+    path: '/home',
+    name: 'home',
+    component: () => import('/@views/Home.vue')
+}]
+
+export default createRouter({
+  history: createWebHistory(),
+  routes
+})
+```
+
+**main.js**
+
+```js
+import { createApp } from 'vue'
+import router from '/@/router'
+
+import App from '/@/App.vue'
+
+const app = createApp(App)
+app.use(router)
+app.mount('#app')
+```
+
+**页面**
+
+```js
+import {useRoute, useRouter} from 'vue-router'
+
+const route = useRoute() // 相当于 vue2 中的 this.$route
+const router = useRouter() // 相当于 vue2 中的 this.$router
+```
+
+
+
+## vuex
+
+* `npm install vuex@next`
+
+* 新建`/src/store/index.js`
+
+  ```js
+  import { createStore } from 'vuex'
+  
+  export default createStore({
+      state () {
+          return {
+              count: 0
+          }
+      },
+      mutations: {
+          increment (state) {
+              state.count++
+          }
+      },
+      actions: {
+          increment ({ commit }) {
+              commit('increment')
+          }
+      }
+  })
+  ```
+
+* `main.js`
+
+  ```js
+  import store from '/@/store'
+  createApp(App)
+      .use(store)
+      .mount('#app')
+  // 或
+  const app = createApp(App)
+  app.use(store)
+  app.mount('#app')
+  ```
+
+* 页面
+
+  ```js
+  import { useStore } from 'vuex'
+  
+  const store = useStore() // 相当于 vue2 中的 this.$store
+  store.dispatch() // 通过 store 对象来 dispatch 派发异步任务
+  store.commit() // commit 修改 store 数据
+  ```
+
+  
