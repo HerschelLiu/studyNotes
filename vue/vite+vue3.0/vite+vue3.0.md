@@ -195,7 +195,7 @@ const route = useRoute() // 相当于 vue2 中的 this.$route
 const router = useRouter() // 相当于 vue2 中的 this.$router
 ```
 
-
+**注：**如果出现`[vite] Failed to resolve module import "vue-router". (imported by /@/router/`错误，重新npm安装就行了。
 
 ## vuex
 
