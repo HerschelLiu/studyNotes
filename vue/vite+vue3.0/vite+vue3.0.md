@@ -287,7 +287,38 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
   **示例**
   
   ```js
-  
+  import { computed, onMounted } from 'vue';
+  import { useStore, mapState } from 'vuex'
+  export default {
+      name: 'Home',
+      setup(props, ctx) { 
+          /* props 父组件传值
+           * context/ctx上下文对象，这个上下文对象中包含了一些有用的属性，这些属性在 Vue2.0 中需要通过 this 才能访问到(3.0无法访问this)，在 vue3.0 中，访问他们变成以下形式：
+           * context.parent--> this.$parent 
+           * context.root--> this
+           * context.emit-->this.$emit
+           * context.refs-->this.$refs
+           * context.slots --> this.$slots
+           * 程序执行setup时，组件尚未被创建，因此能访问到的有用属性有： root、parent、refs、attrs、listeners、isServer、ssrContext、emit 于此同时 data、computed、methods等是访问不到的
+           */
+          // data
+          const count = value(0)
+          // computed
+          const plusOne = computed(() => count.value++)
+          // method
+          const increment = () => count.value++
+          // watch
+          watch(() => count.value * 2, v => console.log(v))
+          // 生命周期
+          onMounted(() => console.log('mounted!')) // 会自动引入
+  		// 利用watchEffect可以监听props。
+          watchEffect(() => { // 利用watchEffect监听props 
+     			console.log(props.val); // 首次以及props改变才会执行这里的代码
+          })
+          // 暴露给模板或渲染函数.可以返回对象或方法
+          return { count }
+      }
+  };
   ```
   
   
