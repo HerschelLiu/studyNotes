@@ -248,4 +248,46 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
   store.commit() // commit 修改 store 数据
   ```
 
+  ## vue3.0新特性
+  
+  ### `template`模板
+  
+  `vue2.0`里`template`只支持单一根节点，在`vue3.0`里可以使用多个根节点
+  
+  ```html
+  <template>
+  	<!-- vue3.0组件的根节点可以有多个，或者使用<Fragment> 空标签 -->
+  	<div class="login"></div>
+  	<div class="main"></div>
+  	<div></div>
+  </template>
+  ```
+  
+  ### 选用Function_based API（Composition API）
+  
+  **生命周期**
+  
+  | Vue3.0生命周期  |                          说明                           |       对应的Vue2.0生命周期        |
+  | :-------------: | :-----------------------------------------------------: | :-------------------------------: |
+  |      setup      | 初始化数据阶段的生命周期，介于beforeCreate与created之间 | 相当于beforeCreate、created的合并 |
+  |  onBeforeMount  |                       组件挂载前                        |            beforeMount            |
+  |    onMounted    |                      实例挂载完毕                       |              mounted              |
+  | onBeforeUpdate  |                    响应式数据变化前                     |           beforeUpdate            |
+  |    onUpdated    |                   响应式数据变化完成                    |              updated              |
+  | onBeforeUnmount |                       实例销毁前                        |           beforeDestroy           |
+  |   onUnmounted   |                       实例已销毁                        |             destroyed             |
+  | onErrorCaptured |                      错误数据捕捉                       |                 -                 |
+  
+  **为什么撤销 Class API ?**
+  
+  1. 更好地支持TypeScript
+  2. 除了类型支持以外 Class API 并不带来任何新的优势
+  3. vue中的UI组件很少用到继承，一般都是组合，可以用Function-based API
+  
+  **示例**
+  
+  ```js
+  
+  ```
+  
   
