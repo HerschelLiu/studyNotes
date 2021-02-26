@@ -66,7 +66,7 @@ module.exports = {
 };
 ```
 
-
+* setup是一个新的组件选项，也是其他API的入口。也就是说，你所有的操作都将在setup函数内部定义和执行.setup 函数会在 `beforeCreate` 之后、`created` 之前执行
 
 ## 搭配 Typescript(index.html只要把main的后缀改为ts就不能运行)
 
@@ -249,11 +249,11 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
   ```
 
   ## vue3.0新特性
-  
+
   ### `template`模板
-  
+
   `vue2.0`里`template`只支持单一根节点，在`vue3.0`里可以使用多个根节点
-  
+
   ```html
   <template>
   	<!-- vue3.0组件的根节点可以有多个，或者使用<Fragment> 空标签 -->
@@ -262,11 +262,11 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
   	<div></div>
   </template>
   ```
-  
+
   ### 选用Function_based API（Composition API）
-  
+
   **生命周期**
-  
+
   | Vue3.0生命周期  |                          说明                           |       对应的Vue2.0生命周期        |
   | :-------------: | :-----------------------------------------------------: | :-------------------------------: |
   |      setup      | 初始化数据阶段的生命周期，介于beforeCreate与created之间 | 相当于beforeCreate、created的合并 |
@@ -277,17 +277,130 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
   | onBeforeUnmount |                       实例销毁前                        |           beforeDestroy           |
   |   onUnmounted   |                       实例已销毁                        |             destroyed             |
   | onErrorCaptured |                      错误数据捕捉                       |                 -                 |
-  
+
   **为什么撤销 Class API ?**
-  
+
   1. 更好地支持TypeScript
+
   2. 除了类型支持以外 Class API 并不带来任何新的优势
+
   3. vue中的UI组件很少用到继承，一般都是组合，可以用Function-based API
-  
+
+  4. `main.js`支持链式语法（例子见**vuex**部分）
+
+  5. reactive 接收一个普通对象然后返回该普通对象的响应式代理。等同于 2.x 的 Vue.observable(),注意在源码中明确显示需要传递一个对象，否则会抛出异常，如果想要对一个单独的变量使用响应式，可以使用ref。
+
+     ```js
+     const obj = reactive({ count: 0 }) // 返回的就是响应式对象
+     // 使用
+     obj.count ++
+     console.log(obj.count) // 输出的是1
+     ```
+    * 如果想要在组件内使用这个变量需要在setup中返回
+
+        + 第一种返回形式
+
+          ```html
+          <template>
+              <!-- 这种形式在组件内使用的时候需要obj.count -->
+              <p>{{ obj.count }}</p> 
+          </template>
+          ```
+        
+          ```js
+          import { reactive } from 'vue';
+          
+          export default defineComponent({
+              setup () {
+                  const obj = reactive({ count: 0 })
+                  return { obj } // 这种形式在组件内使用的时候需要obj.count
+              }
+          })
+          ```
+        
+        + 第二种返回形式
+        
+          ```html
+          <template>
+              <!-- 这种形式在组件内使用的时候跟之前一样 -->
+              <p>{{ count }}</p> 
+          </template>
+          ```
+        
+          ```js
+          import { reactive, toRefs } from 'vue';
+          
+          export default defineComponent({
+              setup () {
+                  const obj = reactive({ count: 0 })
+                  return { ...toRefs(obj) }
+              }
+          })
+          ```
+        
+          
+
+
+  6. ref 接受一个参数值并返回一个响应式且可改变的 ref 对象。ref 对象拥有一个指向内部值的单一属性 .value。
+
+     ```js
+     const count = ref(0)
+     console.log(count.value) // 0
+     
+     count.value++
+     console.log(count.value) // 1
+     ```
+
+  7. toRefs 把一个响应式对象转换成普通对象，该普通对象的每个 property 都是一个 ref ，和响应式对象 property 一一对应。
+
+     ```js
+     import { reactive, toRefs } from 'vue';
+     
+     export default defineComponent({
+         setup () {
+             const obj = reactive({ count: 0 })
+             return { ...toRefs(obj) }
+         }
+     })
+     ```
+
+  8. toRef 可以用来为一个 reactive 对象的属性创建一个 ref。这个 ref 可以被传递并且能够保持响应性。
+
+     ```js
+     const state = reactive({
+       foo: 1,
+       bar: 2,
+     })
+     
+     const fooRef = toRef(state, 'foo')
+     
+     fooRef.value++
+     console.log(state.foo) // 2
+     
+     state.foo++
+     console.log(fooRef.value) // 3
+     ```
+
+  9. nextTick 跟之前的作用一样只不过呢写法略有不同。
+
+     ```js
+     import { nextTick } from 'vue';
+     
+     export default defineComponent({
+         setup () {
+             nextTick(() => {
+                 console.log('--- DOM更新了 ---')
+             })
+         }
+     })
+     ```
+
+     
+
   **示例**
-  
+
   ```js
-  import { computed, onMounted } from 'vue';
+  import { computed, onMounted, ref, watch } from 'vue';
   import { useStore, mapState } from 'vuex'
   export default {
       name: 'Home',
@@ -302,23 +415,39 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
            * 程序执行setup时，组件尚未被创建，因此能访问到的有用属性有： root、parent、refs、attrs、listeners、isServer、ssrContext、emit 于此同时 data、computed、methods等是访问不到的
            */
           // data
-          const count = value(0)
+          const count = ref(0)
           // computed
           const plusOne = computed(() => count.value++)
           // method
           const increment = () => count.value++
           // watch
-          watch(() => count.value * 2, v => console.log(v))
+          // 共三个参数，前两个是function，第三个为配置。
+          // 第一个参数是监听的值，第二个是监听时候的回调
+          watch(() => count.value * 2, v => console.log(v), {
+                  //是否深度监听
+                  deep: true,
+                  //是否先执行一次
+                  immediate: true
+              })
+          // 监听多个值
+          watch(
+          	[() => count.value, () => name.value],
+              ([newData1, newData2], [oldData1, oldData2]) => {
+                  console.log(newData1, newData2)
+                  console.log(oldData1, oldData2)
+              }
+          )
           // 生命周期
           onMounted(() => console.log('mounted!')) // 会自动引入
   		// 利用watchEffect可以监听props。
+          // 监听器的升级版本，立即执行传入的一个函数，并响应式追踪其依赖，并在其依赖变更时重新运行该函数。
           watchEffect(() => { // 利用watchEffect监听props 
      			console.log(props.val); // 首次以及props改变才会执行这里的代码
           })
           // 暴露给模板或渲染函数.可以返回对象或方法
-          return { count }
+          return { count, plusOne }
       }
   };
   ```
-  
-  
+
+  * setup是一个新的组件选项，也是其他API的入口。也就是说，你所有的操作都将在setup函数内部定义和执行， Vue3.0也将用函数代替Vue2.x的类也就是new 
