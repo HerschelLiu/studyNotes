@@ -231,7 +231,9 @@ descripble(''test group1",function(){
 })
 ```
 
-### mocha钩子函数
+### 用法
+
+#### mocha钩子函数
 
 ```js
 describe('hooks', function () {
@@ -255,9 +257,313 @@ describe('hooks', function () {
 })
 ```
 
+> 测试用例和测试的钩子可以混合排列。（相同的）钩子函数会按照它们的书写顺序运行；（整体的运行顺序是）所有的`before()`钩子运行一次，然后是`beforeEach()`钩子，测试用例，`afterEach()`钩子（循环运行），最后是`after()`钩子（运行一次）
+
+#### 钩子函数的描述参数
+
+所有的钩子在调用时都可以提供一个可选的“描述信息”的参数，以便在你的测试中更精确地定位错误。如果给一个钩子函数传入一个命名函数，当未提供“描述信息”参数的时候，这个命名函数的名称将被作为描述信息。
+
+```javascript
+beforeEach(function () {
+  // beforeEach hook
+})
+
+beforeEach(function namedFun () {
+  // beforeEach: namedFun
+})
+
+beforeEach('一些描述信息' ，function () {
+  // beforEach: 一些描述信息
+})
+```
+
 **更多mocha语法请看官方文档或参考链接**
 [mocha官方文档](https://mochajs.org/)
 [Mocha.js官方文档翻译 —— 简单、灵活、有趣](https://www.jianshu.com/p/9c78548caffa)
+
+#### 异步代码
+
+用Mocha测试异步代码简单的不要不要的！测试运行完了调用一下回调函数就行。只需要在`it()`中添加一个回调[[2\]](https://www.jianshu.com/p/9c78548caffa#fn2)，Mocha就知道应该等到这个回调被调用时才结束这个测试用例的运行。
+
+```javascript
+describe('User', function () {
+  describe(#'save()', function () {
+    it('应当正常保存', function () {
+      var user = new User('Luna')
+      user.save(function (err) {
+        if (err) done(err)
+        else done()
+      })
+    })
+  })
+})
+
+// 简便起见，done()函数接受一个error参数，所以上面的代码可以这么写：
+describe('User', function () {
+  describe(#'save()', function () {
+    it('应当正常保存', function () {
+      var user = new User('Luna')
+      user.save(done)
+  })
+})
+```
+
+#### 延迟的根测试套件
+
+如果你需要在所有测试套件运行之前进行一些异步操作，你可以延迟根测试套件。以`--delay`参数运行`mocha`[[6\]](#fn6)，这会在全局注入一个特殊的回调函数`run()`：
+
+```javascript
+setTimeout(function () {
+  // 一些设置
+  
+  describe('我的测试套件', function () {
+    // ...
+  })
+
+  run()
+}, 5000)
+```
+
+#### 挂起测试（Pending Tests）
+
+“Pending”——“有人最终会编写这些测试用例”——没有传入回调函数的测试用例[[7\]](#fn7)：
+
+```javascript
+describe('Array', function () {
+  describe('#indexOf()', function () {
+    // 挂起的测试用例
+    it('未找到时应当返回-1')
+  })
+})
+```
+
+挂起的测试用例会在报告中出现“pending”状态。
+
+#### 独占测试
+
+通过向测试套件或测试用例函数添加`.only`后缀，独占特性允许你只运行指定的测试套件或测试用例。下面是一个独占测试套件的例子：
+
+```javascript
+describe('Array', function (){
+  describe.only('#indexOf()', function () {
+    // ...
+  })
+})
+```
+
+<small>*注意：所有嵌套（在`.only`套件中的）测试套件仍旧会运行*</small>
+ 下面是一个运行单个测试用例的例子：
+
+```javascript
+describe('Array', function (){
+  describe('#indexOf()', function () {
+    it.only('除非找到否则返回-1', function () {
+      // ...
+    })
+
+    it('找到后应当返回下标', function () {
+      // ...
+    })
+  })
+})
+```
+
+#### 跳过测试
+
+这个功能是`only()`的反面。通过后缀`skip()`就可以让Mocha忽略这个测试套件或测试用例。所有被跳过的测试都会被标记为`pending`状态并体现在报告中。下面是一个跳过一整个测试套件的例子：
+
+
+
+```javascript
+describe('Array', function() {
+  describe.skip('#indexOf()', function() {
+    // ...
+  })
+})
+```
+
+下面是一个跳过测试用例的例子：
+
+
+
+```javascript
+describe('Array', function() {
+  describe('#indexOf()', function() {
+    it.skip('should return -1 unless present', function() {
+      // 这个测试用例不会运行
+    })
+
+    it('should return the index when present', function() {
+      // 这个测试用例会运行
+    })
+  })
+})
+```
+
+> 最佳实践：使用`skip()`而不是直接将测试注释掉
+
+你也可以使用`this.skip()`在运行时跳过测试。如果测试需要的环境或配置没办法提前检测，可以考虑使用运行时跳过。例如：
+
+
+
+```javascript
+it('应该仅在正确的环境配置中测试', function () {
+  if(/*测试环境正确*/) {
+    // 编写断言
+  } else {
+    this.skip()
+  }
+})
+```
+
+#### 测试耗时
+
+许多测试报告都会显示测试耗时，并且标记出那些耗时较长的测试
+
+你可以使用`slow()`方法来定义到底多久才算“耗时较长”：
+
+
+
+```javascript
+describe('something slow', function() {
+  this.slow(10000)
+
+  it('它的耗时应该足够我去做个三明治了', function() {
+    // ...
+  })
+})
+```
+
+#### 测试超时
+
+##### 套件级别
+
+套件级别的超时应用于整个测试套件，你也可以通过`this.timeout(0)`来取消超时限制。如果没有覆盖这个值的话[[12\]](#fn12)，所有嵌套的测试套件和测试用例都会继承这个超时限制。
+
+
+
+```javascript
+describe('a suite of tests', function() {
+  this.timeout(500)
+
+  it('应当不超过500毫秒', function(done){
+    setTimeout(done, 300)
+  })
+
+  it('也应当不超过500毫秒', function(done){
+    setTimeout(done, 250)
+  })
+})
+```
+
+##### 用例级别
+
+也可以对单一用例设置超时时间，或者通过`this.timeout(0)`来取消超时限制：
+
+
+
+```javascript
+it('应该不超过500毫秒', function(done){
+  this.timeout(500)
+  setTimeout(done, 300)
+})
+```
+
+##### 钩子级别
+
+当然也可以设置钩子级别的超时：
+
+
+
+```javascript
+describe('一个测试套件', function() {
+  beforeEach(function(done) {
+    this.timeout(3000); // 一个用时很长的环境设置操作.
+    setTimeout(done, 2500)
+  })
+})
+```
+
+同样，使用`this.timeout(0)`来取消超时限制
+
+> 在v3.0.0或更新的版本中，给`this.timeout()`传递一个大于[最大延迟值](https://link.jianshu.com?t=https://developer.mozilla.org/zh-CN/docs/Web/API/Window/setTimeout#Maximum_delay_value)的参数会让超时限制失效
+
+### 接口
+
+Mocha的“接口”系统允许开发者选择习惯的风格或DSL。Mocha有**BDD**，**TDD**，**Exports**，**QUnit**和**Require**风格的接口。
+
+#### 8.1 BDD
+
+**BDD**接口提供`describe()`，`context()`，`it()`，`specify()`，`before()`，`after()`，`beforeEach()`和`afterEach()`。
+
+`context()`只是`describe()`的别名，二者表现也是一致的；它只是为了让测试可读性更高。同样`specify()`也是`it()`的别名。
+
+> 前文所有的示例都是使用**BDD**接口编写的
+
+```javascript
+describe('Array', function() {
+  before(function() {
+    // ...
+  })
+
+  describe('#indexOf()', function() {
+    context('when not present', function() {
+      it('should not throw an error', function() {
+        (function() {
+          [1,2,3].indexOf(4)
+        }).should.not.throw()
+      })
+      it('should return -1', function() {
+        [1,2,3].indexOf(4).should.equal(-1);
+      })
+    })
+    context('when present', function() {
+      it('should return the index where the element first appears in the array', function() {
+        [1,2,3].indexOf(3).should.equal(2)
+      })
+    })
+  })
+})
+```
+
+### 测试报告
+
+doc测试报告输出一个层级化的HTML来表示你的测试结果。使用header，footer和一些样式来包裹测试结果，然后你就有了一份惊艳的测试报告文档！
+
+例如，假定你有下面的JavaScript：
+
+
+
+```javascript
+describe('Array', function() {
+  describe('#indexOf()', function() {
+    it('should return -1 when the value is not present', function() {
+      [1,2,3].indexOf(5).should.equal(-1);
+      [1,2,3].indexOf(0).should.equal(-1);
+    });
+  });
+});
+```
+
+在命令行输入`mocha --reporter doc array`会输出：
+
+
+
+```html
+<section class="suite">
+  <h1>Array</h1>
+  <dl>
+    <section class="suite">
+      <h1>#indexOf()</h1>
+      <dl>
+      <dt>should return -1 when the value is not present</dt>
+      <dd><pre><code>[1,2,3].indexOf(5).should.equal(-1);
+[1,2,3].indexOf(0).should.equal(-1);</code></pre></dd>
+      </dl>
+    </section>
+  </dl>
+</section>
+```
 
 ## chai相关语法
 
@@ -272,6 +578,426 @@ chai有expect和should两种api,项目使用expect
 **更多chai语法请看官方文档或参考链接**
 [chai官方文档](https://www.chaijs.com/api/)
 [Chai.js断言库API中文文档](https://www.jianshu.com/p/f200a75a15d2)
+
+### 语言链
+
+下面的接口是单纯作为语言链提供以期提高断言的可读性。除非被插件改写否则它们一般不提供测试功能。
+
+- to
+
+- be
+
+- been
+
+- is
+
+- that
+
+- which
+
+- and
+
+- has
+
+- have
+
+- with
+
+- at
+
+- of
+
+- same
+
+- not：对之后的断言取反`expect(foo).to.not.equal('bar')`
+
+- deep：设置`deep`标记，然后使用`equal`和`property`断言。该标记可以让其后的断言不是比较对象本身，而是递归比较对象的键值对`expect(foo).to.deep.equal({ bar: 'baz'})`；`deep.property`中的特殊符号可以使用双反斜杠进行转义（第一个反斜杠是在字符串参数中对第二个反斜杠进行转义，第二个反斜杠用于在`property`中进行转义）
+
+  ```js
+  var deepCss = { '.link': { '[target]': 42 } }
+  expect(deepCss).to.have.deep.property('\\.link.\\[target\\]', 42)
+  ```
+
+  
+
+- any：在`keys`断言之前使用`any`标记（与`all`相反）`expect(foo).to.have.any.keys('bar', 'baz')`
+
+- all：在`keys`断言之前使用`all`标记（与`any`相反）
+
+- .a(type)/.an(type)：`a`和`an`断言即可作为语言链又可作为断言使用
+
+  - type：String，被测试的值的类型
+
+  ```js
+  // 类型断言
+  expect('test').to.be.a('string');
+  expect({ foo: 'bar' }).to.be.an('object');
+  expect(null).to.be.a('null');
+  expect(undefined).to.be.an('undefined');
+  expect(new Error).to.be.an('error');
+  expect(new Promise).to.be.a('promise');
+  expect(new Float32Array()).to.be.a('float32array');
+  expect(Symbol()).to.be.a('symbol');
+  
+  // es6 overrides
+  expect({[Symbol.toStringTag]:()=>'foo'}).to.be.a('foo');
+  
+  // language chain
+  expect(foo).to.be.an.instanceof(Foo);
+  ```
+
+- .include(value)/contains(value)：`include()`和`contains()`即可作为属性类断言前缀语言链又可作为作为判断数组、字符串是否包含某值的断言使用。当作为语言链使用时，常用于`key()`断言之前
+
+  - value：Object | String | Number
+
+  ```js
+  expect([1, 2, 3]).to.include(2)
+  expect('foobar').to.include('bar')
+  expect({ foo: 'bar', hello: 'universe' }).to.include.keys('foo')
+  ```
+
+- .ok：断言目标为真值。
+
+  ```js
+  expect('everything').to.be.ok
+  expect(1).to.be.ok
+  expect(false).to.not.be.ok
+  expect(null).to.not.be.ok
+  ```
+
+- .true/false：断言目标为`true`，注意，这里与`ok`的区别是不进行类型转换，**只能为`true`才能通过断言**`expect(true).to.be.true`/false;`expect(1)to.not.be.true/false`
+
+- .null/.undefined：断言目标为`null/undefined``expect(null).to.be.null/undefined`;`expect(undefined).to.not.be.null/undefined`
+
+- .NaN：断言目标为非数字`NaN`
+
+  ```js
+  expect('foo').to.be.null
+  expect(4)to.not.be.null
+  ```
+
+- .exist：断言目标存在，即非`null`也非`undefined`
+
+  ```js
+  var foo = 'hi',
+    bar = null,
+    baz
+  
+  expect(foo).to.exist
+  expect(bar).to.not.exist
+  expect(baz).to.not.exist
+  ```
+
+- .empty：断言目标的长度为`0`。对于数组和字符串，它检查`length`属性，对于对象，它检查可枚举属性的数量
+
+  ```js
+  expect([]).to.be.empty
+  expect('').to.be.empty
+  expect({}).to.be.empty
+  ```
+
+- .arguments：断言目标是一个参数对象`arguments`
+
+  ```js
+  function test () {
+    expect(arguments).to.be.arguments
+  }
+  ```
+
+- .equal(value)：value：Mixed；断言目标严格等于(`===`)`value`。另外，如果设置了`deep`标记，则断言目标深度等于`value`;.eql(value)：断言目标深度等于`value`，相当于`deep.equal(value)`的简写
+
+  ```js
+  expect('hello').to.equal('hello')
+  expect(42).to.equal(42)
+  expect(1).to.not.equal(true)
+  expect({ foo: 'bar'}).to.not.equal({ foo: 'bar'})
+  expect({ foo: 'bar'}).to.deep.equal({foo: 'bar'})
+  ```
+
+- .above/least/below/most(value)：断言目标大于（超过）/不小于（大于或等于）小于/不大于（小于或等于）value.
+
+  ```js
+  expect(10).to.be.above(5)
+  // 也可接在length后来断言一个最小的长度。相比直接提供长度的好处是提供了更详细的错误消息
+  expect('foo').to.have.length.above(2)
+  expect([1, 2, 3]).to.have.length.above(2)
+  
+  expect(10).to.be.at.least(10)
+  // 也可接在length后来断言一个最小的长度。相比直接提供长度的好处是提供了更详细的错误消息
+  expect('foo').to.have.length.of.at.least(3)
+  expect([1, 2, 3]).to.have.length.of.at.least(3)
+  
+  expect(5).to.be.below(10)
+  // 也可接在length后来断言一个最大的长度。相比直接提供长度的好处是提供了更详细的错误消息
+  expect('foo').to.have.length.below(4)
+  expect([1, 2, 3]).to.have.length.below(4)
+  
+  expect(5).to.be.at.most(5)
+  // 也可接在length后来断言一个最大的长度。相比直接提供长度的好处是提供了更详细的错误消息
+  expect('foo').to.have.length.of.at.most(4)
+  expect([1, 2, 3]).to.have.length.of.at.most(3)
+  ```
+
+- .within(start, finish)：断言目标在某个区间内
+
+  - start：Number，下限
+  - finish：Number，上限
+
+  ```js
+  expect(7).to.be.within(5, 10)
+  // 也可接在length后来断言一个长度区间。相比直接提供长度的好处是提供了更详细的错误消息
+  expect('foo').to.have.length.within(2, 4)
+  expect([1, 2, 3]).to.have.length.within(2, 4)
+  ```
+
+- .instanceof(constructor)：断言目标是构造函数`constructor`的一个实例
+
+  ```js
+  var Tea = function (name) { this.name = name },
+    Chai = new Tea('chai')
+  
+  expect(Chai).to.be.an.instanceof(Tea)
+  expect([1, 2, 3]).to.be.an.instanceof(Array)
+  ```
+
+- .property(name[String, 属性名], value[Mixed, 可选，属性值])：断言目标是否拥有某个名为`name`的属性，可选地如果提供了`value`则该属性值还需要严格等于（`===`）`value`。如果设置了`deep`标记，则可以使用点`.`和中括号`[]`来指向对象和数组中的深层属性
+
+  ```js
+  // 简单引用
+  var obj = { foo: 'bar' }
+  expect(obj).to.have.property('foo')
+  expect(pbj).to.have.property('foo', 'bar')
+  
+  // 深层引用
+  var deepObj = {
+    green: { tea: 'matcha' },
+    teas: [ 'Chai', 'matcha', { tea: 'konacha' } ]
+  }
+  
+  expect(deepObj).to.have.deep.property('green.tea', 'matcha')
+  expect(deepObj).to.have.deep.property('teas[1]', 'matcha')
+  expect(deepObj).to.have.deep.property('teas[2].tea', 'konacha')
+  // 如果目标是一个数组，还可以直接使用一个或多个数组下标作为name来在嵌套数组中断言deep.property
+  var arr = [
+    [ 'chai', 'matcha', 'konacha' ],
+    [ { tea: 'chai' },
+      { tea: 'matcha' },
+      { tea: 'konacha' }
+    ]
+  ]
+  
+  expect(arr).to.have.deep.property('[0][1]', 'matcha')
+  expect(arr).to.have.deep.property('[1][2].tea', 'konacha')
+  // 此外，property把断言的主语（subject）从原来的对象变为当前属性的值，使得可以在其后进一步衔接其它链式断言（来针对这个属性值进行测试）
+  expect(obj).to.have.property('foo')
+    .that.is.a('string')
+  expect(deepObj).to.have.property('green')
+    .that.is.an('object')
+    .that.deep.equals({ tea: 'matcha' })
+  expect(deepObj).to.have.property('teas')
+    .that.is.an('array')
+    .with.deep.property('[2]')
+      .that.deep.equals({ tea: 'konacha' })
+  // 注意，只有当设置了deep标记的时候，在property() name中的点（.）和中括号（[]）才必须使用双反斜杠\进行转义（为什么是双反斜杠，在前文有提及），当没有设置deep标记的时候，是不能进行转义的
+  // 简单指向
+  var css = { '.link[target]': 42 }
+  expect(css).to.have.property('.link[target]', 42)
+  
+  //深度指向
+  var deepCss = { 'link': { '[target]': 42 } }
+  expect(deepCss).to.have.deep.property('\\.link\\.[target]', 42)
+  ```
+
+- .ownPropertyDescription(name[String, 属性名], descriptor[Object,  描述对象, 可选])：断言目标的某个自有属性存在描述符对象，如果给定了`descroptor`描述符对象，则该属性的描述符对象必须与其相匹配
+
+  ```js
+  expect('test').to.have.ownPropertyDescriptor('length')
+  expect('test').to.have.ownPropertyDescriptor('length', {
+    enumerable: false,
+    configrable: false,
+    writeable: false,
+    value: 4
+  })
+  expect('test').not.to.have.ownPropertyDescriptor('length', {
+    enumerable: false,
+    configurable: false,
+    writeable: false,
+    value: 3  
+  })
+  // 将断言的主语改为了属性描述符对象
+  expect('test').to.have.ownPropertyDescriptor('length')
+    .to.have.property('enumerable', false)
+  expect('test').to.have.ownPropertyDescriptor('length')
+    .to.have.keys('value')
+  ```
+
+- .length：设置`.have.length`标记作为比较`length`属性值的前缀。`expect('foo').to.have.length.above(2)`,`expect([1, 2, 3]).to.have.length.within(2, 4)`
+
+- .lengthOf(value[Number])：断言目标的`length`属性为期望的值。
+
+  ```js
+  expect([1, 2, 3]).to.have.lengthOf(3)
+  expect('foobar').to.have.lengthOf(6)
+  ```
+
+- .match(RegExp[正则表达式])：断言目标匹配到一个正则表达式。`expect('foobar').to.match(/^foo/)`
+
+- .string(string)：断言目标字符串包含另一个字符串。`expect('foobar').to.have.string('bar')`
+
+- .keys(key1[String | Array | Object 属性名], [key2], [...])：断言目标包含传入的属性名。与`any`，`all`，`contains`或者`have`前缀结合使用会影响测试结果：
+
+  当与`any`结合使用时，无论是使用`have`还是使用`contains`前缀，目标必须至少存在一个传入的属性名才能通过测试。注意，`any`或者`all`应当至少使用一个，否则默认为`all`
+
+  当结合`all`和`contains`使用时，目标对象必须至少拥有全部传入的属性名，但是它也可以拥有其它属性名
+
+  ```js
+  // 当结合all和have使用时，目标对象必须且仅能拥有全部传入的属性名
+  // 结合any使用
+  expect({ foo: 1, bar: 2, baz: 3 }).to.have.any.keys('foo', 'bar')
+  expect({ foo: 1, bar: 2, baz: 3 }).to.contains.any.keys('foo', 'bar')
+  
+  // 结合all使用
+  expect({ foo: 1, bar: 2, baz: 3 }).to.have.all.keys('foo', 'bar', 'baz')
+  expect({ foo: 1, bar: 2, baz: 3 }).to.contains.all.keys('foo', 'bar')
+  
+  // 传入string
+  expect({ foo: 1, bar: 2, baz: 3 }).to.have.any.keys('foo')
+  // 传入Array
+  expect({ foo: 1, bar: 2, baz: 3 }).to.have.all.keys(['foo', 'bar', 'baz'])
+  // 传入Object
+  expect({ foo: 1, bar: 2, baz: 3 }).to.have.any.keys({ bar: 2, foo: 1 })
+  ```
+
+- .throw(constructor[ErrorConstroctor | String | RegExp])：断言目标函数会抛出一个指定错误或错误类型（使用`instanceOf`计算），也可使用正则表达式或者字符串来检测错误消息
+
+  ```js
+  var err = new RefernceError('this is a bad function')
+  var fn = function () { throw err }
+  
+  expect(fn).to.throw(ReferenceError)
+  expect(fn).to.throw(Error)
+  expect(fn).to.throw(/bad function/)
+  expect(fn).to.not.throw('good function')
+  expect(fn).to.throw(ReferrenceError, /bad function/)
+  expect(fn).to.throw(err)
+  // 注意，当一个抛错断言被否定了（前面有.not），那么它会从Error构造函数开始依次检查各个可能传入的参数。检查一个只是消息类型不匹配但是已知的错误，合理的方式是先断言该错误存在，然后使用.and后断言错误消息不匹配
+  expect(fn).to.throw(ReferenceError)
+    .and.not.throw(/good function/)
+  ```
+
+- .respondTo(method[String])：断言目标类或对象会响应一个方法（存在这个方法）
+
+  ```js
+  Klass.prototype.bar = function () {}
+  expect(Klass).to.respondTo('bar')
+  expect(obj).to.respondTo('bar')
+  // 如果需要检查一个构造函数是否会响应一个静态方法（挂载在构造函数本身的方法），请查看itself标记
+  Klass.baz = function () {}
+  expect(Klass).itself.to.respondTo('baz')
+  ```
+
+- itself：设置`itself`标记，然后使用`respondTo`断言
+
+  ```js
+  function Foo () {}
+  Foo.bar = function () {}
+  Foo.prototype.baz = function () {}
+  
+  expect(Foo).itself.to.respondTo('bar')
+  expect(Foo).itself.not.to.respond('baz')
+  ```
+
+- satisfy(method[Function, 测试器，接受一个参数表示目标值，返回一个布尔值])：断言目标值能够让给定的测试器返回真值。`expect(1).to.satisfy(function (num) { return num > 0 })`
+
+- .closeTo(expected[Number, 期望值], delta[Number, 范围半径])：断言目标数字等于`expected`，或在期望值的+/-`delta`范围内。`expect(1.5).to.be.closeTo(1, 0.5)`
+
+- members(set[Array])：断言目标是`set`的超集，或前者有后者所有严格相等（`===`）的成员。另外，如果设置了`deep`标记，则成员进行深度比较（include/contains只能接受单个值，但它们的主语除了是数组，还可以判断字符串；members则将它们的能力扩展为能够接受一个数组，但主语只能是数组）
+
+  ```js
+  expect([1, 2, 3]).to.include.members([3, 2])
+  expect([1, 2, 3]).to.not.include.members([3, 2, 8])
+  
+  expect([4, 2]).to.have.members([2, 4])
+  expect([5, 2]).to.not.have.members([5, 2, 1])
+  
+  expect([{ id: 1 }]).to.deep.include.members([{ id: 1 }])
+  ```
+
+- .oneOf(list[Array])：断言目标值出现在`list`数组的某个顶层位置（直接子元素，严格相等）
+
+  ```js
+  expect('a').to.be.oneOf(['a', 'b', 'c'])
+  expect(9).to.not.be.oneOf(['z'])
+  
+  // 严格相等，所以对象类的值必须为同一个引用才能被判定为相等
+  var three = [3]
+  expect([3]).to.not.be.oneOf([1, 2, [3]])
+  expect(three).to.not.be.oneOf([1, 2, [3]])
+  expect(three).to.be.oneOf([1, 2, three])
+  ```
+
+- .change(object, property[String, 属性名])：断言目标方法会改变指定对象的指定属性
+
+  ```js
+  var obj = { val: 10 }
+  var fn = function () { obj.val += 3 }
+  var noChangeFn = function () { return 'bar' + 'baz' }
+  
+  expect(fn).to.change(obj, 'val')
+  ```
+
+- .increase(object, property[String, 属性名])：断言目标方法会增加指定对象的属性
+
+  ```js
+  var obj = { val: 10 }
+  var fn = function () { obj.val = 15 }
+  expect(fn).to.increase(obj, val)
+  ```
+
+- decrease(object, property[String, 属性名])：断言目标方法会减少指定对象的属性
+
+  ```js
+  var obj = { val: 10 }
+  var fn = function () { obj.val = 5 }
+  expect(fn).to.decrease(obj, val)
+  ```
+
+- .extensible：断言目标对象是可扩展的（可以添加新的属性）
+
+  ```js
+  var nonExtensibleObject = Object.preventExtensions({})
+  var sealedObject = Object.seal({})
+  var frozenObject = Object.freeze({})
+  
+  expect({}).to.be.extensible
+  expect(nonExtensibleObject).to.not.be.extensible
+  expect(sealObject).to.not.be.extensible
+  expect(frozenObject).to.not.be.extensible
+  ```
+
+- .sealed：断言目标对象是封闭的（无法添加新的属性并且存在的属性不能被删除但可以被修改）
+
+  ```js
+  var sealedObject= Object.seal({})
+  var frozenObject = Object.freeze({})
+  
+  expect(sealedObject).to.be.sealed
+  expect(frozenObject).to.be.sealed
+  expect({}).to.not.be.sealed
+  ```
+
+- .frozen：断言目标对象是冻结的（无法添加新的属性并且存在的属性不能被删除和修改）
+
+  ```js
+  var frozenObject = Object.freeze({})
+  
+  expect(frozenObject).to.be.frozen
+  expect({}).to.not.be.frozen
+  ```
+
+**TDD**
+
+除了一些语法糖以外，Chai提供的`assert`风格的断言和node.js包含的assert模块非常相似。`assert`风格是三种断言风格中唯一不支持链式调用的。
 
 ## webdriverIO相关语法
 
@@ -290,13 +1016,13 @@ $('input[name=username]')等等，
 设置表单的值2：browser.setValue("input", "111")
 
 //测试常用的api:
-点击按钮：browser.click(`#button1`);
-获取文本的值：browser.getText('h1');
-获取表单的值：browser.getValue('input');
-设置表单的值：browser.setValue("input", "111");
-等待元素展现：browser.waitForVisible(`h1`);
-等待元素在5s内消失：browser.waitForVisible(`h1`,5000,true);
-查看dom是否存在：browser.isExisting('h1');
+点击按钮：.click(`#button1`);
+获取文本的值：.getText('h1');
+获取表单的值：.getValue('input');
+设置表单的值：.setValue("input", "111");
+等待元素展现：.waitForVisible(`h1`);
+等待元素在5s内消失：.waitForVisible(`h1`,5000,true); // 最好使用await
+查看dom是否存在：.isExisting('h1');
 
 //执行js代码，例如当元素不在视口，不方便点击的时候，就可以采用执行js代码去点击:
 //例如执行点击遮罩层：

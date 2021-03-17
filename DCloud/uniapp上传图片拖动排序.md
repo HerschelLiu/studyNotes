@@ -296,9 +296,11 @@ export default {
                 item.opacity = this.opacity;
                 clearTimeout(this.timer);
                 this.timer = null;
-            }, 200);
+            }, 500);
         },
         preview(item, index) {
+            clearTimeout(this.timer);
+            this.timer = '';
             if (this.custom) {
                 this.imgPreview(index);
             } else {
@@ -306,6 +308,8 @@ export default {
             }
         },
         touchend(item, index) {
+            clearTimeout(this.timer);
+            this.timer = null;
             item.scale = 1;
             item.opacity = 1;
             item.x = item.oldX;
@@ -414,8 +418,7 @@ export default {
             Promise.all(
                 res.tempFilePaths.map(item => {
                     return uni.uploadFile({
-                        // url: common.apiUrl + 'api/OssUpload/uploadFileCheck',
-                        url: 'https://api.daigou.com/index.php/api/OssUpload/uploadFileCheck',
+                        url: common.apiUrl + 'api/OssUpload/uploadFileCheck',
                         filePath: item,
                         name: 'file',
                         formData: {
@@ -446,6 +449,13 @@ export default {
                         duration: 2000
                     });
                 }
+            }).catch(()=>{
+              uni.hideLoading();
+              uni.showToast({
+                title: '上传失败，请重试！',
+                icon: 'none',
+                duration: 2000
+              });
             });
         },
         addImage(image) {
@@ -618,7 +628,6 @@ export default {
     }
 }
 </style>
-
 ```
 
 根据[GitHub - shmilyany/shmily-drag-image](https://github.com/shmilyany/shmily-drag-image)修改使用
