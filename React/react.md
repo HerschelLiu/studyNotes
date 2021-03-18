@@ -498,3 +498,191 @@ MyComponent.propTypes = {
   })
 };
 ```
+
+## Hook
+
+*Hook* 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。
+
+[Hook API 索引](https://react.docschina.org/docs/hooks-reference.html)
+
+### State Hook
+
+```react
+import React, { useState } from 'react';
+
+function Example() {
+  // 声明一个叫 “count” 的 state 变量。
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+`useState` 会返回一对值：**当前**状态和一个让你更新它的函数，你可以在事件处理函数中或其他一些地方调用这个函数。它类似 class 组件的 `this.setState`，但是它不会把新的 state 和旧的 state 进行合并。
+
+```react
+function ExampleWithManyStates() {
+  // 声明多个 state 变量！
+  const [age, setAge] = useState(42);
+  const [fruit, setFruit] = useState('banana');
+  const [todos, setTodos] = useState([{ text: 'Learn Hooks' }]);
+  // ...
+}
+```
+
+`setState`可以起不同的名字
+
+### Effect Hook
+
+在 React 组件中执行过数据获取、订阅或者手动修改过 DOM。统一把这些操作称为“副作用”，或者简称为“作用”。
+
+`useEffect`给函数组件增加了操作副作用的能力。它跟 class 组件中的 `componentDidMount`、`componentDidUpdate` 和 `componentWillUnmount` 具有相同的用途，只不过被合并成了一个 API。
+
+```react
+import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+
+  // 相当于 componentDidMount 和 componentDidUpdate:
+  useEffect(() => {
+    // 使用浏览器的 API 更新页面标题
+    // `componentDidMount`+`componentDidUpdate`
+    document.title = `You clicked ${count} times`;
+  });
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+```
+
+副作用函数还可以通过返回一个函数来指定如何“清除”副作用。例如，在下面的组件中使用副作用函数来订阅好友的在线状态，并通过取消订阅来进行清除操作：
+
+```react
+import React, { useState, useEffect } from 'react';
+
+function FriendStatus(props) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  function handleStatusChange(status) {
+    setIsOnline(status.isOnline);
+  }
+
+  useEffect(() => {
+    // `componentDidMount`+`componentDidUpdate`
+    ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+    return () => {
+      // `componentWillUnmount`
+      ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+    };
+  });
+
+  if (isOnline === null) {
+    return 'Loading...';
+  }
+  return isOnline ? 'Online' : 'Offline';
+}
+```
+
+跟 `useState` 一样，你可以在组件中多次使用 `useEffect`
+
+### Hook使用规则
+
+Hook 就是 JavaScript 函数，但是使用它们会有两个额外的规则：
+
+- 只能在**函数最外层**调用 Hook。不要在循环、条件判断或者子函数中调用。
+- 只能在 **React 的函数组件**中调用 Hook。不要在其他 JavaScript 函数中调用。（还有一个地方可以调用 Hook —— 就是自定义的 Hook 中。）
+
+### 自定义Hook
+
+前面，我们介绍了一个叫 `FriendStatus` 的组件，它通过调用 `useState` 和 `useEffect` 的 Hook 来订阅一个好友的在线状态。假设我们想在另一个组件里重用这个订阅逻辑。
+
+首先，我们把这个逻辑抽取到一个叫做 `useFriendStatus` 的自定义 Hook 里：
+
+```react
+import React, { useState, useEffect } from 'react';
+
+function useFriendStatus(friendID) {  const [isOnline, setIsOnline] = useState(null);
+
+  function handleStatusChange(status) {
+    setIsOnline(status.isOnline);
+  }
+
+  useEffect(() => {
+    ChatAPI.subscribeToFriendStatus(friendID, handleStatusChange);
+    return () => {
+      ChatAPI.unsubscribeFromFriendStatus(friendID, handleStatusChange);
+    };
+  });
+
+  return isOnline;
+}
+```
+
+它将 `friendID` 作为参数，并返回该好友是否在线：
+
+现在我们可以在两个组件中使用它：
+
+```react
+function FriendStatus(props) {
+  const isOnline = useFriendStatus(props.friend.id);
+  if (isOnline === null) {
+    return 'Loading...';
+  }
+  return isOnline ? 'Online' : 'Offline';
+}
+
+
+function FriendListItem(props) {
+  const isOnline = useFriendStatus(props.friend.id);
+  return (
+    <li style={{ color: isOnline ? 'green' : 'black' }}>
+      {props.friend.name}
+    </li>
+  );
+}
+```
+
+这两个组件的 state 是完全独立的。Hook 是一种复用*状态逻辑*的方式，它不复用 state 本身。事实上 Hook 的每次*调用*都有一个完全独立的 state —— 因此你可以在单个组件中多次调用同一个自定义 Hook。
+
+
+
+自定义 Hook 更像是一种约定而不是功能。如果函数的名字以 “`use`” 开头并调用其他 Hook，我们就说这是一个自定义 Hook。 `useSomething` 的命名约定可以让我们的 linter 插件在使用 Hook 的代码中找到 bug。
+
+### 其他Hook
+
+#### useContext
+
+让你不使用组件嵌套就可以订阅 React 的 Context。
+
+```react
+function Example() {
+  const locale = useContext(LocaleContext);
+  const theme = useContext(ThemeContext);
+  // ...
+}
+```
+
+#### useReducer
+
+通过 reducer 来管理组件本地的复杂 state。
+
+```react
+function Todos() {
+  const [todos, dispatch] = useReducer(todosReducer);
+  // ...
+```
+
