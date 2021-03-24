@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 ## 安装&使用
 
 ```bash
@@ -35,3 +39,18 @@ Taro create --name [页面名称]
 * 字节跳动小程序`npm run [dev|build]:tt`
 * QQ小程序`npm run [dev|build]:qq`
 * 京东小程序`npm run [dev|build]:jd`
+
+## 定义路径
+
+在`config.index.js`加上如下代码
+
+```
+const path = require('path')
+
+const config = {
+	alias: {
+		'@': path.resolve(__dirname, '../src') // 因为此文件在config文件夹中，路径这么写，或者写成path.resolve(__dirname, '..', 'src')
+	}
+}
+```
+
