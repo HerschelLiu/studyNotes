@@ -265,18 +265,18 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
 
   ### 选用Function_based API（Composition API）
 
-  **生命周期**
+  ### 生命周期
 
-  | Vue3.0生命周期  |                          说明                           |       对应的Vue2.0生命周期        |
-  | :-------------: | :-----------------------------------------------------: | :-------------------------------: |
-  |      setup      | 初始化数据阶段的生命周期，介于beforeCreate与created之间 | 相当于beforeCreate、created的合并 |
-  |  onBeforeMount  |                       组件挂载前                        |            beforeMount            |
-  |    onMounted    |                      实例挂载完毕                       |              mounted              |
-  | onBeforeUpdate  |                    响应式数据变化前                     |           beforeUpdate            |
-  |    onUpdated    |                   响应式数据变化完成                    |              updated              |
-  | onBeforeUnmount |                       实例销毁前                        |           beforeDestroy           |
-  |   onUnmounted   |                       实例已销毁                        |             destroyed             |
-  | onErrorCaptured |                      错误数据捕捉                       |                 -                 |
+  | Vue3.0生命周期  |                          说明                           |                    对应的Vue2.0生命周期                     |
+  | :-------------: | :-----------------------------------------------------: | :---------------------------------------------------------: |
+  |      setup      | 初始化数据阶段的生命周期，介于beforeCreate与created之间 | 相当于beforeCreate、created的合并（运行在beforeCreate之前） |
+  |  onBeforeMount  |                       组件挂载前                        |                         beforeMount                         |
+  |    onMounted    |                      实例挂载完毕                       |                           mounted                           |
+  | onBeforeUpdate  |                    响应式数据变化前                     |                        beforeUpdate                         |
+  |    onUpdated    |                   响应式数据变化完成                    |                           updated                           |
+  | onBeforeUnmount |                       实例销毁前                        |                        beforeDestroy                        |
+  |   onUnmounted   |                       实例已销毁                        |                          destroyed                          |
+  | onErrorCaptured |                      错误数据捕捉                       |                              -                              |
 
   **为什么撤销 Class API ?**
 
@@ -340,46 +340,61 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
         
           
 
+### ref 接受一个参数值并返回一个响应式且可改变的 ref 对象。ref 对象拥有一个指向内部值的单一属性 .value。
 
-  6. ref 接受一个参数值并返回一个响应式且可改变的 ref 对象。ref 对象拥有一个指向内部值的单一属性 .value。
+```js
+const count = ref(0)
+console.log(count.value) // 0
 
-     ```js
-     const count = ref(0)
-     console.log(count.value) // 0
-     
-     count.value++
-     console.log(count.value) // 1
-     ```
+count.value++
+console.log(count.value) // 1
 
-  7. toRefs 把一个响应式对象转换成普通对象，该普通对象的每个 property 都是一个 ref ，和响应式对象 property 一一对应。
+// 语法糖
+ref: count = 0
+```
+**注：**
 
-     ```js
-     import { reactive, toRefs } from 'vue';
-     
-     export default defineComponent({
-         setup () {
-             const obj = reactive({ count: 0 })
-             return { ...toRefs(obj) }
-         }
-     })
-     ```
+* ref函数仅能监听基本类型的变化，不能监听复杂类型的变化（比如对象、数组）
+* 在vue中使用ref的值不用通过value获取；在js中使用ref的值必须通过value获取
 
-  8. toRef 可以用来为一个 reactive 对象的属性创建一个 ref。这个 ref 可以被传递并且能够保持响应性。
+### reactive
 
-     ```js
-     const state = reactive({
-       foo: 1,
-       bar: 2,
-     })
-     
-     const fooRef = toRef(state, 'foo')
-     
-     fooRef.value++
-     console.log(state.foo) // 2
-     
-     state.foo++
-     console.log(fooRef.value) // 3
-     ```
+监听复杂类型的变化（比如对象、数组）
+
+### toRefs 把一个响应式对象转换成普通对象，该普通对象的每个 property 都是一个 ref ，和响应式对象 property 一一对应。
+
+可以用toRefs配合结构赋值使用
+
+toRefs用于将一个reactive对象转化为属性全部为ref对象的普通对象。
+
+```js
+import { reactive, toRefs } from 'vue';
+
+export default defineComponent({
+    setup () {
+        const obj = reactive({ count: 0 })
+        return { ...toRefs(obj) }
+    }
+})
+```
+
+toRef 可以用来为一个 reactive 对象的属性创建一个 ref。这个 ref 可以被传递并且能够保持响应性。
+
+```js
+const state = reactive({
+  foo: 1,
+  bar: 2,
+})
+
+const fooRef = toRef(state, 'foo')
+
+fooRef.value++
+console.log(state.foo) // 2
+
+state.foo++
+console.log(fooRef.value) // 3
+```
+
 
   9. nextTick 跟之前的作用一样只不过呢写法略有不同。
 
@@ -395,9 +410,302 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
      })
      ```
 
-     
 
-  **示例**
+### watch 与 watchEffect 的用法
+
+watch 函数用来侦听特定的数据源，并在回调函数中执行副作用。默认情况是惰性的，也就是说仅在侦听的源数据变更时才执行回调。
+
+```js
+watch(source, callback, [options])
+```
+
+参数说明：
+
+- source: 可以支持string,Object,Function,Array; 用于指定要侦听的响应式变量
+- callback: 执行的回调函数
+- options：支持deep、immediate 和 flush 选项。`{ deep: true, immediate: true }`
+
+```vue
+import { defineComponent, ref, reactive, toRefs, watch } from "vue";
+export default defineComponent({
+  setup() {
+    // 修改age值时会触发 watch的回调
+	// 监听reactive
+	const state = reactive({ nickname: "xiaofan", age: 20 });
+
+    setTimeout(() =>{
+        state.age++
+    },1000)
+
+    watch(
+      () => state.age,
+      (curAge, preAge) => {
+        console.log("新值:", curAge, "老值:", preAge);
+      }
+    );
+
+	// 监听ref()
+    const year = ref(0)
+
+    setTimeout(() =>{
+        year.value ++ 
+    },1000)
+
+    watch(year, (newVal, oldVal) =>{
+        console.log("新值:", newVal, "老值:", oldVal);
+    })
+
+	// 监听多个值
+	watch([() => state.age, year], ([curAge, preAge], [newVal, oldVal]) => {
+        console.log("新值:", curAge, "老值:", preAge);
+        console.log("新值:", newVal, "老值:", oldVal);
+    });
+
+    return {
+		year,
+        ...toRefs(state)
+    }
+  },
+});
+```
+
+#### stop 停止监听
+
+我们在组件中创建的`watch`监听，会在组件被销毁时自动停止。如果在组件销毁之前我们想要停止掉某个监听， 可以调用`watch()`函数的返回值，操作如下：
+
+```js
+const stopWatchRoom = watch(() => state.room, (newType, oldType) => {
+    console.log("新值:", newType, "老值:", oldType);
+}, {deep:true});
+
+setTimeout(()=>{
+    // 停止监听
+    stopWatchRoom()
+}, 3000)
+```
+
+#### watchEffect
+
+```vue
+import { defineComponent, ref, reactive, toRefs, watchEffect } from "vue";
+export default defineComponent({
+  setup() {
+    const state = reactive({ nickname: "xiaofan", age: 20 });
+    let year = ref(0)
+
+    setInterval(() =>{
+        state.age++
+        year.value++
+    },1000)
+
+    watchEffect(() => {
+        console.log(state);
+        console.log(year);
+      }
+    );
+
+    return {
+        ...toRefs(state)
+    }
+  },
+});
+```
+
+从上面的代码可以看出， 并没有像`watch`一样需要先传入依赖，`watchEffect`会自动收集依赖, 只要指定一个回调函数。在组件初始化时， 会先执行一次来收集依赖， 然后当收集到的依赖中数据发生变化时， 就会再次执行回调函数。所以总结对比如下：
+
+1. watchEffect 不需要手动传入依赖
+2. watchEffect 会先执行一次用来自动收集依赖
+3. watchEffect 无法获取到变化前的值， 只能获取变化后的值
+
+## 自定义 Hooks
+
+我们约定这些「自定义 Hook」以 use 作为前缀，和普通的函数加以区分。
+
+```vue
+// 使用ts
+import { ref, Ref, computed } from "vue";
+
+type CountResultProps = {
+    count: Ref<number>;
+    multiple: Ref<number>;
+    increase: (delta?: number) => void;
+    decrease: (delta?: number) => void;
+};
+
+export default function useCount(initValue = 1): CountResultProps {
+    const count = ref(initValue);
+
+    const increase = (delta?: number): void => {
+        if (typeof delta !== "undefined") {
+            count.value += delta;
+        } else {
+            count.value += 1;
+        }
+    };
+    const multiple = computed(() => count.value *2 )
+
+    const decrease = (delta?: number): void => {
+        if (typeof delta !== "undefined") {
+            count.value -= delta;
+        } else {
+            count.value -= 1;
+        }
+    };
+
+    return {
+        count,
+        multiple,
+        increase,
+        decrease,
+    };
+}
+```
+
+```vue
+// 使用
+<template>
+  <p>count: {{ count }}</p>
+  <p>倍数： {{ multiple }}</p>
+  <div>
+    <button @click="increase()">加1</button>
+    <button @click="decrease()">减一</button>
+  </div>
+</template>
+
+<script lang="ts">
+import useCount from "../hooks/useCount";
+ setup() {
+    const { count, multiple, increase, decrease } = useCount(10);
+        return {
+            count,
+            multiple,
+            increase,
+            decrease,
+        };
+    },
+</script>
+```
+
+## Teleport
+
+Teleport 就像是哆啦A梦中的「任意门」，任意门的作用就是可以将人瞬间传送到另一个地方。
+
+在子组件`Header`中使用到`Dialog`组件，我们实际开发中经常会在类似的情形下使用到 `Dialog` ，此时`Dialog`就被渲染到一层层子组件内部，处理嵌套组件的定位、`z-index`和样式都变得困难。
+
+`Dialog`从用户感知的层面，应该是一个独立的组件，从dom结构应该完全剥离Vue顶层组件挂载的DOM；同时还可以使用到Vue组件内的状态（`data`或者`props`）的值。简单来说就是,**即希望继续在组件内部使用`Dialog`,又希望渲染的DOM结构不嵌套在组件的DOM中**。
+
+此时就需要Teleport上场，我们可以用`<Teleport>`包裹`Dialog`, 此时就建立了一个传送门，可以将`Dialog`渲染的内容传送到任何指定的地方。
+
+我们希望Dialog渲染的dom和顶层组件是兄弟节点关系, 在`index.html`文件中定义一个供挂载的元素:
+
+```
+<body>
+<div id="app"></div>
++ <div id="dialog"></div>
+</body>
+```
+
+定义一个`Dialog`组件`Dialog.vue`, 留意 `to` 属性， 与上面的`id`选择器一致：
+
+```
+<template>
+    <teleport to="#dialog">
+        <div class="dialog">
+            <div class="dialog_wrapper">
+                <div class="dialog_header" v-if="title">
+                    <slot name="header">
+                        <span>{{title}}</span>
+                    </slot>
+                </div>
+            </div>
+            <div class="dialog_content">
+                <slot></slot>
+            </div>
+            <div class="dialog_footer">
+                <slot name="footer"></slot>
+            </div>
+        </div>
+    </teleport>
+</template>
+```
+
+最后在一个子组件`Header.vue`中使用`Dialog`组件,这里主要演示 Teleport的使用，不相关的代码就省略了。`header`组件
+
+```
+<div class="header">
+    ...
+    <navbar />
++    <Dialog v-if="dialogVisible"></Dialog>
+</div>
+...
+```
+
+我们使用 `teleport` 组件，通过 `to` 属性，指定该组件渲染的位置与 `<div id="app"></div>` 同级，也就是在 `body` 下，但是 `Dialog` 的状态 `dialogVisible` 又是完全由内部 Vue 组件控制.
+
+## Suspense
+
+`Suspense`是Vue3.x中新增的特性, vue2.x中应该经常遇到这样的场景：
+
+```vue
+<template>
+<div>
+    <div v-if="!loading">
+        ...
+    </div>
+    <div v-if="loading">
+        加载中...
+    </div>
+</div>
+</template>
+```
+
+在前后端交互获取数据时， 是一个异步过程，一般我们都会提供一个加载中的动画，当数据返回时配合`v-if`来控制数据显示。
+
+如果你使用过`vue-async-manager`这个插件来完成上面的需求， 你对`Suspense`可能不会陌生，Vue3.x感觉就是参考了`vue-async-manager`.
+
+Vue3.x新出的内置组件`Suspense`, 它提供两个`template` slot, 刚开始会渲染一个fallback状态下的内容， 直到到达某个条件后才会渲染default状态的正式内容， 通过使用`Suspense`组件进行展示异步渲染就更加的简单。:::warning 如果使用 `Suspense`, 要返回一个promise :::`Suspense` 组件的使用：
+
+```html
+ <Suspense>
+        <template #default>
+            <async-component></async-component>
+        </template>
+        <template #fallback>
+            <div>
+                Loading...
+            </div>
+        </template>
+    </Suspense>
+```
+
+`asyncComponent.vue`:
+
+```vue
+<template>
+<div>
+    <h4>这个是一个异步加载数据</h4>
+    <p>用户名：{{user.nickname}}</p>
+    <p>年龄：{{user.age}}</p>
+</div>
+</template>
+
+<script>
+import { defineComponent } from "vue"
+import axios from "axios"
+export default defineComponent({
+    setup(){
+        const rawData = await axios.get("http://xxx.xinp.cn/user")
+        return {
+            user: rawData.data
+        }
+    }
+})
+</script>
+```
+
+### 在 Vue2.x 中， `template`中只允许有一个根节点,但是在 Vue3.x 中，你可以直接写多个根节点
+
+### 示例
 
   ```js
   import { computed, onMounted, ref, watch } from 'vue';
@@ -405,7 +713,9 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
   export default {
       name: 'Home',
       setup(props, ctx) { 
-          /* props 父组件传值
+          /* 
+           * 不可以使用ES6解构，解构会消除它的响应式。
+           * props 父组件传值
            * context/ctx上下文对象，这个上下文对象中包含了一些有用的属性，这些属性在 Vue2.0 中需要通过 this 才能访问到(3.0无法访问this)，在 vue3.0 中，访问他们变成以下形式：
            * context.parent--> this.$parent 
            * context.root--> this
