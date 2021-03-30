@@ -31,6 +31,8 @@ FLUTTER_STORAGE_BASE_URL  ->  https://storage.flutter-io.cn
 PUB_HOSTED_URL  ->   https://pub.flutter-io.cn
 ```
 
+(3).  “系统变量” 那部分点击 “新建”,给新建的环境变量命名为 “FLUTTER_HOME” ，将复制的flutter的安装路径粘贴进去（到bin文件夹下）;点击 “确定” 保存新建的环境变量，然后找到 “Path” 那一栏，点击 “编辑” ，增加`%FLUTTER_HOME%`，点击 “确定”.剩下的窗口全部点击 “确定” ，至此，就成功将flutter添加到系统环境变量中了
+
 *Linux*
 
 (1). 打开bashrc文件：
