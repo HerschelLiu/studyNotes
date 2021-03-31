@@ -1,3 +1,7 @@
+[TOC]
+
+
+
 ## Flutter环境配置
 
 国内Flutter镜像目前常用的有两个，一个是Flutter官方社区中国镜像，另外一个是上海交通大学Linux用户组的镜像，下面使用Flutter官方中国镜像搭建Flutter开发环境。
@@ -667,3 +671,6 @@ DecoratedBox(
 )
 ```
 
+## 注意
+
+1. 最好安装Android Studio，仅安装Android SDK会有很多问题
