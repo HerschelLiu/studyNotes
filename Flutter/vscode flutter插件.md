@@ -9,6 +9,6 @@
 
 * **Awesome Flutter Snippets**：常用函数的代码片段
 
-* **flutter-stylizer**：可解决api不提示问题
+* **flutter-stylizer**：可解决api不提示问题，会明显表示结构
 
   
