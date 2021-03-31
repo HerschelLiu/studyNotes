@@ -671,6 +671,129 @@ DecoratedBox(
 )
 ```
 
+## 路由
+
+示例
+
+```dart
+// main.dart
+import 'dart:html';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/newRoute.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You have pushed the button this many times:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            FlatButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NewRoute()));
+              },
+              child: Text('open new route'),
+              textColor: Colors.red,
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+```dart
+// newRoute.dart
+import 'package:flutter/material.dart';
+
+class NewRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('New Route'),
+      ),
+      body: Center(
+        child: Text('This is new route'),
+      ),
+    );
+  }
+}
+
+```
+
+## MaterialPageRoute
+
+`MaterialPageRoute`继承自`PageRoute`类，`PageRoute`类是一个抽象类，表示占有整个屏幕空间的一个模态路由页面，它还定义了路由构建及切换时过渡动画的相关接口及属性。`MaterialPageRoute` 是Material组件库提供的组件，它可以针对不同平台，实现与平台页面切换动画风格一致的路由切换动画：
+
+```dart
+  MaterialPageRoute({
+    WidgetBuilder builder,
+    RouteSettings settings, // 包含路由的配置信息，如路由名称、是否初始路由（首页）。
+    bool maintainState = true, // 默认情况下，当入栈一个新路由时，原来的路由仍然会被保存在内存中，如果想在路由没用的时候释放其所占用的所有资源，可以设置maintainState为false。
+    bool fullscreenDialog = false, // 表示新的路由页面是否是一个全屏的模态对话框，在iOS中，如果fullscreenDialog为true，新页面将会从屏幕底部滑入（而不是水平方向）。
+  })
+```
+
+如果想自定义路由切换动画，可以自己继承PageRoute来实现
+
+## Navigator
+
+* `Future push(BuildContext context, Route route)`: 入栈（打开新的页面）
+* `bool pop(BuildContext context, [ result ])`: 出栈（关闭页面），`result`为页面关闭时返回给上一个页面的数据。
+* `Navigator.replace`,`Navigator.popUntil`等
+
 ## 注意
 
 1. 最好安装Android Studio，仅安装Android SDK会有很多问题
