@@ -773,7 +773,7 @@ class NewRoute extends StatelessWidget {
 
 ```
 
-## MaterialPageRoute
+### MaterialPageRoute
 
 `MaterialPageRoute`继承自`PageRoute`类，`PageRoute`类是一个抽象类，表示占有整个屏幕空间的一个模态路由页面，它还定义了路由构建及切换时过渡动画的相关接口及属性。`MaterialPageRoute` 是Material组件库提供的组件，它可以针对不同平台，实现与平台页面切换动画风格一致的路由切换动画：
 
@@ -788,11 +788,52 @@ class NewRoute extends StatelessWidget {
 
 如果想自定义路由切换动画，可以自己继承PageRoute来实现
 
-## Navigator
+### Navigator
 
 * `Future push(BuildContext context, Route route)`: 入栈（打开新的页面）
-* `bool pop(BuildContext context, [ result ])`: 出栈（关闭页面），`result`为页面关闭时返回给上一个页面的数据。
+
+* `bool pop(BuildContext context, [ result ])`: 出栈（关闭页面），`result`为页面关闭时返回给上一个页面的数据。又打开此页面的push方法的返回值为result（**非命名路由传值方式**），此方式点击自带返回不能传值给上一页，只能在使用pop()方法才能。
+
+  ```dart
+  // A页面 
+  var result = await Navigator.push(context, MaterialPageRoure(builder: (context) => NewRoute(text: '我是传入的参数')))
+  
+  // B页面
+  class NewRoute extends StatelessWidget {
+     // 接收一个text参数 @required为必传
+    NewRoute({ Key key, @required this.text }) : super(key: key);
+    final String text;
+  
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("提示"),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(18),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Text(text),
+                RaisedButton(
+                  onPressed: () => Navigator.pop(context, "我是返回值"),
+                  child: Text("返回"),
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+  }
+  ```
+
+  
+
 * `Navigator.replace`,`Navigator.popUntil`等
+
+### 命名路由
 
 ## 注意
 
