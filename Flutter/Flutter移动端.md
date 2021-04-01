@@ -835,6 +835,31 @@ class NewRoute extends StatelessWidget {
 
 ### 命名路由
 
+```dart
+MaterialApp(
+  title: 'Flutter Demo',
+  initialRoute:"/", //名为"/"的路由作为应用的首页.该属性决定应用的初始路由页是哪一个命名路由
+  theme: ThemeData(
+    primarySwatch: Colors.blue,
+  ),
+  //注册路由表
+  routes:{
+   "new_page":(context) => NewRoute(),
+   "/":(context) => MyHomePage(title: 'Flutter Demo Home Page'), //注册首页路由
+  } 
+);
+```
+
+#### 通过路由名打开新路由页
+
+要通过路由名称来打开新路由，可以使用`Navigator` 的`pushNamed`方法：
+
+```dart
+Future pushNamed(BuildContext context, String routeName,{Object arguments})
+```
+
+`Navigator` 除了`pushNamed`方法，还有`pushReplacementNamed`等其他管理命名路由的方法
+
 ## 注意
 
 1. 最好安装Android Studio，仅安装Android SDK会有很多问题
