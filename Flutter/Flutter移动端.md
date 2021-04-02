@@ -850,6 +850,17 @@ MaterialApp(
 );
 ```
 
+通常路径名使用路径结构`/A/B/C`
+
+```dart
+routes: {
+    '/': (context) => FirstPage(),
+    '/second': (context) => SecondPage()
+}
+```
+
+
+
 #### 通过路由名打开新路由页
 
 要通过路由名称来打开新路由，可以使用`Navigator` 的`pushNamed`方法：
@@ -859,6 +870,309 @@ Future pushNamed(BuildContext context, String routeName,{Object arguments})
 ```
 
 `Navigator` 除了`pushNamed`方法，还有`pushReplacementNamed`等其他管理命名路由的方法
+
+```dart
+// main.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/newRoute.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        // home: MyHomePage(title: 'Flutter Demo Home Page'),
+        // # 注册路由表
+        routes: {
+          'new_page': (context) => NewRoute(),
+          '/': (context) => MyHomePage(title: 'Flutter Demo Home Page')
+        });
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'You have pushed the button this many times:',
+            ),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            // ignore: deprecated_member_use
+            FlatButton(
+              onPressed: () {
+                // # 路由名跳页及传参， arguments这个是固定的key，不是自定义的名
+                // 接值需要用ModalRoute.of(context).settings.arguments获取
+                Navigator.pushNamed(context, 'new_page', arguments: "hi");
+                // 另一种写法 Navigator.of(context).pushNamed('new_page', arguments: 'hello');
+              },
+              child: Text('open new route'),
+              textColor: Colors.red,
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+
+```
+
+```dart
+// newRoute.dart
+import 'package:flutter/material.dart';
+
+class NewRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // 接值
+    var args = ModalRoute.of(context).settings.arguments;
+    print(args);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('New Route'),
+      ),
+      body: Center(
+        child: Text('This is new route'),
+      ),
+    );
+  }
+}
+
+```
+
+### 路由生成钩子
+
+假设我们要开发一个电商APP，当用户没有登录时可以看店铺、商品等信息，但交易记录、购物车、用户个人信息等页面需要登录后才能看。为了实现上述功能，我们需要在打开每一个路由页前判断用户登录状态
+
+`MaterialApp`有一个`onGenerateRoute`属性，它在打开命名路由时可能会被调用，之所以说可能，是因为当调用`Navigator.pushNamed(...)`打开命名路由时，如果指定的路由名在路由表中已注册，则会调用路由表中的`builder`函数来生成路由组件；如果路由表中没有注册，才会调用`onGenerateRoute`来生成路由。
+
+要实现上面控制页面权限的功能就非常容易：我们放弃使用路由表，取而代之的是提供一个`onGenerateRoute`回调，然后在该回调中进行统一的权限控制
+
+```dart
+MaterialApp(
+  ... //省略无关代码
+  onGenerateRoute: (RouteSettings settings) {
+      String routeName = settings.name;
+      print('routeName: $routeName');
+      if (routeName == '/new_page') {
+          return MaterialPageRoute(builder: (context) {
+              print('this: ${settings.arguments}');
+              return NewRoute(text: settings.arguments);
+          });
+      } else {
+          return MaterialPageRoute(
+              builder: (context) =>
+              MyHomePage(title: 'Flutter Demo Home Page'));
+      }
+  },
+);
+```
+```dart
+// new_page
+import 'package:flutter/material.dart';
+
+class NewRoute extends StatelessWidget {
+  NewRoute({Key key, this.text}) : super(key: key);
+
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    print('args: $text');
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('New Route'),
+      ),
+      body: Center(
+        child: Text('This is new route'),
+      ),
+    );
+  }
+}
+
+```
+
+> 注意，`onGenerateRoute`只会对命名路由生效。
+>
+> 不需要设置routes
+>
+> 跳页直接使用命名路由的方法，即可，settings.name获取跳页时传入的路由名
+
+## 包管理及资源管理
+
+Flutter使用`yaml`进行包管理。默认配置文件为`pubspec.yaml`
+
+资源管理：Flutter APP安装包中会包含代码和 assets（资源）两部分。Assets是会打包到程序安装包中的，可在运行时访问。常见类型的assets包括静态数据（例如JSON文件）、配置文件、图标和图片（JPEG，WebP，GIF，动画WebP / GIF，PNG，BMP和WBMP）等。
+
+```yaml
+name: flutter_in_action # 应用或包名称
+description: First Flutter application. # 应用或包的描述、简介。
+
+version: 1.0.0+1 # 应用或包的版本号。
+
+dependencies: # 应用或包依赖的其它包或插件。
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  pkg1:
+  	path: ../../code/pkg1 # 依赖本地包
+  pkg2:
+  	path: packages/package1 # 假定包位于Git存储库的根目录中。如果不是这种情况，可以使用path参数指定相对位置
+  	git:
+  		url: git://github.com/xxx/pkg1.git # 依赖存储在Git仓库中的包
+
+dev_dependencies: # 开发环境依赖的工具包（而不是flutter应用本身依赖的包）。
+  flutter_test:
+    sdk: flutter
+    
+flutter: # flutter相关的配置选项。
+  uses-material-design: true
+  assets: # 不同版本的asset可能会显示在不同的上下文中。比如一倍图（logo/logo.png)2倍图（logo/2x/logo.png)，3倍图（logo/3x/logo.png),logo/logo.png被认为是主资源，另两种被认为是一种变体。这些文件随后会与指定的asset一起被包含在asset bundle中。
+  	- assets/my_icon.png # 指定应包含在应用程序中的文件(相对于pubspec.yaml文件所在的文件系统路径来标识自身的路径);asset的声明顺序是无关紧要的，asset的实际目录可以是任意文件夹;
+```
+
+### assets
+
+#### 根据分辨率加载图片
+
+```
+/image.png
+/Mx/image.png
+/Nx/image.png
+...etc.
+```
+
+其中M和N是数字标识符，对应于其中包含的图像的分辨率，也就是说，它们指定不同设备像素比例的图片。
+
+```
+…/my_icon.png
+…/2.0x/my_icon.png
+…/3.0x/my_icon.png
+```
+
+在设备像素比率为1.8的设备上，`.../2.0x/my_icon.png` 将被选择。对于2.7的设备像素比率，`.../3.0x/my_icon.png`将被选择。
+
+如果未在`Image` widget上指定渲染图像的宽度和高度，那么`Image` widget将占用与主资源相同的屏幕空间大小。 也就是说，如果`.../my_icon.png`是72px乘72px，那么`.../3.0x/my_icon.png`应该是216px乘216px; 但如果未指定宽度和高度，它们都将渲染为72像素×72像素（以逻辑像素为单位）。
+
+`pubspec.yaml`中asset部分中的每一项都应与实际文件相对应，但主资源项除外。当主资源缺少某个资源时，会按分辨率从低到高的顺序去选择 ，也就是说1x中没有的话会在2x中找，2x中还没有的话就在3x中找。
+
+```dart
+Widget build(BuildContext context) {
+  return new DecoratedBox(
+    decoration: new BoxDecoration(
+      image: new DecorationImage(
+        image: new AssetImage('graphics/background.png'),
+      ),
+    ),
+  );
+}
+
+// 有些时候可能期望直接得到一个显示图片的widget，那么可以使用
+Widget build(BuildContext context) {
+  return Image.asset('graphics/background.png');
+}
+```
+
+> new可省略
+>
+> `AssetImage` 并非是一个widget
+
+#### 依赖包中的资源图片
+
+要加载依赖包中的图像，必须给`AssetImage`提供`package`参数。
+
+例如，假设您的应用程序依赖于一个名为“my_icons”的包，它具有如下目录结构：
+
+- …/pubspec.yaml
+- …/icons/heart.png
+- …/icons/1.5x/heart.png
+- …/icons/2.0x/heart.png
+- …etc.
+
+```dart
+new AssetImage('icons/heart.png', package: 'my_icons')
+// 或
+new Image.asset('icons/heart.png', package: 'my_icons')
+```
+
+#### 特定平台 assets
+
+上面的资源都是flutter应用中的，这些资源只有在Flutter框架运行之后才能使用，如果要给我们的应用设置APP图标或者添加启动图，那我们必须使用特定平台的assets。
+
+#####  设置APP图标
+
+* Android：在Flutter项目的根目录中，导航到`.../android/app/src/main/res`目录，里面包含了各种资源文件夹,只需按照[Android开发人员指南 (opens new window)](https://developer.android.com/guide/practices/ui_guidelines/icon_design_launcher.html#size)中的说明， 将其替换为所需的资源，并遵守每种屏幕密度（dpi）的建议图标大小标准。**如果重命名.png文件，则还必须在android/app/src/main/`AndroidManifest.xml`的`<application>`标签的`android:icon`属性中更新名称。**
+* IOS：在Flutter项目的根目录中，导航到`.../ios/Runner`。该目录中`Assets.xcassets/AppIcon.appiconset`已经包含占位符图片， 只需将它们替换为适当大小的图片，保留原始文件名称。
+
+##### app启动页
+
+* android：`.../android/app/src/main/res/drawable/launch_background.xml`,通过自定义drawable来实现自定义启动界面（你也可以直接换一张图片）。
+* IOS：`.../ios/Runner/Assets.xcassets/LaunchImage.imageset`,拖入图片，并命名为`LaunchImage.png`、`LaunchImage@2x.png`、`LaunchImage@3x.png`。 如果你使用不同的文件名，那您还必须更新同一目录中的`Contents.json`文件，图片的具体尺寸可以查看苹果官方的标准。
+
+## 调试
+
+### debugger()
+
+```dart
+void someFunction(double offset) {
+  debugger(when: offset > 30.0); // 可选when参数，可以指定该参数仅在特定条件为真时中断
+  // ...
+}
+```
+
+### `print`、`debugPrint`、`flutter logs`
+
+Dart `print()`功能将输出到系统控制台，您可以使用`flutter logs`来查看它（基本上是一个包装`adb logcat`）。
+
+如果你一次输出太多，那么Android有时会丢弃一些日志行。为了避免这种情况，您可以使用Flutter的`foundation`库中的[`debugPrint()` (opens new window)](https://docs.flutter.io/flutter/foundation/debugPrint.html)。 这是一个封装print，它将输出限制在一个级别，避免被Android内核丢弃。
+
+### 调试模式断言`assert()`
+
+```dart
+String txt = 'this is string';
+assert(txt == 'this is string');
+```
+
+仅在调试时输出
 
 ## 注意
 
