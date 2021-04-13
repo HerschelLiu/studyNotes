@@ -1174,6 +1174,85 @@ assert(txt == 'this is string');
 
 仅在调试时输出
 
+## 文件操作
+
+使用PathProvider插件`path_provider: ^0.4.1`。添加后，执行`flutter packages get` 获取一下, 版本号可能随着时间推移会发生变化
+
+## Http请求
+
+使用Dio
+
+```dart
+dependencies:
+  dio: ^x.x.x #请使用pub上的最新版本
+```
+
+使用
+
+```dart
+import 'package:dio/dio.dart';
+Dio dio =  Dio();
+
+// get
+Response response;
+response=await dio.get("/test?id=12&name=wendu")
+print(response.data.toString());
+// 等价于
+response=await dio.get("/test",queryParameters:{"id":12,"name":"wendu"})
+print(response);
+
+// post
+response=await dio.post("/test",data:{"id":12,"name":"wendu"})
+    
+// 多个请求
+response= await Future.wait([dio.post("/info"),dio.get("/token")]);
+
+// 下载
+response=await dio.download("https://www.google.com/",_savePath);
+
+// 发送FormData 如果发送的数据是FormData，则dio会将请求header的contentType设为“multipart/form-data”。
+FormData formData = new FormData.from({
+   "name": "wendux",
+   "age": 25,
+});
+response = await dio.post("/info", data: formData)
+// 通过FormData上传多个文件:
+FormData formData = new FormData.from({
+   "name": "wendux",
+   "age": 25,
+   "file1": new UploadFileInfo(new File("./upload.txt"), "upload1.txt"),
+   "file2": new UploadFileInfo(new File("./upload.txt"), "upload2.txt"),
+     // 支持文件数组上传
+   "files": [
+      new UploadFileInfo(new File("./example/upload.txt"), "upload.txt"),
+      new UploadFileInfo(new File("./example/upload.txt"), "upload.txt")
+    ]
+});
+response = await dio.post("/info", data: formData)
+```
+
+## 文件结构
+
+```diff
+项目
+|- ...
+|- assets
+   |- imgs
+   |- fonts // icons
+|- jsons // 存json文件，以供代码中转为dart的
+|- lib
+   |- common // 一些工具类，如通用方法类、网络接口类、保存全局变量的静态类等
+   |- models // Json文件对应的Dart Model类会在此目录下
+   |- states // 保存APP中需要跨组件共享的状态类
+   |- routes // 存放所有路由页面类
+   |- widgets // APP内封装的一些Widget组件都在该目录下
+```
+
+
+
 ## 注意
 
 1. 最好安装Android Studio，仅安装Android SDK会有很多问题
+2. [pub包仓库](https://pub.dev/)
+3. json_model：将json转为dart能使用的`flutter packages pub run json_model`
+4. shared_preferences：数据持久化
