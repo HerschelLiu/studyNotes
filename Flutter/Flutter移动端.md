@@ -1253,6 +1253,28 @@ response = await dio.post("/info", data: formData)
 ## 注意
 
 1. 最好安装Android Studio，仅安装Android SDK会有很多问题
+
 2. [pub包仓库](https://pub.dev/)
+
 3. json_model：将json转为dart能使用的`flutter packages pub run json_model`
+
 4. shared_preferences：数据持久化
+
+5. padding和margin使用`EdgeInsets.`
+
+6. 颜色使用`Color.fromRGBO()`即rgba
+
+7. 自定义appbar
+
+   ```dart
+    Widget build(BuildContext context) {
+       return Scaffold(
+           appBar: AppBar(
+             title: SearchBar(), // 自定义搜索组件
+             backgroundColor: Colors.white,
+           ),
+           body: Center(child: Text('123')));
+     }
+   ```
+
+   
