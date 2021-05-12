@@ -39,7 +39,96 @@ export default class App extends Vue {
 }
 ```
 
-如果想使用@Emit、@Inject、@Model、@Prop、@Provide、@Watch等装饰器,可以安装 `npm i -S vue-property-decorator`
-
+使用@Emit、@Inject、@Model、@Prop、@Provide、@Watch等装饰器,可以安装 `npm i -S vue-property-decorator`
 
 如果想在项目中使用Vuex,可以安装 `npm install --save vuex-class`
+
+## 使用
+
+```typescript
+import { Component, Emit, Inject, Model, Prop, Provide, Vue, Watch } from 'vue-property-decorator'
+
+// @Component // @Component 修饰符注明了此类为一个 Vue 组件
+
+@Component({
+  name: '',
+  components: {},
+  // 所有的组件选项都可以放在这里
+  template: '<button @click="onClick">Click!</button>'
+})
+export class MyComponent extends Vue {
+  
+  @Prop()
+  propA: number = 1
+
+  @Prop({ default: 'default value' })
+  propB: string
+
+  @Prop([String, Boolean])
+  propC: string | boolean
+
+  @Prop({ type: null })
+  propD: any
+
+  @Watch('child')
+  onChildChanged(val: string, oldVal: string) { }
+}
+```
+
+相当于
+
+```js
+export default {
+  props: {
+    checked: Boolean,
+    propA: Number,
+    propB: {
+      type: String,
+      default: 'default value'
+    },
+    propC: [String, Boolean],
+    propD: { type: null }
+  }
+  methods: {
+    onChildChanged(val, oldVal) { }
+  },
+  watch: {
+    'child': {
+      handler: 'onChildChanged',
+      immediate: false,
+      deep: false
+    }
+  }
+}
+```
+
+
+
+## 注意
+
+### 当从 npm 安装第三方库时，还要同时安装这个库的类型声明文件
+
+可以从 [TypeSearch](https://links.jianshu.com/go?to=https%3A%2F%2Fmicrosoft.github.io%2FTypeSearch%2F) 中找到并安装这些第三方库的类型声明文件
+ 如果没有这个库的声明文件的话，我们需要手动声明这个库。`src`目录下新建一个`types`目录,然后在types 目录下新建一个 `index.d.ts`文件
+
+```cpp
+//index.d.ts
+declare module "vuedraggable";
+```
+
+### 使用装饰器都需要在页面中引用
+
+```js
+import Component from 'vue-class-component'
+import { Component, Vue } from 'vue-property-decorator' // 从它引用就可以
+```
+
+[vue-property-decorator](https://github.com/kaorun343/vue-property-decorator) 是在 `vue-class-component` 上增强了更多的结合 `Vue` 特性的装饰器，新增了这 7 个装饰器：
+
+- `@Emit`
+- `@Inject`
+- `@Model`
+- `@Prop`
+- `@Provide`
+- `@Watch`
+- `@Component` (从 `vue-class-component` 继承)
