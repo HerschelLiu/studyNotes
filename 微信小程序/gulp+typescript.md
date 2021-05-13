@@ -612,6 +612,5 @@
 
 
 **注意**：
-
 	* 文件所在位置都是dist/，所以wxss引用的事dist/中的文件
 	* 公共组件在页面的` usingComponents`中起名叫`comp-xx`,只有本页使用的组件起名为`the-xx`
