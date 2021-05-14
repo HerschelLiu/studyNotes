@@ -39,9 +39,60 @@ export default class App extends Vue {
 }
 ```
 
-使用@Emit、@Inject、@Model、@Prop、@Provide、@Watch等装饰器,可以安装 `npm i -S vue-property-decorator`
+使用@Emit、@Inject、@Model、@Prop、@Provide、@Watch等装饰器,可以安装 `npm i -S vue-property-decorator`，**深度依赖了vue-class-component**
 
-如果想在项目中使用Vuex,可以安装 `npm install --save vuex-class`
+`vuex-module-decorators`TypeScriptES7装饰器，用于以声明方式创建Vuex模块
+
+```js
+  import {Component, Prop, Vue} from 'vue-property-decorator'
+   
+  @Component
+  export default class App extends Vue {
+   name:string = 'Simon Zhang'
+   
+   // computed
+   get MyName():string {
+   return `My name is ${this.name}`
+   }
+   
+   // methods
+   sayHello():void {
+   alert(`Hello ${this.name}`)
+   }
+   
+   mounted() {
+   this.sayHello();
+   }
+  }
+```
+
+  相当于
+
+  ```js
+  export default {
+   data () {
+   return {
+    name: 'Simon Zhang'
+   }
+   },
+   
+   mounted () {
+   this.sayHello()
+   },
+   
+   computed: {
+   MyName() {
+    return `My name is ${this.name}`
+   }
+   },
+   
+   methods: {
+   sayHello() {
+    alert(`Hello ${this.name}`)
+   },
+   }
+  }
+  ```
 
 ## 使用
 

@@ -120,3 +120,59 @@
 
 * vuedraggable：拖拽，页面中使用需要引用组件vuedraggable
 
+* vuex-module-decorators：TypeScriptES7装饰器，用于以声明方式创建Vuex模块
+
+* vue-class-component：提供了Vue、Component等
+
+* vue-property-decorator：深度依赖了vue-class-component，拓展出了更多操作符：@Prop、@Emit、@Inject、@Model、@Provide、@Watch
+
+  ```js
+  import {Component, Prop, Vue} from 'vue-property-decorator'
+   
+  @Component
+  export default class App extends Vue {
+   name:string = 'Simon Zhang'
+   
+   // computed
+   get MyName():string {
+   return `My name is ${this.name}`
+   }
+   
+   // methods
+   sayHello():void {
+   alert(`Hello ${this.name}`)
+   }
+   
+   mounted() {
+   this.sayHello();
+   }
+  }
+  ```
+
+  相当于
+
+  ```js
+  export default {
+   data () {
+   return {
+    name: 'Simon Zhang'
+   }
+   },
+   
+   mounted () {
+   this.sayHello()
+   },
+   
+   computed: {
+   MyName() {
+    return `My name is ${this.name}`
+   }
+   },
+   
+   methods: {
+   sayHello() {
+    alert(`Hello ${this.name}`)
+   },
+   }
+  }
+
