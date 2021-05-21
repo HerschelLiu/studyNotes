@@ -133,6 +133,10 @@
 
 * JSON to TS：将JSON对象转换为Typescript接口 
 
+* Local History：每次修改保存文件，都会在根目录生成一个`.history`目录，里面是修改的记录,可以修改历史文件的保存路径
+
+* Polacode: 生成代码截图。使用：F1-> 输入Polacode（会在代码右侧出现新标签页） -> 在左侧选中代码 -> 点击Polacode标签页中，图片下方的按钮保存图片
+
 ## 
 
 ## 颜色相关
@@ -141,7 +145,9 @@
 * **Bracket Pair Colorizer2** 每一对括号用不同颜色区别 （括号强迫症必备）
 * **Color Highlight**：在十六进制颜色值添加所代表的颜色的背景
 
-## Typescript
+## 摸鱼
+
+* Thief-Book：小说，支持在底部状态栏阅读
 
 ## 其他
 
@@ -220,11 +226,7 @@
 
 * codelf：变量命名神器
 
-* Local History：每次修改保存文件，都会在根目录生成一个`.history`目录，里面是修改的记录,可以修改历史文件的保存路径
-
 * Better Comments：编写更加人性化的注释，征程使用注释就好，不同样式会变色，比如todo
-
-* Polacode: 生成代码截图。使用：F1-> 输入Polacode（会在代码右侧出现新标签页） -> 在左侧选中代码 -> 点击Polacode标签页中，图片下方的按钮保存图片
 
 * any-rule: 正则插件
 
@@ -233,5 +235,4 @@
 * javascript Booster: 你有没有怀疑过你写的`JavaScript`代码？如何让自己的代码更专业？VSCode中的`JavaScript Booster`可以快速提升你的代码专业度。插件会帮助你在你写的不合理的地方显示黄色感叹号，单击黄色感叹号后，就会跟我们变成更好的代码。
 
   
-
 
