@@ -790,13 +790,27 @@ class NewRoute extends StatelessWidget {
 
 ### Navigator
 
+**注：类比小程序跳转方式：**
+
+* push/pushNamed-navigateTo
+
+* pop-navigateBack
+
+* replace/popAndPushNamed-redirectTo
+
+* pushNamedAndRemoveUntil: 在App里，有一个普遍存在的场景，即打开一个App之后，会出现App的启动页，然后进入欢迎页面，最后才是首页。在这种情况下，用户选择返回，是应该从首页退出App的，而不是再次倒退到欢迎页和启动页。这个时候，pushNamedAndRemoveUntil方法就派上用场了。我们可以通过以下的方式调用，让整个路由栈里只存在一个界面，调用代码如下：
+
+  `Navigator.of(context).pushNamedAndRemoveUntil('/homepage',(Route<dynamic> route)=>false);`
+
+***
+
 * `Future push(BuildContext context, Route route)`: 入栈（打开新的页面）
 
 * `bool pop(BuildContext context, [ result ])`: 出栈（关闭页面），`result`为页面关闭时返回给上一个页面的数据。又打开此页面的push方法的返回值为result（**非命名路由传值方式**），此方式点击自带返回不能传值给上一页，只能在使用pop()方法才能。
 
   ```dart
   // A页面 
-  var result = await Navigator.push(context, MaterialPageRoure(builder: (context) => NewRoute(text: '我是传入的参数')))
+  var result = await Navigator.push(context, MaterialPageRoute(builder: (context) => NewRoute(text: '我是传入的参数')))
   
   // B页面
   class NewRoute extends StatelessWidget {
@@ -832,6 +846,22 @@ class NewRoute extends StatelessWidget {
   
 
 * `Navigator.replace`,`Navigator.popUntil`等
+
+#### MaterialPageRoute
+
+```dart
+MaterialPageRoute({
+  WidgetBuilder builder,
+  RouteSettings settings,
+  bool maintainState = true,
+  bool fullscreenDialog = false,
+})
+```
+
+- `builder` 是一个WidgetBuilder类型的回调函数，它的作用是构建路由页面的具体内容，返回值是一个widget。我们通常要实现此回调，返回新路由的实例。
+- `settings` 包含路由的配置信息，如路由名称、是否初始路由（首页）。
+- `maintainState`：默认情况下，当入栈一个新路由时，原来的路由仍然会被保存在内存中，如果想在路由没用的时候释放其所占用的所有资源，可以设置`maintainState`为false。
+- `fullscreenDialog`表示新的路由页面是否是一个全屏的模态对话框，在iOS中，如果`fullscreenDialog`为`true`，新页面将会从屏幕底部滑入（而不是水平方向）。
 
 ### 命名路由
 
