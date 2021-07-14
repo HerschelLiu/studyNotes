@@ -96,6 +96,52 @@ Flutter中组件状态的改变，一定要配合使用setState，通过调用se
 
 **不同**：StatelessWidget时通过build直接构建的，StatefulWidget没有build方法，耳式通过createState创建一个state对象
 
+### TextField(文本输入框)
+
+```dart
+TextEditingController xxxController = TextEditingController();
+FocusNode xxxFocusNode = FocusNode();
+
+const TextField({
+    Key key,
+    this.controller,    //编辑框的控制器，跟文本框的交互一般都通过该属性完成，如果不创建的话默认会自动创建,controller: xxxController
+    this.focusNode,  //用于管理焦点,focusNode: xxxFocusNode
+    this.decoration = const InputDecoration(),   //输入框的装饰器，用来修改外观
+    TextInputType keyboardType,   //设置输入类型，不同的输入类型键盘不一样
+    this.textInputAction,   //用于控制键盘动作（一般位于右下角，默认是完成）
+    this.textCapitalization = TextCapitalization.none,
+    this.style,    //输入的文本样式
+    this.textAlign = TextAlign.start,   //输入的文本位置
+    this.textDirection,    //输入的文字排列方向，一般不会修改这个属性
+    this.autofocus = false,   //是否自动获取焦点
+    this.obscureText = false,   //是否隐藏输入的文字，一般用在密码输入框中
+    this.autocorrect = true,   //是否自动校验
+    this.maxLines = 1,   //最大行
+    this.maxLength,   //能输入的最大字符个数
+    this.maxLengthEnforced = true,  //配合maxLength一起使用，在达到最大长度时是否阻止输入
+    this.onChanged,  //输入文本发生变化时的回调
+    this.onEditingComplete,   //点击键盘完成按钮时触发的回调，该回调没有参数，(){}
+    this.onSubmitted,  //同样是点击键盘完成按钮时触发的回调，该回调有参数，参数即为当前输入框中的值。(String){}
+    this.inputFormatters,   //对输入文本的校验
+    this.enabled,    //输入框是否可用
+    this.cursorWidth = 2.0,  //光标的宽度
+    this.cursorRadius,  //光标的圆角
+    this.cursorColor,  //光标的颜色
+    this.keyboardAppearance,
+    this.scrollPadding = const EdgeInsets.all(20.0),
+    this.dragStartBehavior = DragStartBehavior.down,
+    this.enableInteractiveSelection,
+    this.onTap,    //点击输入框时的回调(){}
+    this.buildCounter,
+  })
+```
+
+**注：**
+
+1. `xxxController.value.text`输入框内的值
+2. `xxxController.clear()`清空输入框内容
+3. `xxxFocusNode.unfocus()`失去焦点
+
 ## Flutter生命周期
 
 创建（插入视图树）、更新（在视图中）、销毁（从视图树中移除）
@@ -798,9 +844,32 @@ class NewRoute extends StatelessWidget {
 
 * replace/popAndPushNamed-redirectTo
 
-* pushNamedAndRemoveUntil: 在App里，有一个普遍存在的场景，即打开一个App之后，会出现App的启动页，然后进入欢迎页面，最后才是首页。在这种情况下，用户选择返回，是应该从首页退出App的，而不是再次倒退到欢迎页和启动页。这个时候，pushNamedAndRemoveUntil方法就派上用场了。我们可以通过以下的方式调用，让整个路由栈里只存在一个界面，调用代码如下：
+* pushAndRemoveUntil/pushNamedAndRemoveUntil: 
 
-  `Navigator.of(context).pushNamedAndRemoveUntil('/homepage',(Route<dynamic> route)=>false);`
+  * reLaunch：在App里，有一个普遍存在的场景，即打开一个App之后，会出现App的启动页，然后进入欢迎页面，最后才是首页。在这种情况下，用户选择返回，是应该从首页退出App的，而不是再次倒退到欢迎页和启动页。这个时候，pushNamedAndRemoveUntil方法就派上用场了。我们可以通过以下的方式调用，让整个路由栈里只存在一个界面，调用代码如下：
+
+    `Navigator.of(context).pushNamedAndRemoveUntil('/homepage',((Route route) => false route)=>false);`(Route route) => false，这样能保证把之前所有的路由都进行删除，然后才push新的路由。（判断Until所结束的时机，如果为false的话，就会一直继续执行Remove的操作，直到为true的时候，停止Remove操作，然后才执行push操作）
+
+  * 如果想在弹出新路由之前，删除路由栈中的部分路由。利用ModalRoute.withName(name)，来执行判断，可以看下面的源码，当所传的name跟堆栈中的路由所定义的时候，会返回true值，不匹配的话，则返回false。例：[screen1, sceen2,screen3] => [screen1, screen4]
+
+    ```dart
+    Navigator.of(context).pushNamedAndRemoveUntil('/screen4',ModalRoute.withName('/screen1'));
+     
+     //ModalRoute.withName的源码
+       static RoutePredicate withName(String name) {
+        return (Route<dynamic> route) {
+          return !route.willHandlePopInternally
+              && route is ModalRoute
+              && route.settings.name == name;
+        };
+      }
+    
+    ————————————————
+    版权声明：本文为CSDN博主「入魔的冬瓜」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    原文链接：https://blog.csdn.net/weixin_34999505/article/details/86760606
+    ```
+
+    
 
 ***
 
@@ -876,7 +945,15 @@ MaterialApp(
   routes:{
    "new_page":(context) => NewRoute(),
    "/":(context) => MyHomePage(title: 'Flutter Demo Home Page'), //注册首页路由
-  } 
+  },
+  // 当没有路由可以匹配
+  onUnknownRoute: (RouteSettings setting) {
+    String name = setting.name;
+    print("onUnknownRoute:$name");
+    return new MaterialPageRoute(builder: (context) {
+      return new NotFoundPage();
+    });
+  },
 );
 ```
 
@@ -1067,6 +1144,46 @@ class NewRoute extends StatelessWidget {
 >
 > 跳页直接使用命名路由的方法，即可，settings.name获取跳页时传入的路由名
 
+### 自定义路由
+
+如果想自定义页面的进场和出场动画，那么需要使用PageRouteBuilder来创建路由。
+PageRouteBuilder是主要的部分，一个是“pageBuilder”，用来创建所要跳转到的页面，另一个是“transitionsBuilder”，也就是我们可以自定义的转场效果。
+
+```dart
+PageRouteBuilder({
+    RouteSettings settings,
+    @required this.pageBuilder,//构造页面
+    this.transitionsBuilder = _defaultTransitionsBuilder,//创建转场动画
+    this.transitionDuration = const Duration(milliseconds: 300),//转场动画的持续时间
+    this.opaque = true,//是否是透明的
+    this.barrierDismissible = false,//举个例子，比如AlertDialog也是利用PageRouteBuilder进行创建的，barrierDismissible若为false，点击对话框周围，对话框不会关闭；若为true，点击对话框周围，对话框自动关闭。
+    this.barrierColor,
+    this.barrierLabel,
+    this.maintainState = true,
+})
+```
+
+```dart
+// 自定义跳转动画
+Navigator.push(
+  context,
+  PageRouteBuilder(
+    opaque: false,
+    pageBuilder: (BuildContext context, _, __) {
+      return new HomePage();
+    },
+    transitionsBuilder:
+    (___, Animation<double> animation, ____, Widget child) {
+      return FadeTransition(
+        opacity: animation,
+        child: RotationTransition(
+          turns: Tween<double>(begin: 0.5, end: 1.0).animate(animation),
+          child: child,
+        ),
+      );
+    }));
+```
+
 ## 包管理及资源管理
 
 Flutter使用`yaml`进行包管理。默认配置文件为`pubspec.yaml`
@@ -1178,6 +1295,10 @@ new Image.asset('icons/heart.png', package: 'my_icons')
 * android：`.../android/app/src/main/res/drawable/launch_background.xml`,通过自定义drawable来实现自定义启动界面（你也可以直接换一张图片）。
 * IOS：`.../ios/Runner/Assets.xcassets/LaunchImage.imageset`,拖入图片，并命名为`LaunchImage.png`、`LaunchImage@2x.png`、`LaunchImage@3x.png`。 如果你使用不同的文件名，那您还必须更新同一目录中的`Contents.json`文件，图片的具体尺寸可以查看苹果官方的标准。
 
+## 状态管理
+
+第三方pkg：provider，scoped_model, flutter_redux
+
 ## 调试
 
 ### debugger()
@@ -1284,17 +1405,11 @@ response = await dio.post("/info", data: formData)
 
 1. 最好安装Android Studio，仅安装Android SDK会有很多问题
 
-2. [pub包仓库](https://pub.dev/)
-
-3. json_model：将json转为dart能使用的`flutter packages pub run json_model`
-
-4. shared_preferences：数据持久化
-
 5. padding和margin使用`EdgeInsets.`
 
 6. 颜色使用`Color.fromRGBO()`即rgba
 
-7. 自定义appbar
+4. 自定义appbar
 
    ```dart
     Widget build(BuildContext context) {
@@ -1307,4 +1422,310 @@ response = await dio.post("/info", data: formData)
      }
    ```
 
-   
+5. Dart依赖包官网：
+
+* [国外网址](https://links.jianshu.com/go?to=https%3A%2F%2Fpub.dev)
+* [国内网址](https://links.jianshu.com/go?to=https%3A%2F%2Fpub.flutter-io.cn)
+
+6. 依赖包：
+
+* json_model：将json转为dart能使用的`flutter packages pub run json_model`
+* shared_preferences：数据持久化
+* device_info：设备信息
+* fluro：路由框架
+* provider，scoped_model, flutter_redux, fish_redux：状态管理
+* fluttertoast：toast控件
+* charts_flutter：图表库
+* connectivity：网络监听
+* table_calendar：日历组件
+* webview_flutter：官方webview
+* flutter_webview_plugin：第三方webvie
+* flutter_screenutil：UI适配
+* Flutter_keyboard_size: 可帮助获取有关 - 键盘高度、是否打开、设置 bool 值是否屏幕小等信息。
+
+## 依赖包用法
+
+### flutter_screenutil
+
+[flutter_screenutil](https://github.com/OpenFlutter/flutter_screenutil/blob/master/README_CN.md)
+
+### 属性
+
+| 属性        | 类型              | 默认值         | 描述                                                         |
+| ----------- | ----------------- | -------------- | ------------------------------------------------------------ |
+| designSize  | Size              | Size(360, 690) | 设计稿中设备的尺寸(单位随意,建议dp,但在使用过程中必须保持一致) |
+| builder     | Widget Function() | Container()    | 一般返回一个MaterialApp类型的Function()                      |
+| orientation | Orientation       | portrait       | 屏幕方向                                                     |
+
+**第一种**
+
+```dart
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    //填入设计稿中设备的屏幕尺寸,单位dp
+    return ScreenUtilInit(
+      designSize: Size(360, 690),
+      builder: () => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Flutter_ScreenUtil',
+        theme: ThemeData(
+                  primarySwatch: Colors.blue,
+                  //要支持下面这个需要使用第一种初始化方式
+                  textTheme: TextTheme(
+                    button: TextStyle(fontSize: 45.sp)
+                  ),
+                ),
+        home: HomePage(title: 'FlutterScreenUtil Demo'),
+      ),
+    );
+  }
+}
+```
+
+**第二种**：不支持在MaterialApp的theme的textTheme中使用字体适配
+
+**ScreenUtil.init只需在home或者根路由（即第一个flutter页面）中调用一次即可。**
+
+```dart
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter_ScreenUtil',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: HomePage(title: 'FlutterScreenUtil Demo'),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  Widget build(BuildContext context) {
+    //设置尺寸（填写设计中设备的屏幕尺寸）如果设计基于360dp * 690dp的屏幕
+    ScreenUtil.init(
+        BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width,
+            maxHeight: MediaQuery.of(context).size.height),
+        designSize: Size(360, 690),
+        orientation: Orientation.portrait);
+    return Scaffold();
+  }
+}
+```
+
+* 宽：xxx.w(dart sdk>=2.6)/ScreenUtil().setWidth(xxx)
+* 高：xxx.h(dart sdk>=2.6)/ScreenUtil().setHeight(xxx)
+* 字号：xxx.sp(dart sdk>=2.6)/ScreenUtil().setSp(xxx)
+
+```dart
+// API
+    ScreenUtil().setWidth(540)  (sdk>=2.6 : 540.w)   //根据屏幕宽度适配尺寸
+    ScreenUtil().setHeight(200) (sdk>=2.6 : 200.h)   //根据屏幕高度适配尺寸(一般根据宽度适配即可)
+    ScreenUtil().radius(200)    (sdk>=2.6 : 200.r)   //根据宽度或高度中的较小者进行调整
+    ScreenUtil().setSp(24)      (sdk>=2.6 : 24.sp)   //适配字体
+
+    ScreenUtil.pixelRatio       //设备的像素密度
+    ScreenUtil.screenWidth   (sdk>=2.6 : 1.sw)   //设备宽度
+    ScreenUtil.screenHeight  (sdk>=2.6 : 1.sh)   //设备高度
+    ScreenUtil.bottomBarHeight  //底部安全区距离，适用于全面屏下面有按键的
+    ScreenUtil.statusBarHeight  //状态栏高度 刘海屏会更高
+    ScreenUtil.textScaleFactor //系统字体缩放比例
+
+    ScreenUtil().scaleWidth  // 实际宽度设计稿宽度的比例
+    ScreenUtil().scaleHeight // 实际高度与设计稿高度度的比例
+
+    ScreenUtil().orientation  //屏幕方向
+
+    0.2.sw  //屏幕宽度的0.2倍
+    0.5.sh  //屏幕高度的50%
+```
+
+### 第三方路由管理框架fluro
+
+[fluro](https://link.zhihu.com/?target=https%3A//pub.flutter-io.cn/packages/fluro)是flutter生态中比较优秀的一个路由管理框架，包含以下特点
+
+- 简单的路由导航
+- 函数处理程序（映射到函数而不是路由）
+- 通配符参数匹配
+- 内置常见转换
+- 简单的自定义过渡创建
+
+#### 开始安装
+
+打开项目根路径中的`pubspec.yaml`文件，并在`dependencies`下面增加`fluro`的依赖：`fluro: ^1.6.0`，后面的版本号根据fluro最新版本填入。然后运行`flutter pub get`。至此，安装就完成了，可以直接在代码中引入并使用。
+
+#### 使用
+
+在lib目录建立routers文件夹，同时在里面新建三个文件：application.dart、router_handler.dart、routers.dart。(second_page.dart为跳转页面)
+
+**router_handler.dart处理路由传参：**
+
+```dart
+import 'package:fluro/fluro.dart';
+import 'package:flutter/material.dart';
+
+//页面
+import '../pages/second_page.dart';
+
+// 一个页面一个Handler
+Handler xxxPageHandler = Handler(
+  handlerFunc: (BuildContext context, Map<String,List<String>> params){
+    String goodsId = params['goodsId'].first;
+    return SecondPage(goodsId);
+  }
+);
+
+```
+
+**routers.dart是所有路由集合：**
+
+```dart
+import 'package:fluro/fluro.dart';
+import 'package:flutter/material.dart';
+import 'router_handler.dart';
+
+class Routes {
+  //根路径
+  static String root = '/';
+  static String xxxPage = '/secondPage';
+  
+  //配置路由对象，所有的路由都在这里面
+  static void configureRoutes(FluroRouter router){
+    router.define(xxxPage, handler: secondPageHandler);
+  }
+  
+  // 对参数进行encode，解决参数中有特殊字符，影响fluro路由匹配
+  static Future navigateTo(BuildContext context, String path, {Map<String, dynamic> params, TransitionType transition = TransitionType.native}) {
+    String query =  "";
+    if (params != null) {
+      int index = 0;
+      for (var key in params.keys) {
+        var value = Uri.encodeComponent(params[key]);
+        if (index == 0) {
+          query = "?";
+        } else {
+          query = query + "\&";
+        }
+        query += "$key=$value";
+        index++;
+      }
+    }
+    print('我是navigateTo传递的参数：$query');
+
+    path = path + query;
+    return router.navigateTo(context, path, transition:transition);
+  }
+}
+```
+
+**在进行路由的总体配置时，还需要处理不存在的路径情况**，即使用空页面或者默认页面进行代替。同时，需要注意的是应用的首页一定要用“/”进行配置。 为了方便使用，还需要把Router进行静态化，这样在任何一个页面都可以直接调用它。如下所示，是application.dart文件的示例代码。
+
+```dart
+import 'package:fluro/fluro.dart';
+
+class Application{
+  static FluroRouter router;
+}
+```
+
+```dart
+import 'package:fluro/fluro.dart';
+import 'package:flutter_demo/routes.dart';
+import 'application.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final router = FluroRouter();
+    //给routers.dart里面的传递FluroRouter传递router实例对象
+    Routes.configureRoutes(router);
+    //给Application的router赋值router实例对象
+    Application.router = router;
+    
+    return MaterialApp(
+      title: 'Demo App',
+      onGenerateRoute: Application.router.generator,
+    );
+  }
+}
+```
+
+**跳转页面**
+
+不传参
+
+```dart
+Routes.navigateTo(
+  context,
+  Routes.setting, //routers.dart中配置的路由名
+);
+```
+
+传参
+
+```dart
+String title = '我是标题哈哈哈';
+String url = 'https://www.baidu.com/';
+Routes.navigateTo(
+  context,
+  Routes.webView, //routers.dart中配置的路由名
+  params: {
+    'title': title,
+    'url': url,
+  },
+).then((result) {
+  // 通过pop回传的值，边缘侧滑返回则不通过此处传值
+});
+```
+
+**注意：**如果字符串中包含中文就需要使用Uri.encodeComponent进行转义
+
+### shared_preferences
+
+```dart
+SharedPreferences prefs = await SharedPreferences.getInstance();
+// 获取就是getXxx
+// 增/改
+prefs.setString(key, value)
+prefs.setBool(key, value)
+prefs.setDouble(key, value)
+prefs.setInt(key, value)
+prefs.setStringList(key, value)
+  
+// 删
+prefs.remove(key); //删除指定键
+prefs.clear();//清空键值对
+```
+
+### Flutter_keyboard_size
+
+`MediaQuery.of(context).viewInsets.bottom` 获取它的高度,但是，对于复杂的小部件树，它不起作用。因此，每次我们必须将键盘大小调整为小部件树。
+
+**用法**
+
+```dart
+KeyboardSizeProvider(
+      smallSize: 500.0, // smallSize属性是可选的，默认值为400.0
+      child: Scaffold(
+
+```
+
