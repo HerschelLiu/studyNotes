@@ -112,6 +112,7 @@
         "tsc": "tsc -w",
         "gulp": "gulp",
         "lint": "eslint --ext .ts,.wxml miniprogram",
+        // concurrently同时运行多个服务
         "dev": "gulp clear && concurrently \"npm run tsc\" \"npm run gulp\"",
         "build:tsc": "node ./node_modules/typescript/lib/tsc.js",
         "build:gulp": "gulp wxml json wxss wxs scss js png version && gulp mini",
@@ -122,7 +123,7 @@
         "@vue/eslint-config-standard": "^4.0.0",
         "@vue/eslint-config-typescript": "^4.0.0",
         "babel-eslint": "^10.0.3",
-        "concurrently": "^5.3.0",
+        "concurrently": "^5.3.0", // 同时运行多个服务
         "eslint": "^6.5.1",
         "eslint-plugin-vue": "^5.2.3",
         "gulp": "^4.0.2",
@@ -521,52 +522,52 @@
 |- 项目
    |- miniprogram
       |- api
-		|- xx.ts
-		|- components
-		   |- xx
-		      |- index.json
-		      |- index.ts
-		      |- index.wxml
-               |- index.wxss
-		|- images
-		   |- ...
-		|- pages
-		   |- xx
-		      |- xx.json
-		      |- xx.ts
-		      |- xx.wxml
-               |- xx.wxss
-               |- components
-                  |- xx
-		            |- index.json
-		            |- index.ts
-		            |- index.wxml
-		            |- index.wxss
-         |- style
-            |- page
-               |- _xx.scss
-            |- components
-               |- _xx.scss
-            |- _style.scss
-            |- page.scss
-            |- components.scss
-         |- 子包
-            |- pages
-               |- xx
-                  |- xx.json
-                  |- xx.ts
-                  |- xx.wxml
-                  |- xx.wxss
-                  |- components
-                     |- xx
-                        |- index.json
-                        |- index.ts
-                        |- index.wxml
-                        |- index.wxss
-             |- style
-                |- page
-                   |- _xx.scss
-                |- page.scss
+				|- xx.ts
+      |- components
+         |- xx
+            |- index.json
+            |- index.ts
+            |- index.wxml
+            |- index.wxss
+      |- images
+         |- ...
+      |- pages
+         |- xx
+            |- xx.json
+            |- xx.ts
+            |- xx.wxml
+                 |- xx.wxss
+                 |- components
+                    |- xx
+                  |- index.json
+                  |- index.ts
+                  |- index.wxml
+                  |- index.wxss
+           |- style
+              |- page
+                 |- _xx.scss
+              |- components
+                 |- _xx.scss
+              |- _style.scss
+              |- page.scss
+              |- components.scss
+           |- 子包
+              |- pages
+                 |- xx
+                    |- xx.json
+                    |- xx.ts
+                    |- xx.wxml
+                    |- xx.wxss
+                    |- components
+                       |- xx
+                          |- index.json
+                          |- index.ts
+                          |- index.wxml
+                          |- index.wxss
+               |- style
+                  |- page
+                     |- _xx.scss
+                  |- page.scss
 	|- node_modules
 	|- .eslintignore
 	|- .eslintrc.js
@@ -612,5 +613,142 @@
 
 
 **注意**：
-	* 文件所在位置都是dist/，所以wxss引用的事dist/中的文件
-	* 公共组件在页面的` usingComponents`中起名叫`comp-xx`,只有本页使用的组件起名为`the-xx`
+
+ * 文件所在位置都是dist/，所以wxss引用的事dist/中的文件
+ * `公共组件在页面的`` usingComponents`中起名叫comp-xx,只有本页使用的组件起名为`the-xx`
+ * `typings`文件夹放在`miniprogram`中，将`wx`文件夹放在`typings/`删除`types`文件夹
+ * `typings/wx/index.d.ts`只保留`declare namespace WechatMiniprogram`部分
+ * `tsconfig.json`文件中，1. 需要加上`"types": ["node" ]`(types用于指定需要包含的模块，只有在这里列出的模块的声明文件才会被加载),不然编译会报错；2. `typeRoots`用来指定声明文件或文件夹的路径列表，如果指定了此项，则只有在这里列出的声明文件才会被加载,如果不用可以去掉（有此项编译未见报错）；3.加上`"include": ["./miniprogram/**/*.ts"]`可以指定要编译的路径列表；4.加上`"exclude": ["node_modules", "typings"]`表示要排除的，不编译的文件，它也可以指定一个列表，规则和include一样，可以是文件可以是文件夹，可以是相对路径或绝对路径，可以使用通配符
+ * `gulpfile.js`使用`require`引入，不要使用`import`
+
+自己尝试出的代码
+
+```js
+// gulpfile
+const { task, src, dest, watch, series } = require('gulp')
+const gulpStylus = require('gulp-stylus')
+const htmlmin = require('gulp-htmlmin')
+const clean = require('gulp-clean')
+const minify = require('gulp-minify')
+const stylus = require('stylus')
+
+task('clear', done => {
+  src('dist/', { read: false, allowEmpty: true })
+    .pipe(clean())
+  done()
+})
+
+task('npm', () => {
+  return src('./miniprogram/**/miniprogram_npm/**')
+    .pipe(dest('dist'))
+})
+
+task('wxml', () => {
+  return src(['./miniprogram/**/*.wxml', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(htmlmin({
+      removeComments: true,
+      collapseWhitespace: true,
+      keepClosingSlash: true,
+      caseSensitive: true
+    }))
+    .pipe(dest('dist'))
+})
+
+task('json', () => 
+  src(['./miniprogram/**/*.json', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(dest('dist'))
+)
+
+task('js', () => {
+  src(['./miniprogram/**/*.js', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(dest('dist'))
+})
+
+task('wxss', () => {
+  src(['./miniprogram/**/*.wxss', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(dest('dist'))
+})
+
+task('wxs', () => {
+  src(['./miniprogram/**/*.wxs', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(dest('dist'))
+})
+
+task('img', () => {
+  src(['./miniprogram/**/*.png', './miniprogram/**/*.jpg', './miniprogram/**/*.jpeg', './miniprogram/**/*.gif', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(dest('dist'))
+})
+
+task('stylus', () => {
+  src(['./miniprogram/**/*.styl', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(stylus({ compress: true }))
+    .pipe(dest('dist'))
+})
+
+task('mini', () => {
+  return src(['./dist/**/*.js', '!./miniprogram/**/miniprogram_npm/**'])
+    .pipe(minify({
+      ext: {
+        min: [/(.*)\.js$/, '$1.js']
+      },
+      mangle: false,
+      noSource: true,
+      exclude: ['tasks']
+    }))
+    .pipe(dest('dist'))
+})
+
+task('watch', () => {
+  watch('./miniprogram/**/miniprogram_npm/**', series('npm'))
+  watch(['./miniprogram/**/*.wxml', '!./miniprogram/**/miniprogram_npm/**'], series('wxml'))
+  watch(['./miniprogram/**/*.json', '!./miniprogram/**/miniprogram_npm/**'], series('json'))
+  watch(['./miniprogram/**/*.json', '!./miniprogram/**/miniprogram_npm/**'], series('json'))
+  watch(['./miniprogram/**/*.js', '!./miniprogram/**/miniprogram_npm/**'], series('js'))
+  watch(['./miniprogram/**/*.wxss', '!./miniprogram/**/miniprogram_npm/**'], series('wxss'))
+  watch(['./miniprogram/**/*.wxs', '!./miniprogram/**/miniprogram_npm/**'], series('wxs'))
+  watch(['./miniprogram/**/*.png', './miniprogram/**/*.jpg', './miniprogram/**/*.jpeg', './miniprogram/**/*.gif', '!./miniprogram/**/miniprogram_npm/**'], series('img'))
+  watch(['./miniprogram/**/*.styl', '!./miniprogram/**/miniprogram_npm/**'], series('stylus'))
+})
+
+task('default', series(['npm', 'wxml', 'json', 'js', 'wxss', 'wxs', 'img', 'stylus'], 'watch'))
+
+```
+
+```json
+// tsconfig.json
+...
+"compilerOptions": {
+  ...
+  "types": [
+    "node"
+  ]
+  ...
+},
+"include": [
+  "./miniprogram/**/*.ts"
+],
+"exclude": [
+  "node_modules",
+  "typings"
+]
+...
+```
+
+```json
+// package.json
+{
+  ...
+  "scripts": {
+    ...
+    "gulp": "gulp",
+    "tsc": "tsc -w", // -wd代表监听
+    "dev": "gulp clear && concurrently \"npm run tsc\" \"npm run gulp\"",// 直接运运行npm run gulp会运行gulp file.js中所有
+    "build:tsc": "node ./node_modules/typescript/lib/tsc.js",
+    "build:gulp": "gulp npm wxml json wxss wxs stylus js img && gulp mini",// 选择编译gulp file.js中的某些任务
+    "build": "gulp clear && npm run build:tsc && npm run build:gulp"
+    ...
+  },
+  ...
+}
+```
+
