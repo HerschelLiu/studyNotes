@@ -52,17 +52,17 @@ export default class App extends Vue {
    
    // computed
    get MyName():string {
-   return `My name is ${this.name}`
+   	return `My name is ${this.name}`
    }
    
    // methods
    sayHello():void {
-   alert(`Hello ${this.name}`)
+   	alert(`Hello ${this.name}`)
    }
    
    mounted() {
-   this.sayHello();
-   }
+     this.sayHello();
+    }
   }
 ```
 
@@ -71,25 +71,25 @@ export default class App extends Vue {
   ```js
   export default {
    data () {
-   return {
-    name: 'Simon Zhang'
-   }
+     return {
+      name: 'Simon Zhang'
+     }
    },
    
    mounted () {
-   this.sayHello()
+   	this.sayHello()
    },
    
    computed: {
-   MyName() {
-    return `My name is ${this.name}`
-   }
+     MyName() {
+      return `My name is ${this.name}`
+     }
    },
    
    methods: {
-   sayHello() {
-    alert(`Hello ${this.name}`)
-   },
+     sayHello() {
+      alert(`Hello ${this.name}`)
+     },
    }
   }
   ```
