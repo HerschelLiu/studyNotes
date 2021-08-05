@@ -1,3 +1,5 @@
+[toc]
+
 ## 准备
 
 `vue create xxx`选择ts和TSLint
@@ -32,7 +34,7 @@ export default class App extends Vue {
     return 'computed ' + this.msg
   }
 
-  // 方法method5
+  // 方法methods
   greet () {
     alert('greeting: ' + this.msg)
   }
@@ -183,3 +185,19 @@ import { Component, Vue } from 'vue-property-decorator' // 从它引用就可以
 - `@Provide`
 - `@Watch`
 - `@Component` (从 `vue-class-component` 继承)
+
+## 错误及解决
+
+#### Parsing error: Using the export keyword between a decorator and a class is not allowed. Please use `export @dec class` instead.
+
+.eslintrc.js 中增加如下配置
+
+```json
+parserOptions: {
+  parser: 'babel-eslint',
++  ecmaFeatures: {
++    "legacyDecorators": true // 主要是这个选项
++  }
+},
+```
+
