@@ -41,7 +41,7 @@ export default class App extends Vue {
 }
 ```
 
-使用@Emit、@Inject、@Model、@Prop、@Provide、@Watch等装饰器,可以安装 `npm i -S vue-property-decorator`，**深度依赖了vue-class-component**
+使用@Emit、@Inject、@Model、@Prop、@Provide、@Watch等装饰器,可以安装 `npm i -S vue-property-decorator`，**深度依赖了vue-class-component**,所以安装`vue-property-decorator`就要安装`vue-class-component`,然后单独饮用`vue-property-decorator`即可
 
 `vuex-module-decorators`TypeScriptES7装饰器，用于以声明方式创建Vuex模块
 
@@ -188,6 +188,8 @@ import { Component, Vue } from 'vue-property-decorator' // 从它引用就可以
 
 ## 错误及解决
 
+### 单独使用装饰器出现的错误
+
 #### Parsing error: Using the export keyword between a decorator and a class is not allowed. Please use `export @dec class` instead.
 
 .eslintrc.js 中增加如下配置
@@ -199,5 +201,19 @@ parserOptions: {
 +    "legacyDecorators": true // 主要是这个选项
 +  }
 },
+```
+
+#### Missing class properties transform.
+
+安装`@babel/plugin-proposal-class-properties`和`"@babel/plugin-proposal-decorators"`
+
+.babelrc.js 中增加如下配置
+
+```json
+"plugins": [
+  ...
+  ["@babel/plugin-proposal-decorators", { "legacy": true }],
+  "@babel/plugin-proposal-class-properties"
+]
 ```
 
