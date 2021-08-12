@@ -1,0 +1,37 @@
+<view class="components-audio-player custom-audio-player-class">
+  <!-- 播放按钮 start -->
+  <view class="play-btn" bindtap="handleTogglePlay">
+    <slot wx:if="{{ customPlayBtn }}" name="playBtn" />
+    <view wx:else class="play-btn">
+      <comp-image wx:if="{{ playStatus === 'play' }}" class="img" src="{{ pauseBtnImg }}" />
+      <comp-image wx:else class="img" src="{{ playBtnImg }}" />
+    </view>
+  </view>
+  <view wx:if="{{ showTime }}" class="time">{{ currentTimeStr }}/{{ durationStr }}</view>
+  <!-- 播放按钮 end -->
+
+  <!-- 进度条 start -->
+  <slot wx:if="{{ customProgress }}" name="progress" />
+  <view wx:if="{{ showProgress && !customProgress }}" class="progress-box">
+    <progress
+      class="progress"
+      percent="{{ percent }}"
+      stroke-width="2"
+      activeColor="#b1bfb4"
+      backgroundColor="#D5E6D9"
+    />
+    <movable-area wx:if="{{ showProgressBtn }}" class="movable-area">
+      <movable-view disabled="{{ duration <= 0 && movable }}" x="{{ percent }}" direction="horizontal" bindchange="handleProgressBtnMove" bindtouchend="handleProgressBtnTouchend">
+        <view class="progress-btn" />
+      </movable-view>
+    </movable-area>
+  </view>
+  <!-- 进度条 end -->
+
+  <!-- 静音按键 start -->
+  <block wx:if="{{ muteImg }}">
+    <comp-image wx:if="{{ isMute }}" class="mute" src="{{ muteImg }}" bindtap="handleToggleMute" />
+    <comp-image wx:else class="mute" src="{{ voiceImg }}" bindtap="handleToggleMute" />
+  </block>
+  <!-- 静音按键 end -->
+</view>

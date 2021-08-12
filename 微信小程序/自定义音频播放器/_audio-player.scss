@@ -1,0 +1,55 @@
+@import '../variable';
+@import '../mixin';
+
+.components-audio-player {
+  @extend .flex-row;
+  align-items: center;
+  justify-content: space-between;
+
+  .img {
+    @extend .block;
+    @extend .width-height;
+  }
+
+  .play-btn {
+    width: 88rpx;
+    height: 88rpx;
+  }
+
+  .time {
+    width: 140rpx;
+    text-align: center;
+    font-size: 26rpx;
+    color: $light-text;
+  }
+
+  .progress-box {
+    @include position(relative);
+
+    .progress {
+      width: 200rpx;
+      border-radius: 3rpx;
+    }
+
+    .movable-area {
+      @include position(absolute, -18rpx, 50%);
+      transform: translateY(-50%);
+      width: calc(100% + 18rpx);
+      height: 36rpx;
+
+      .progress-btn {
+        width: 36rpx;
+        height: 36rpx;
+        background: $white;
+        border-radius: 50%;
+        box-shadow: 0 0 8rpx 0 rgba(5, 101, 29, 0.2);
+      }
+    }
+  }
+
+  .mute {
+    @extend .block;
+    width: 40rpx;
+    height: 40rpx;
+  }
+}
