@@ -21,7 +21,7 @@
       backgroundColor="#D5E6D9"
     />
     <movable-area wx:if="{{ showProgressBtn }}" class="movable-area">
-      <movable-view disabled="{{ duration <= 0 && movable }}" x="{{ percent }}" direction="horizontal" bindchange="handleProgressBtnMove" bindtouchend="handleProgressBtnTouchend">
+      <movable-view disabled="{{ duration <= 0 && movable }}" x="{{ percent }}" direction="horizontal" bindchange="handleProgressBtnMove" bindtouchend="handleProgressBtnTouchend" bindtouchcancel="handleProgressBtnTouchend">
         <view class="progress-btn" />
       </movable-view>
     </movable-area>

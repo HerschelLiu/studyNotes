@@ -107,9 +107,11 @@ Component({
      * 播放进度条百分比
      */
     'currentTime': function(data: number) {
-      this.setData({
-        percent: data / this.data.duration * 100
-      })
+      if (!isNaN(data)) {
+        this.setData({
+          percent: data / this.data.duration * 100
+        })
+      }
     }
   },
 
@@ -166,8 +168,7 @@ Component({
         wx.nextTick(() => {
           this.setData({
             currentTimeStr: '00:00',
-            currentTime: 0,
-            percent: 0
+            currentTime: 0
           })
         })
       })
@@ -233,7 +234,9 @@ Component({
      * 进度条按钮移动
      */
     handleProgressBtnMove(e: any) {
-      if (this.data.innerAudioContext) {
+      if (this.data.innerAudioContext && e.detail.source === 'touch') {
+        this.data.innerAudioContext.pause()
+        this.data.innerAudioContext.seek(e.detail.x / 100 * this.data.duration)
         this.setData({
           percent: e.detail.x
         })
@@ -244,7 +247,7 @@ Component({
      */
     handleProgressBtnTouchend() {
       if (this.data.innerAudioContext) {
-        this.data.innerAudioContext.seek(this.data.percent / 100 * this.data.duration)
+        this.data.innerAudioContext.play()
       }
     }
   }
