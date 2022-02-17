@@ -580,6 +580,9 @@ SafeArea安全区域，`MediaQuery.of(context).padding.top`获取状态栏高度
 ```dart
 import 'package:flutter/material.dart';
 
+import 'home.dart';
+import 'my.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -596,6 +599,16 @@ class MyHome extends StatefulWidget {
 
 class _MyHomeState extends State<MyHome> {
   int _activeIndex = 0;
+  List<Widget> tabbar = [];
+  
+  @override
+  void initState() {
+    tabbar
+      ..add(Home())
+      ..add(My());
+    super.initState();
+  }
+  
   @override
   Widget build(BuildContext context) {
     void _changeBottomNav(int index) {
@@ -604,6 +617,7 @@ class _MyHomeState extends State<MyHome> {
       });
     }
     return Scaffold(
+      body: tabbar[_activeIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
