@@ -1,16 +1,60 @@
 [TOC]
 
-# vite-1.0.0-rc.13+vue3.0(alpha)
+# vite+vue3.0
 
 ## 快速上手
 
 1. Vite 官方目前提供了一个比较简单的脚手架：create-vite-app，可以使用这个脚手架快速创建一个使用 Vite 构建的 Vue.js 应用
 
+   ### vuecli
+   
+   对于 Vue 3，你应该使用 `npm` 上可用的 Vue CLI v4.5 作为 `@vue/cli`。要升级，你应该需要全局重新安装最新版本的 `@vue/cli`：
+   
    ```bash
-   npm init vite-app <project-name>
+   yarn global add @vue/cli
+   # 或
+   npm install -g @vue/cli
+   ```
+   
+   然后在 Vue 项目中运行：
+   
+   ```bash
+   vue upgrade --next
+   ```
+   ### vite
+   
+   通过在终端中运行以下命令，可以使用 Vite 快速构建 Vue 项目。
+   
+   使用 npm：
+   
+   ```bash
+   # npm 6.x
+   npm init vite@latest <project-name> --template vue
+   
+   # npm 7+，需要加上额外的双短横线
+   npm init vite@latest <project-name> -- --template vue
+   
    cd <project-name>
    npm install
    npm run dev
+   ```
+   
+   或者 yarn：
+   
+   ```bash
+   yarn create vite <project-name> --template vue
+   cd <project-name>
+   yarn
+   yarn dev
+   ```
+   
+   或者 pnpm:
+   
+   ```bash
+   pnpm create vite <project-name> -- --template vue
+   cd <project-name>
+   pnpm install
+   pnpm dev
    ```
 
 **注：Vite 目前只支持 Vue.js 3.0 版本**。
@@ -22,48 +66,135 @@
 
 ## 配置
 
-新建`vite.config.js`(相当于`vue.config.js`)
+**设置运行命令**package.json
+
+```json
+{
+  "scripts": {
+    "dev": "vite --mode development",
+    "build:dev": "vite build --mode dev",
+    "build:test": "vue-tsc --noEmit && vite build --mode test",
+    "build:uat": "vue-tsc --noEmit && vite build --mode uat",
+    "build:prod": "vue-tsc --noEmit && vite build --mode production"
+  }
+}
+```
+
+
+
+新建`vite.config.ts`(相当于`vue.config.js`)
 
 ```js
-const path = require('path');
-// import path from 'path'; 此种写法会使npm run dev不能运行，不知道vue.config,js是否也如此
+import vue from '@vitejs/plugin-vue' // 通过@vitejs/plugin-vue这个插件来支持Vue
+import { resolve } from 'path'
+import { visualizer } from 'rollup-plugin-visualizer' // 依赖分析插件。可视化并分析汇总捆绑包，以查看哪些模块占用了空间。
+import { defineConfig, loadEnv } from 'vite' // loadEnv加载环境变量
+import viteImagemin from 'vite-plugin-imagemin' // 压缩图片资源的插件
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons' // 用于生成 svg 雪碧图。当你使用该插件的时候，指定好存放svg的文件夹。再按照指定的方式去访问svg图片。就可以再不产生http请求的情况下渲染出svg图片。使用该插件时，插件会自动将所有svg图片加载到HTML中。并且每一个svg将会被过滤去无用的信息数据。让svg达到最小的值。之后使用svg图片就只需要操作DOM即可，而不需要发送http请求。
 
-module.exports = {
-    base: './', //在生产中服务时的基本公共路径。@default '/'
-    alias: {
-        '/@/': path.resolve(__dirname, './src'),
-        '/@views/': path.resolve(__dirname, './src/views'),
-        '/@components/': path.resolve(__dirname, './src/components'),
+// https://vitejs.dev/config/
+// https://cn.vitejs.dev/config/
+export default ({ mode }) => {
+  /**
+   * 1. Vite 默认是不加载 .env 文件的，因为这些文件需要在执行完 Vite 配置后才能确定加载哪一个，举个例子，root 和 envDir 选项会影响加载行为。不过当你      的确需要时，你可以使用 Vite 导出的 loadEnv 函数来加载指定的 .env 文件
+   * 2. process.cwd()项目根目录（index.html 文件所在的位置）。可以是一个绝对路径，或者一个相对于该配置文件本身的相对路径。
+   */
+  const env = loadEnv(mode, process.cwd()) // cwd指当前工作路径。根据当前工作目录中的 `mode` 加载 .env 文件
+
+  // 全局变量
+  const define = {}
+  if (mode !== 'development') define['process.platform'] = 'win32'
+  else define['process.env'] = process.env
+
+  return defineConfig({
+    base: env.VITE_APP_BASE_URL, // 开发或生产环境服务的公共基础路径。VITE_为.env文件变量名默认前缀，可通过envPrefix配置项配置
+    define,
+    resolve: {
+      alias: { // 配置路径别名
+        '@': resolve(__dirname, './src')
+      }
     },
-    outDir: 'dist', //构建输出将放在其中。如果目录存在，它将在构建之前被删除。@default 'dist'
-    minify: 'esbuild', //压缩
-    hostname: 'localhost', //ip地址
-    port: 8888, //端口号
-    open: false, //是否自动在浏览器打开
-    https: false, //是否开启 https
-    ssr: false, //是否服务端渲染
-    optimizeDeps: {
-        // 引入第三方的配置
-        include: ['lodash'],
+    css: {
+      preprocessorOptions: { // 指定传递给 CSS 预处理器的选项。
+        scss: {
+          additionalData: `@import "@/styles/elementVariables.scss"; @import "@/styles/_mixins.scss"; @import "@/styles/_variables.scss";`, // 全局引入scss文件
+          charset: false
+        }
+      }
     },
-    proxy: {
-        //配置代理
-        // 如果是 /lsbdb 打头，则访问地址如下
-        // '/lsbdb': 'http://10.192.195.96:8087',
-        // 如果是 /lsbdb 打头，则访问地址如下
-        // '/lsbdb': {
-        //   target: 'http://10.192.195.96:8087/',
-        //   changeOrigin: true,
-        //   // rewrite: path => path.replace(/^\/lsbdb/, '')
-        // }
-        '/api': {
-            target: 'http://10.0.11.7:8090',
-            changeOrigin: true,
-            ws: true,
-            rewrite: (path: string) => path.replace(/^\/api/, ''),
+    plugins: [
+      vue(),
+      createSvgIconsPlugin({
+        iconDirs: [
+          resolve(__dirname, './src/icons'),
+          resolve(__dirname, './src/views/custom/icons'),
+          resolve(__dirname, './node_modules/@element-plus/icons-svg')
+        ],
+        symbolId: 'icon-[name]'
+      }),
+      viteImagemin({
+        gifsicle: {
+          optimizationLevel: 7,
+          interlaced: false
         },
+        optipng: {
+          optimizationLevel: 7
+        },
+        mozjpeg: {
+          quality: 20
+        },
+        pngquant: {
+          quality: [0.8, 0.9],
+          speed: 4
+        },
+        svgo: {
+          plugins: [
+            {
+              name: 'removeViewBox'
+            },
+            {
+              name: 'removeEmptyAttrs',
+              active: false
+            }
+          ]
+        }
+      }),
+      // stats.html
+      visualizer()
+    ],
+    optimizeDeps: {
+      include: ['vue']
     },
-};
+    server: {
+      open: false,
+      host: '0.0.0.0',
+      port: 9527,
+      strictPort: false
+    },
+    build: {
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      },
+      minify: 'terser',
+      cssCodeSplit: true,
+      assetsInlineLimit: 1024 * 1,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              const name = id.toString().split('node_modules/')[1].split('/')[0].toString()
+              return ['tinymce', 'element-plus', ''].includes(name) && name
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
 ```
 
 * setup是一个新的组件选项，也是其他API的入口。也就是说，你所有的操作都将在setup函数内部定义和执行.setup 函数会在 `beforeCreate` 之后、`created` 之前执行
@@ -72,61 +203,199 @@ module.exports = {
 
 * 全局安装`Typescript`， `npm install typescript -g`
 
-* 根目录创建tsconfig.json`tsc --init`
+* 根目录创建tsconfig.json`npx tsc --init`
 
   ```json
   {
     "compilerOptions": {
-      ...// 其他配置
+      "target": "esnext",
+      "useDefineForClassFields": true,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "strict": true,
+      "jsx": "preserve",
+      "sourceMap": true,
+      "baseUrl": ".",
+      "resolveJsonModule": true,
+      "isolatedModules": false,
+      "esModuleInterop": true,
+      "lib": ["esnext", "dom"],
       "paths": {
-        "/@/*": [
-          "./src/*"
+        "@/*": [
+          "src/*"
         ]
-      },
-      "lib": [
-        "esnext",
-        "dom",
-        "dom.iterable",
-        "scripthost"
-      ]
+      }
     },
     "include": [
       "src/**/*.ts",
+      "src/**/*.d.ts",
       "src/**/*.tsx",
       "src/**/*.vue",
-      "src/types/images.d.ts",
-      "tests/**/*.ts",
-      "tests/**/*.tsx"
+      "node_modules/element-plus/global.d.ts",
+      "node_modules/vite/types"
     ],
-    "exclude": [
-      "node_modules"
-    ]
+    "references": [{ "path": "./tsconfig.node.json" }]
+  }
+  
+  ```
+
+  **tsconfig.node.json**
+
+  ```json
+  {
+    "compilerOptions": {
+      "composite": true,
+      "module": "esnext",
+      "moduleResolution": "node"
+    },
+    "include": ["vite.config.ts"]
   }
   ```
 
+  
+
 * src 目录下新建 types 文件夹，里面需要配置 ts 的类型
 
-  * 新建`shims-vue.d.ts`
+  **自动创建组件的类型文件**
 
-    ```typescript
-    declare module '*.vue' { // 在项目根目录或 src 文件夹下新建`shims-vue.d.ts`解决 VSCode 找不到 vue 模块问题
-      import { ComponentOptions } from 'vue'
-      const componentOptions: ComponentOptions
-      export default componentOptions
+  ```ts
+  import chalk from 'chalk'
+  import fg from 'fast-glob' // devDependencies
+  import fs from 'fs-plus' // devDependencies
+  
+  const entries = await fg(['src/components/**/index.vue'], { dot: true })
+  let localComponents = ''
+  entries.sort((v1, v2) => {
+    return v1.localeCompare(v2)
+  })
+  entries.forEach(path => {
+    path = path.replace(/^src/g, '@')
+    let name = path.replace(/\/index\.vue$/g, '')
+    name = name.replace(/^@\/components\/(mini\/)?/g, '')
+    name = name.replace(/-[a-z]|\/[a-z]/g, $1 => {
+      return $1.replace(/[-/]/g, '').toUpperCase()
+    })
+    name = name.replace(/^[a-z]/g, $1 => {
+      return $1.toUpperCase()
+    })
+    localComponents += `\n    Comp${name}: typeof import('${path}')['default']`
+  })
+  
+  const text = `/** eslint-disable spaced-comment */
+  
+  /// <reference types="vite/client" />
+  
+  declare module 'vue' {
+    export interface GlobalComponents {${localComponents}
     }
-    ```
+  }
+  
+  export {}
+  `
+  
+  fs.writeFile('src/types/components.d.ts', text, () => {
+    // eslint-disable-next-line no-console
+    console.log(chalk.green('类型文件创建成功！！'))
+  })
+  ```
+  
+  ```json
+  // package.json
+  {
+    "scripts": {
+      "generate:components.d.ts": "node --loader ts-node/esm src/types/index.ts"
+    }
+  }
+  ```
+  
+  
+  
+  **shims.axios.d.ts**
+  
+  ```tsx
+  import { AxiosRequestConfig } from 'axios'
+  
+  declare module 'axios' {
+    export interface AxiosRequestConfig {
+      shotToast?: boolean
+      /** 接口的base类型 */
+      base?: 'component'
+    }
+  }
+  ```
+  
+  **vite-env.d.ts**
+  ```tsx
+   /** eslint-disable spaced-comment */
+   
+  // / <reference types="vite/client" />
+  ```
 
-  * `images.d.ts`
+​      **env.d.ts**
 
-    ```typescript
-    declare module '*.svg'
-    declare module '*.png'
-    declare module '*.jpg'
-    declare module '*.jpeg'
-    declare module '*.gif'
-    declare module '*.bmp'
-    declare module '*.tiff'
-    ```
+      ```tsx
+      /** eslint-disable spaced-comment */
+      
+      // / <reference types="vite/client" />
+      
+      declare module '*.vue' {
+        import type { DefineComponent } from 'vue'
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+        const component: DefineComponent<{}, {}, any>
+        export default component
+      }
+      
+      declare module '*.svg'
+      declare module '*.png'
+      declare module '*.jpg'
+      declare module '*.jpeg'
+      declare module '*.gif'
+      declare module '*.bmp'
+      declare module '*.tiff'
+      declare module '*.yaml'
+      declare module '*.json'
+      declare module 'vue3-drag-resize'
+      
+      declare type ImageFit = '' | 'fill' | 'none' | 'contain' | 'cover' | 'scale-down'
+      
+      interface AnyObject {
+        [key: string]: any
+      }
+      
+      type Words =
+        | 'a'
+        | 'b'
+        | 'c'
+        | 'd'
+        | 'e'
+        | 'f'
+        | 'g'
+        | 'h'
+        | 'i'
+        | 'j'
+        | 'k'
+        | 'l'
+        | 'm'
+        | 'n'
+        | 'o'
+        | 'p'
+        | 'q'
+        | 'r'
+        | 's'
+        | 't'
+        | 'u'
+        | 'v'
+        | 'w'
+        | 'x'
+        | 'y'
+        | 'z'
+      
+      /** 限定首字母大写 */
+      type Cap = `${Capitalize<Words>}${string}`
+      
+      ```
+
+
 
 * 将`main.js`改为`main.ts`，并将 `index.html` 中引入的 `main.js` 改为 `main.ts`。
 
@@ -761,3 +1030,102 @@ export default defineComponent({
   ```
 
   * setup是一个新的组件选项，也是其他API的入口。也就是说，你所有的操作都将在setup函数内部定义和执行， Vue3.0也将用函数代替Vue2.x的类也就是new 
+
+## vite插件
+
+### vite-plugin-imagemin图片压缩插件
+
+**配置说明**
+
+|   参数   | 类型                                  | 默认值  | 说明                                                        |
+| :------: | ------------------------------------- | ------- | ----------------------------------------------------------- |
+| verbose  | `boolean`                             | `true`  | 是否在控制台输出压缩结果                                    |
+|  filter  | `RegExp or (file: string) => boolean` | -       | 指定哪些资源不压缩                                          |
+| disable  | `boolean`                             | `false` | 是否禁用                                                    |
+|   svgo   | `object` or `false`                   | -       | 见 [Options](https://github.com/svg/svgo/#what-it-can-do)   |
+| gifsicle | `object` or `false`                   | -       | 见 [Options](https://github.com/imagemin/imagemin-gifsicle) |
+| mozjpeg  | `object` or `false`                   | -       | 见 [Options](https://github.com/imagemin/imagemin-mozjpeg)  |
+| optipng  | `object` or `false`                   | -       | 见 [Options](https://github.com/imagemin/imagemin-optipng)  |
+| pngquant | `object` or `false`                   | -       | 见 [Options](https://github.com/imagemin/imagemin-pngquant) |
+|   webp   | `object` or `false`                   | -       | 见 [Options](https://github.com/imagemin/imagemin-webp)     |
+
+**默认配置**
+
+```ts
+import viteImagemin from 'vite-plugin-imagemin'
+
+export default () => {
+  return {
+    plugins: [
+      viteImagemin({
+        gifsicle: {
+          optimizationLevel: 7,
+          interlaced: false,
+        },
+        optipng: {
+          optimizationLevel: 7,
+        },
+        mozjpeg: {
+          quality: 20,
+        },
+        pngquant: {
+          quality: [0.8, 0.9],
+          speed: 4,
+        },
+        svgo: {
+          plugins: [
+            {
+              name: 'removeViewBox',
+            },
+            {
+              name: 'removeEmptyAttrs',
+              active: false,
+            },
+          ],
+        },
+      }),
+    ],
+  }
+}
+```
+
+### vite-plugin-svg-icons用于生成 svg 雪碧图.
+
+**配置说明**
+
+| 参数        | 类型                   | 默认值                | 说明                                                         |
+| ----------- | ---------------------- | --------------------- | ------------------------------------------------------------ |
+| iconDirs    | `string[]`             | -                     | 需要生成雪碧图的图标文件夹                                   |
+| symbolId    | `string`               | `icon-[dir]-[name]`   | svg 的 symbolId 格式，见下方说明                             |
+| svgoOptions | `boolean｜SvgoOptions` | `true`                | svg 压缩配置，可以是对象[Options](https://github.com/svg/svgo) |
+| inject      | `string`               | `body-last`           | svgDom 默认插入的位置，可选`body-first`                      |
+| customDomId | `string`               | `__svg__icons__dom__` | svgDom 插入节点的 ID                                         |
+
+**symbolId**
+
+```
+icon-[dir]-[name]
+```
+
+**[name]:**
+
+svg 文件名
+
+**[dir]**
+
+该插件的 svg 不会生成 hash 来区分，而是通过文件夹来区分.
+
+如果`iconDirs`对应的文件夹下面包含这其他文件夹
+
+例：
+
+则生成的 SymbolId 为注释所写
+
+```
+# src/icons
+- icon1.svg # icon-icon1
+- icon2.svg # icon-icon2
+- icon3.svg # icon-icon3
+- dir/icon1.svg # icon-dir-icon1
+- dir/dir2/icon1.svg # icon-dir-dir2-icon1
+```
