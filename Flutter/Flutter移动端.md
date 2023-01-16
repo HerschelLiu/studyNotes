@@ -79,7 +79,7 @@ source ~/.bash_profile
 
 ## 零散知识
 
-### `?`在左边为null的情况下，会阻断右边的调用；`？？`主要作用时在左侧表达式为bull的时候，为其设置默认值
+### `?`在左边为null的情况下，会阻断右边的调用；`？？`主要作用是在左侧表达式为null的时候，为其设置默认值
 
 ### 资源文件assets
 
@@ -91,10 +91,10 @@ Flutter中组件状态的改变，一定要配合使用setState，通过调用se
 
 ## Widget
 
-* StatefulWidget：带绑定状态；有一些Widget（比如Image，Checkbox），除了父Widget初始化时传入的静态值以外，还需要处理用户的交互或数据变化，在Widget呗创建完成之后，还需要关心以及相应数据改变带来的Widget的重新渲染
+* StatefulWidget：带绑定状态；有一些Widget（比如Image，Checkbox），除了父Widget初始化时传入的静态值以外，还需要处理用户的交互或数据变化，在Widget被创建完成之后，还需要关心以及相应数据改变带来的Widget的重新渲染
 * StatelessWidget：不带绑定状态
 
-**不同**：StatelessWidget时通过build直接构建的，StatefulWidget没有build方法，耳式通过createState创建一个state对象
+**不同**：StatelessWidget是通过build直接构建的，StatefulWidget没有build方法，而是通过createState创建一个state对象
 
 ### TextField(文本输入框)
 
@@ -162,7 +162,7 @@ abstract class WidgetsBindingObserver{
     void didChangePlatformBrightness() {}
     // 本地化语言变化
     void didChangeLocales(List<Locale> locale) {}
-    // APp生命周期变化
+    // App生命周期变化
     void didChangeAppLifecycleState(AppLifecycleState state) {}
     // 内存警告回调
     void didHaveMemoryPressure() {}
@@ -175,9 +175,9 @@ abstract class WidgetsBindingObserver{
 
 didChangeLifecycleState有一个枚举类型的参数AppLifecycleState，它的值包括三个：resumed、inactive、pause。
 
-- resumed：界面进入可见状态，并能够处理用户相应；
-- inactive：界面进入不活动状态，无法处理用户的相应；
-- paused：界面进入不可见状态，不能够处理用户相应，但在后台继续活动中。
+- resumed：界面进入可见状态，并能够处理用户响应；
+- inactive：界面进入不活动状态，无法处理用户的响应；
+- paused：界面进入不可见状态，不能够处理用户响应，但在后台继续活动中。
 
 ## 编写页面
 
@@ -580,59 +580,70 @@ SafeArea安全区域，`MediaQuery.of(context).padding.top`获取状态栏高度
 ```dart
 import 'package:flutter/material.dart';
 
-import 'home.dart';
-import 'my.dart';
+import 'views/home/home.dart';
+import 'views/my/my.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Flutter Demo', home: MyHome());
-  }
-}
-
-class MyHome extends StatefulWidget {
-  @override
-  _MyHomeState createState() => _MyHomeState();
-}
-
-class _MyHomeState extends State<MyHome> {
-  int _activeIndex = 0;
-  List<Widget> tabbar = [];
-  
-  @override
-  void initState() {
-    tabbar
-      ..add(Home())
-      ..add(My());
-    super.initState();
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    void _changeBottomNav(int index) {
-      setState(() {
-        _activeIndex = index;
-      });
-    }
-    return Scaffold(
-      body: tabbar[_activeIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.business), title: Text('Business')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.school), title: Text('School')),
-        ],
-        currentIndex: _activeIndex, // 当前选中
-        fixedColor: Colors.green, // 选中颜色
-        onTap: _changeBottomNav, // 点击事件
+    return MaterialApp(
+      title: 'Test', 
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        // 点击水波纹效果
+        splashColor: Colors.transparent
       ),
+      home: const MyStackPage()
     );
   }
 }
+
+class MyStackPage extends StatefulWidget {
+  const MyStackPage({super.key});
+
+  @override
+  State<MyStackPage> createState() => _MyStackPageState();
+}
+
+class _MyStackPageState extends State<MyStackPage> {
+  int _currentIndex = 0;
+  
+  // 接口位置
+  @override
+  void initState() async {
+    super.initState();
+    final data = await ServiceNetApi()
+        .getList(RequestGetListModel(start: 0, count: 20).toJson());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'My')
+          ],
+          currentIndex: _currentIndex,
+          onTap: (int value) => setState(() {
+            _currentIndex = value;
+          }),
+        ),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: const [
+            Home(),
+            My()
+          ],
+        )
+    );
+  }
+}
+
 ```
 
 点击事件可以使用一个void的函数，写在Widget build中
