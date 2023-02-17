@@ -30,8 +30,75 @@
 * hyper-quit：关闭最后一个window时退出Hyper
 * hyper-opacity：设置不透明度.`config`种新增opacity设置
 * hypercwd：cd不同文件夹会新打开基于此文件夹的tab
+* hyper-drop-file：支持文件拖入方式输入地址（不用再复制地址了）
+* hyperborder： 效果图最外面一圈炫彩（其实就是官方图标的炫彩）就是它弄出来的，甚至还能加动画
+* hyper-font-ligatures：支持字体 ligature 显示（前提是你的 fontFamily 自带了 ligature）
 
 例如`plugins: ["hyper-snazzy", "hyper-transparent-dynamic"]`
+
+## 默认快捷键
+
+### mac
+
+```json
+{
+  "window:devtools": "command+alt+i",
+  "window:reload": "command+shift+r",
+  "window:reloadFull": "command+shift+f5",
+  "window:preferences": "command+,",
+  "zoom:reset": "command+0",
+  "zoom:in": [
+    "command+plus",
+    "command+="
+  ],
+  "zoom:out": "command+-",
+  "window:new": "command+n",
+  "window:minimize": "command+m",
+  "window:zoom": "ctrl+alt+command+m",
+  "window:toggleFullScreen": "command+ctrl+f",
+  "window:close": "command+shift+w",
+  "tab:new": "command+t",
+  "tab:next": [
+    "command+shift+]",
+    "command+shift+right",
+    "command+alt+right",
+    "ctrl+tab"
+  ],
+  "tab:prev": [
+    "command+shift+[",
+    "command+shift+left",
+    "command+alt+left",
+    "ctrl+shift+tab"
+  ],
+  "tab:jump:prefix": "command",
+  "pane:next": "command+]",
+  "pane:prev": "command+[",
+  "pane:splitRight": "command+d",
+  "pane:splitDown": "command+shift+d",
+  "pane:close": "command+w",
+  "editor:undo": "command+z",
+  "editor:redo": "command+y",
+  "editor:cut": "command+x",
+  "editor:copy": "command+c",
+  "editor:paste": "command+v",
+  "editor:selectAll": "command+a",
+  "editor:search": "command+f",
+  "editor:search-close": "esc",
+  "editor:movePreviousWord": "alt+left",
+  "editor:moveNextWord": "alt+right",
+  "editor:moveBeginningLine": "command+left",
+  "editor:moveEndLine": "command+right",
+  "editor:deletePreviousWord": "alt+backspace",
+  "editor:deleteNextWord": "alt+delete",
+  "editor:deleteBeginningLine": "command+backspace",
+  "editor:deleteEndLine": "command+delete",
+  "editor:clearBuffer": "command+k",
+  "editor:break": "ctrl+c",
+  "plugins:update": "command+shift+u"
+}
+```
+
+
 
 ## 其他
 

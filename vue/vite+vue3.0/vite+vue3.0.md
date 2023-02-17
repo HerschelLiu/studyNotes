@@ -27,35 +27,38 @@
    
    使用 npm：
    
-   ```bash
-   # npm 6.x
-   npm init vite@latest <project-name> --template vue
+   **使用vite命令**
    
-   # npm 7+，需要加上额外的双短横线
-   npm init vite@latest <project-name> -- --template vue
+   ```bash
+   npm/yarn/pnpm create vite@latest
+   # 你还可以通过附加的命令行选项直接指定项目名称和你想要使用的模板。例如，要构建一个 Vite + Vue 项目，使用ts需要改为vue-ts,运行:
+   # npm 6.x
+   npm create vite@latest my-vue-app --template vue
+   
+   # npm 7+, extra double-dash is needed:
+   npm create vite@latest my-vue-app -- --template vue
+   
+   # yarn
+   yarn create vite my-vue-app --template vue
+   
+   # pnpm
+   pnpm create vite my-vue-app --template vue
    
    cd <project-name>
    npm install
    npm run dev
    ```
    
-   或者 yarn：
+   **使用vue命令**
    
    ```bash
-   yarn create vite <project-name> --template vue
+   npm/yarn init/create vite-app <project-name>
    cd <project-name>
-   yarn
-   yarn dev
+   npm install
+   npm run dev
    ```
    
-   或者 pnpm:
    
-   ```bash
-   pnpm create vite <project-name> -- --template vue
-   cd <project-name>
-   pnpm install
-   pnpm dev
-   ```
 
 **注：Vite 目前只支持 Vue.js 3.0 版本**。
 

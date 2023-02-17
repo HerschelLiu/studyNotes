@@ -22,6 +22,8 @@ sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/to
 
 
 
+**手动更新**`omz update`
+
 ## 插件
 
 ### **git**
@@ -131,13 +133,11 @@ git clone https://github.com/paulirish/git-open.git $ZSH_CUSTOM/plugins/git-open
 
 ### Pure
 
-是一款小巧、简洁、快速且美观的 ZSH prompt依赖npm
+[pure prompt](https://link.zhihu.com/?target=https%3A//github.com/sindresorhus/pure)是[sindresorhus大神](https://link.zhihu.com/?target=https%3A//github.com/sindresorhus)开源的一款简洁快速的zsh prompt，简洁是因为它的只会提示**路径、git状态、git分支等必要的信息**，而不是又多又杂，快速是因为它检查git状态是异步检查的。
 
 ```bash
 npm i -g pure-prompt
 ```
-
-
 
 在`.zshrc`(打开Finder，进入当前用户目录，按下快捷键command⌘ + shift⇧ + .，即可显示当前文件夹中的隐藏文件，找到`.zshrc`)中在`source $ZSH/oh-my-zsh.sh`下添加如下代码
 
@@ -146,6 +146,18 @@ autoload -U promptinit; promptinit
 prompt pure
 ```
 
+**m1芯片mac通过上述方式无效：**使用手动方式
+
+```bash
+mkdir -p "$HOME/.zsh"
+git clone https://github.com/sindresorhus/pure.git "$HOME/.zsh/pure"
+
+# 在.zsh中加入
+fpath+=$HOME/.zsh/pure
+```
+
+
+
 ### Spaceship
 
 Spaceship是一个功能强大的zsh的扩展，具体可以从官网查看https://denysdovhan.com/spaceship-prompt/
@@ -153,8 +165,4 @@ Spaceship是一个功能强大的zsh的扩展，具体可以从官网查看https
 ```bash
 npm install -g spaceship-prompt
 ```
-
-
-
-## 其他
 
