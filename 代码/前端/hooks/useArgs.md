@@ -3,6 +3,7 @@
 ## VUE
 
 ```tsx
+// vue3.x
 import { useRouter } from 'vue-router'
 
 import router from '@/router'
@@ -31,6 +32,32 @@ export async function useValidateArgs(args: string, required = true): Promise<st
   } else return Promise.resolve('')
 }
 
+// vue2.x
+/**
+ * 验证参数是否存在
+ * @param args 参数名
+ * @param required 是否必填，默认[是]
+ * @returns 参数值
+ * @note await useValidateArgs.call(this, args, required)
+ */
+export async function useValidateArgs(args: string, required = true): Promise<string> {
+  const route = this.$route
+  const router = this.$router
+  const arg = route.query[args] || route.params[args]
+  if (arg && typeof arg === 'string') return Promise.resolve(arg)
+  if (required) {
+    /** TODO: 错误提示 */
+    if (route.matched.filter(item => !item.redirect).length > 1) {
+      /** TODO: 返回操作 */
+    } else {
+      router.push({
+        name: /** TODO: 404页面 */,
+        replace: true
+      })
+    }
+    return Promise.reject()
+  } else return Promise.resolve('')
+}
 ```
 
 ## 微信小程序
@@ -44,6 +71,7 @@ interface AnyObject {
  * @param args 参数名
  * @param required 是否必填，默认[是]
  * @returns 参数值
+ * @note await useValidateArgs.call(this, args, required)。useValidateArgs中this参数是为了声明类型，call方法第一个就是this，会改变函数中this指向，如果怕在js中this报错，去掉也可以
  */
 export function useValidateArgs(this: WxPage, args: string, required = true): Promise<string> {
   return new Promise((resolve, reject) => {
