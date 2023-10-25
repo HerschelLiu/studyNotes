@@ -8,23 +8,67 @@
 
 > plugins = (插件A 插件B 插件C ...)
 
-Mac自带了zsh，Linux下须先安装zsh再执行如下命令:
+Mac自带了zsh，Linux下安装oh-my-zsh需要先安装zsh
+
+安装zsh(ubuntu)
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-```
-
-或：
-
-```bash
-sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+sudo apt install zsh
 ```
 
 
+
+安装oh-my-zsh
+
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+```
+
+> 通过简单地修改omz的安装脚本，可以通过gitee的镜像下载omz并在之后用gitee进行更新。
+>
+> 可以使用以下方式，也可以使用上述方式，把链接改成gitee的install.sh链接
+>
+> 首先全部拷贝下网址中的代码，并在本地创建叫做install.sh的文件，将代码复制进该文件。
+> [tools/install.sh · Gitee 极速下载/oh-my-zsh](https://gitee.com/mirrors/oh-my-zsh/blob/master/tools/install.sh)
+>
+> 在该脚本中有这样一段代码，指定了上游的仓库
+>
+> ```sh
+> ZSH=${ZSH:-~/.oh-my-zsh}
+> REPO=${REPO:-ohmyzsh/ohmyzsh}
+> REMOTE=${REMOTE:-https://github.com/${REPO}.git}
+> BRANCH=${BRANCH:-master} 
+> ```
+>
+> 由于我们想要用gitee加速，所以应该将该代码改为
+>
+> ```sh
+> ZSH=${ZSH:-~/.oh-my-zsh}
+> REPO=${REPO:-mirrors/oh-my-zsh} 	# 修改
+> REMOTE=${REMOTE:-https://gitee.com/${REPO}.git}  #修改
+> BRANCH=${BRANCH:-master}
+> ```
+>
+> 修改完成之后，在install.sh的文件夹下执行sh install.sh命令，即可加速安装omz。之后可以通过omz update命令更新omz。
 
 **手动更新**`omz update`
 
 ## 插件
+
+下载插件仓库到oh my zsh 的 plugins 目录下，然后修改配置文件添加支持的插件：
+
+```bash
+vi ~/.zshrc
+
+# i
+plugins=(xxx xxx)
+
+# esc :wq
+
+source ~/.zshrc
+```
+
+
 
 ### **git**
 
@@ -51,7 +95,7 @@ gru == git reset --
 gst = git status
 ```
 
-[其他别名]([ohmyzsh/plugins/git at master · ohmyzsh/ohmyzsh (github.com)](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git))
+其他别名([ohmyzsh/plugins/git at master · ohmyzsh/ohmyzsh (github.com)](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git))
 
 ### **z**
 
@@ -79,7 +123,7 @@ git clone https://github.com/valentinocossar/vscode.git ${ZSH_CUSTOM:-~/.oh-my-z
 
 ### **zsh-autosuggestions**
 
-[官网](https://link.zhihu.com/?target=https%3A//github.com/zsh-users/zsh-autosuggestions)，非常好用的一个插件，会记录你之前输入过的所有命令，并且自动匹配你可能想要输入命令，然后按`control+e`→补全
+[官网](https://github.com/zsh-users/zsh-autosuggestions)，非常好用的一个插件，会记录你之前输入过的所有命令，并且自动匹配你可能想要输入命令，然后按`control+e`→补全
 
 安装
 
@@ -89,12 +133,12 @@ git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-m
 
 ### **zsh-syntax-highlighting**
 
-语法高亮。[官网](https://link.zhihu.com/?target=https%3A//github.com/zsh-users/zsh-syntax-highlighting)，命令太多，有时候记不住，等输入完了才知道命令输错了，这个插件直接在输入过程中就会提示你，当前命令是否正确，错误红色，正确绿色
+语法高亮。[官网](https://github.com/zsh-users/zsh-syntax-highlighting)，命令太多，有时候记不住，等输入完了才知道命令输错了，这个插件直接在输入过程中就会提示你，当前命令是否正确，错误红色，正确绿色
 
 安装
 
 ```bash
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 ```
 
 ```bash

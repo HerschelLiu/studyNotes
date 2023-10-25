@@ -42,3 +42,22 @@ export function useLog(title: string, info: string) {
 
 ```
 
+## 在template中调试log
+
+```js
+// vue2
+Vue.prototype.$log = window.console.log
+
+// vue3
+app.config.globalProperties.$log = window.console.log
+
+// 在模版中使用即可将数据打印在控制台
+<p>{{ $log(logData) }}</p>
+
+const logData = reactive({
+  name: 'aaa',
+  age: 23,
+  height: 600
+})
+```
+
