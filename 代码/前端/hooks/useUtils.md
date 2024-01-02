@@ -122,5 +122,38 @@ export function useNumberToChinese(number: number) {
 
 export const useSleep = (ms: number) => new Promise<Date>(resolve => setTimeout(() => resolve(new Date()), ms))
 
+
+/**
+ * 定时器
+ * @param {*} func
+ * @param {number}   delay     [间隔时间，默认 300ms]
+ * @param {number}   timeout   [循环时长，默认 1000ms]
+ * @returns {promise<number>}     timestamp  [结束时间戳]
+ */
+export const setIntervalOut = (func: (progress: number) => any, options?: { delay?: number; timeout?: number }) =>
+  new Promise((resolve, reject) => {
+    try {
+      const { delay = 300, timeout = 10000 } = options || {}
+      const startTime = performance.now()
+      let endDelay = performance.now()
+      const setup = (endTime: number) => {
+        cancelAnimationFrame(requestID)
+        const progress = (endTime - startTime) / timeout
+        if (progress < 1) {
+          if (endTime - endDelay >= delay) {
+            func(progress)
+            endDelay = endTime
+          }
+          requestID = requestAnimationFrame(setup)
+        } else {
+          func(1)
+          resolve(Date.now())
+        }
+      }
+      let requestID = requestAnimationFrame(setup)
+    } catch (error) {
+      reject(error)
+    }
+  })
 ```
 

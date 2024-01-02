@@ -51,6 +51,54 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/too
 >
 > 修改完成之后，在install.sh的文件夹下执行sh install.sh命令，即可加速安装omz。之后可以通过omz update命令更新omz。
 
+国内源
+
+- 使用 curl 安装
+
+```bash
+sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh)"
+```
+
+- 使用 wget 安装
+
+```bash
+sh -c "$(wget -O- https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh)"
+```
+
+> 或
+>
+> ```bash
+> wget https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh
+> ```
+>
+> 然后给`install.sh`添加权限：
+>
+> ```bash
+> chmod +x install.sh
+> ```
+>
+> 然后执行`install.sh`：`./install.sh`
+> 如果发现很慢，可以修改为`gitee`：
+> `vim install.sh`进入编辑状态：
+> 找到以下部分：
+>
+> ```cmd
+> # Default settings
+> ZSH=${ZSH:-~/.oh-my-zsh}
+> REPO=${REPO:-ohmyzsh/ohmyzsh}
+> REMOTE=${REMOTE:-https://github.com/${REPO}.git}
+> BRANCH=${BRANCH:-master}
+> ```
+>
+> 然后将中间两行改为：
+>
+> ```cmd
+> REPO=${REPO:-mirrors/oh-my-zsh}
+> REMOTE=${REMOTE:-https://gitee.com/${REPO}.git}
+> ```
+>
+> 
+
 **手动更新**`omz update`
 
 ## 插件

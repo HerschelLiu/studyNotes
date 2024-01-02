@@ -33,6 +33,8 @@ npm start
 
 React 会将以小写字母开头的组件视为原生 DOM 标签。例如，`<div />` 代表 HTML 的 div 标签，而 `<Welcome />` 则代表一个组件，并且需在作用域内使用 `Welcome`。
 
+组件或类使用大驼峰，其余使用中横线
+
 ## 组件&Props
 
 ```js
@@ -533,6 +535,63 @@ export default ChildComponent;
 
 
 
+## 在react中，如何实现类似vue中的插槽
+
+```tsx
+// Conteiner.tsx
+/** Layout */
+import { Layout } from 'antd'
+import CustomContent from './Content'
+
+const Container: React.FC = () => {
+  
+  return (
+    <>
+      <Layout>
+        <CustomContent>
+          <button>login</button>
+          <button>start</button>
+        </CustomContent>
+      </Layout>
+    </>
+  )
+}
+
+export default Container
+
+```
+
+
+
+```tsx
+// Content.tsx
+import { Layout } from 'antd'
+import { ReactNode } from 'react'
+
+const { Content } = Layout
+
+interface Props {
+  children: ReactNode
+}
+
+const CustomContent: React.FC<Props> = ({ children }) => {
+  return (
+    <>
+      <Content>
+        {children}
+      </Content >
+    </>
+  )
+}
+
+export default CustomContent
+
+```
+
+
+
+
+
 ## Hook
 
 *Hook* 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。Hook 不能在 class 组件中使用 —— 这使得你不使用 class 也能使用 React。
@@ -572,6 +631,18 @@ function ExampleWithManyStates() {
 ```
 
 `setState`可以起不同的名字
+
+**注意**：要将state视为可读，查看[更新 state 中的对象 – React 中文文档](https://zh-hans.react.dev/learn/updating-objects-in-state)
+
+### useImmer
+
+查看[更新 state 中的数组 – React 中文文档](https://zh-hans.react.dev/learn/updating-arrays-in-state)
+
+```bash
+npm install use-immer
+```
+
+使用时引入`import { useImmer } from 'use-immer'`
 
 ### Effect Hook
 
@@ -1213,7 +1284,8 @@ import 'normalize.css'
 ```bash
 npm install classnames --save
 
-# import classnames from 'classnames'
+# 使用时引入
+# import classnames from 'classnames' 或 import classNames from 'classnames'
 ```
 
 **使用**
@@ -1257,6 +1329,113 @@ classNames({ [`btn-${buttonType}`]: true });
 
 
 ### `assembly-css`基础样式库
+
+### [UnoCSS](https://alfred-skyblue.github.io/unocss-docs-cn/integrations/vite)
+
+#### 安装
+
+```ts
+// vite.config.ts
+import UnoCSS from 'unocss/vite'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [UnoCSS()]
+})
+```
+
+创建一个 `uno.config.ts` 文件：
+
+```ts
+// uno.config.ts
+import { defineConfig } from 'unocss'
+
+export default defineConfig({
+  // ...UnoCSS选项
+})
+```
+
+将 `virtual:uno.css` 添加到您的主入口文件：
+
+```ts
+// main.ts
+import 'virtual:uno.css'
+```
+
+> 某些 UI/App 框架需要一些特殊的处理才能正常工作，如果您正在使用以下框架之一，请按照建议进行操作。(详细看UnoCSS/Vite/框架部分)
+>
+> ```ts
+> // vite.config.js
+> import UnoCSS from 'unocss/vite'
+> import React from '@vitejs/plugin-react'
+> 
+> export default {
+>   plugins: [React(), UnoCSS()]
+> }
+> ```
+>
+> 
+
+#### 预设
+
+```ts
+// uno.config.ts
+import { defineConfig, presetAttributify, presetUno } from 'unocss'
+
+export default defineConfig({
+  presets: [
+    presetAttributify({
+      /* 预设选项 */
+    }),
+    presetUno()
+    // ...自定义预设
+  ]
+})
+```
+
+当指定了 `presets` 选项时，将会忽略默认预设。
+
+要禁用默认预设，您可以将 `presets` 设置为空数组：
+
+```ts
+// uno.config.ts
+import { defineConfig } from 'unocss'
+
+export default defineConfig({
+  presets: [], // 禁用默认预设
+  rules: [
+    // 您的自定义规则
+  ]
+})
+```
+
+#### 写法
+
+不知道不确定的写法可在[交互式文档](https://unocss.dev/interactive/?s=font-size)中查询
+
+```tsx
+<>
+  // 第一种：使用中划线
+  <header hover:bg-red w-100px b-1 b-red h-40px></header>
+  // 第二种：使用 className
+  <main grow-1 b-1 b-blue h-100px  className='text-2xl'></main>
+  // 第三种：使用 =
+  <footer b-1 b-pink h-55px w="100%"></footer>
+  // 温馨提示: ⚠️在页面布局的时候，不要随便设置 h="100%" 会有bug
+  
+  // 使用 children- 的写法可以给子元素设置样式
+   <ul children-px-24px >
+     <li>😌</li>
+   </ul>
+</>
+
+作者：hone
+链接：https://juejin.cn/post/7200198060101238842
+来源：稀土掘金
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+
 
 
 

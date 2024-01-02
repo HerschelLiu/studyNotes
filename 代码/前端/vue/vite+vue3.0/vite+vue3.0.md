@@ -4,61 +4,41 @@
 
 ## 快速上手
 
-1. Vite 官方目前提供了一个比较简单的脚手架：create-vite-app，可以使用这个脚手架快速创建一个使用 Vite 构建的 Vue.js 应用
+vue
 
-   ### vuecli
-   
-   对于 Vue 3，你应该使用 `npm` 上可用的 Vue CLI v4.5 作为 `@vue/cli`。要升级，你应该需要全局重新安装最新版本的 `@vue/cli`：
-   
-   ```bash
-   yarn global add @vue/cli
-   # 或
-   npm install -g @vue/cli
-   ```
-   
-   然后在 Vue 项目中运行：
-   
-   ```bash
-   vue upgrade --next
-   ```
-   ### vite
-   
-   通过在终端中运行以下命令，可以使用 Vite 快速构建 Vue 项目。
-   
-   使用 npm：
-   
-   **使用vite命令**
-   
-   ```bash
-   npm/yarn/pnpm create vite@latest
-   # 你还可以通过附加的命令行选项直接指定项目名称和你想要使用的模板。例如，要构建一个 Vite + Vue 项目，使用ts需要改为vue-ts,运行:
-   # npm 6.x
-   npm create vite@latest my-vue-app --template vue
-   
-   # npm 7+, extra double-dash is needed:
-   npm create vite@latest my-vue-app -- --template vue
-   
-   # yarn
-   yarn create vite my-vue-app --template vue
-   
-   # pnpm
-   pnpm create vite my-vue-app --template vue
-   
-   cd <project-name>
-   npm install
-   npm run dev
-   ```
-   
-   **使用vue命令**
-   
-   ```bash
-   npm/yarn init/create vite-app <project-name>
-   cd <project-name>
-   npm install
-   npm run dev
-   ```
-   
-   
+```bash
+npm create vue@latest
+```
+
+Vite
+
+```bash
+npm create vite@latest
+yarn/pnpm create vite
+bunx create-vite
+```
+
+然后按照提示操作即可！
+
+你还可以通过附加的命令行选项直接指定项目名称和你想要使用的模板。例如，要构建一个 Vite + Vue 项目，运行:
+
+```bash
+# npm 7+, extra double-dash is needed:
+npm create vite@latest my-vue-app -- --template vue
+
+# yarn
+yarn create vite my-vue-app --template vue
+
+# pnpm
+pnpm create vite my-vue-app --template vue
+
+# bun
+bunx create-vite my-vue-app --template vue
+```
+
+>  查看 [create-vite](https://github.com/vitejs/vite/tree/main/packages/create-vite) 以获取每个模板的更多细节：`vanilla`，`vanilla-ts`, `vue`, `vue-ts`，`react`，`react-ts`，`react-swc`，`react-swc-ts`，`preact`，`preact-ts`，`lit`，`lit-ts`，`svelte`，`svelte-ts`，`solid`，`solid-ts`，`qwik`，`qwik-ts`。
+
+
 
 **注：Vite 目前只支持 Vue.js 3.0 版本**。
 

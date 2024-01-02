@@ -1,4 +1,4 @@
-**[官网]([nvm-sh/nvm：Node Version Manager - 符合 POSIX 标准的 bash 脚本，用于管理多个主动节点.js版本 (github.com)](https://github.com/nvm-sh/nvm#installing-and-updating))**
+**[官网](https://github.com/nvm-sh/nvm#installing-and-updating)**
 
 **安装时迁移全局包**
 
@@ -37,3 +37,35 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 [[ -r $NVM_DIR/bash_completion ]] && \. $NVM_DIR/bash_completion
 ```
+
+
+
+## 使用gitee源安装nvm
+
+使用`gitee镜像`安装nvm到本地
+
+```bash
+git clone https://gitee.com/mirrors/nvm.git ~/.nvm && cd ~/.nvm && git checkout `git describe --abbrev=0 --tags` 
+```
+
+配置nvm环境变量
+
+mac 在`～/.zshrc`
+
+看过两种
+
+官网
+
+```
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+```
+
+百度查到的
+
+```
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+```
+

@@ -276,7 +276,7 @@ export default {
 import 'uno.css'
 ```
 
-### [taro (webpack4)for react vue2 vue3](https://github.com/MellowCo/unocss-preset-weapp/tree/main/examples/taro_webpack4_vue3)
+### [taro (webpack4、5)for react vue2 vue3](https://github.com/MellowCo/unocss-preset-weapp/tree/main/examples/taro_webpack4_vue3)
 
 **说明**
 
@@ -318,8 +318,10 @@ module.exports = function (merge) {
 }
 ```
 
+
+
 ```ts
-// unocss.config.ts
+// unocss.config.ts webpack4
 import presetWeapp from 'unocss-preset-weapp'
 import { extractorAttributify, transformerClass } from 'unocss-preset-weapp/transformer'
 
@@ -356,6 +358,45 @@ export default {
   ],
 }
 ```
+
+```ts
+// unocss.config.ts webpack5
+// eslint-disable-next-line import/no-named-as-default
+import presetWeapp from 'unocss-preset-weapp'
+import {transformerClass} from 'unocss-preset-weapp/transformer';
+import {defineConfig,transformerDirectives} from 'unocss';
+
+export default defineConfig({
+  presets: [
+    presetWeapp({
+      // h5兼容
+      isH5: process.env.TARO_ENV === 'h5',
+      platform: 'taro',
+      taroWebpack:'webpack5'
+    }),
+  ],
+  shortcuts: [
+    {
+      'border-base': 'border border-gray-500/10',
+      'center': 'flex justify-center items-center',
+    },
+  ],
+  transformers:[
+    transformerClass(),
+    transformerDirectives({
+      enforce: 'pre'
+    }),
+  ],
+  content:{
+    pipeline:{
+      include: [/\.([jt]sx|css)($|\?)/],
+      exclude: []
+    }
+  }
+} )
+```
+
+
 
 ```ts
 // app.ts

@@ -1,6 +1,6 @@
 
 
-```tsx
+```ts
 import { isHaveValue } from '@/hooks/useValidate'
 
 type Callback = () => void
@@ -73,6 +73,13 @@ export const useArraySet = <T extends Object>(target: T[], key: keyof T, value: 
 export const useChunk = <T extends []>(array: T[], size: number) =>
   Array.from({ length: Math.ceil(array.length / size) }, (_v: number, i: number) => array.slice(i * size, i * size + size))
         
+```
+
+
+
+自己新增
+
+```ts
  // 以下代码为js，还未ts化
  /** 多级对象数组展平 */
 export const useFlat = (list, name = 'children') => {
@@ -110,6 +117,23 @@ export const useDeepestDataAndParent = (arr, parent = null, depth = 1) => {
     }
   }
   return deepestItems
+}
+
+/**
+	* 获取对应id的数据项以及其父级数据
+	*/
+function findNode(data, id, parent) {
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].id === id) {
+      return [data[i], parent]
+    } else if (data[i].children) {
+      const result = findNode(data[i].children, id, data[i])
+      if (result) {
+        return result
+      }
+    }
+  }
+  return null
 }
 ```
 
