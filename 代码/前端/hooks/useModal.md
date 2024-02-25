@@ -96,3 +96,13 @@ type Words =
 type Cap = `${Capitalize<Words>}${string}`
 ```
 
+使用
+
+```ts
+
+/** 定义弹窗 */
+const { handleShowModal, handleCloseModal, modalList } = useModal({
+  showCms: false
+})
+```
+
