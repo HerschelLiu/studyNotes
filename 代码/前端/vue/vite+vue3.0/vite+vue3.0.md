@@ -4,10 +4,10 @@
 
 ## 快速上手
 
-vue
+vue [快速上手 | Vue.js (vuejs.org)](https://cn.vuejs.org/guide/quick-start.html)
 
 ```bash
-npm create vue@latest
+npm/pnpm/yarn/bun create vue@latest
 ```
 
 Vite
