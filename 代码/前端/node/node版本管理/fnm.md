@@ -32,6 +32,8 @@ cargo install fnm
 > 
 > # zsh .zshrc
 > eval "$(fnm env --use-on-cd)"
+> #上面这个好像不好使，试试下边的
+> eval "`fnm env --use-on-cd`"
 > 
 > # shell ~/.config/fish/conf.d/fnm.fish
 > fnm env --use-on-cd | source
@@ -75,6 +77,9 @@ fnm alias <指定版本号> <别名>
 
 # 取消别名
 fnm unalias <alias-name>
+
+--use-on-cd:这个标志告诉fnm ，当你cd 进入一个项目根目录时，它应该自动使用.node-version （或.nvmrc ）中指定的版本的Node。很酷，不是吗？
+**--version-file-strategy=recursive**:这个标志和它的recursive 值基本上告诉fnm 使用.node-version(或.nvmrc)中指定的 Node 版本，即使你在一个嵌套目录中，使用use 或install 子命令而没有版本。它还告诉fnm ，当你离开任何这样的项目目录并使用没有版本的use 子命令时，使用别名为default 的Node版本。与--use-on-cd 一起使用这个标志，可以让你在深入进出此类项目目录时，拥有自动使用或安装相关版本Node的魔力（如这里所述）。
 ```
 
 ## 项目中指定版本
@@ -158,3 +163,26 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" --no-use          # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 ```
+
+
+
+## 修改 node 下载源
+
+
+
+```bash
+# zsh、bash
+export FNM_NODE_DIST_MIRROR="https://registry.npmmirror.com/"
+
+fnm install 16 --node-dist-mirror=
+```
+
+## 升级 fnm
+
+```bash
+# macOS
+brew upgrade fnm
+#其他
+#在其他操作系统上，升级和安装几乎是一样的
+```
+

@@ -1,0 +1,1 @@
+[`form-data` 和 `x-www-form-urlencoded` 是两种常见的 HTTP 请求数据格式。`form-data` 适用于上传文件或二进制数据，而 `x-www-form-urlencoded` 适用于传输简单的键值对数据。在实际应用中，通常使用 `x-www-form-urlencoded` 进行普通表单提交，而使用 `form-data` 进行文件上传](https://developer.aliyun.com/article/1432987)

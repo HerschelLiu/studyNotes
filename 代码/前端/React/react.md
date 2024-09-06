@@ -17,15 +17,23 @@
 
 ## Create React App
 
-```bash
-npx create-react-app my-app
-cd my-app
-npm start
-```
+> ```bash
+> npx create-react-app my-app
+> cd my-app
+> npm start
+> ```
+>
+> **官网不再推荐使用Create-React-App作为构建React应用的默认工具，而是转向了Next.js**
+>
+> 可以直接使用 [开始 | Vite 官方中文文档 (vitejs.cn)](https://vitejs.cn/vite3-cn/guide/#trying-vite-online)来创建
+
+
 
 当准备好部署到生产环境时，执行 `npm run build` 会在 `build` 文件夹内生成你应用的优化版本。
 
 由于react默认没有router功能，所以需要安装`react-router`、`react-router-dom`。
+
+
 
 ## 注意
 
@@ -1256,6 +1264,15 @@ export default ({ mode }) => {
 
 ```
 
+在使用vite生成tsconfig.json,tsconfig.app.json,tsconfig.node.json这三个文件,其中tsconfig.node.json是专门用来配置vite.config.ts文件的编译规则,tsconfig.app.json则是用来定义项目中其他文件的ts编译规则,后面两个文件最终会被引入到tsconfig.json中.
+
+
+
+> import.meta.env 和 loadEnv 的使用场景不同
+> import.meta.env 是在运行时获取环境变量的值，适用于应用程序代码中需要动态获取环境变量的场合。（配置文件中获取不到，因为配置文件是在构建时被读取！！！）
+>
+> 而 loadEnv 则是在构建时加载环境变量，适用于打包时（构建时）需要引用环境变量的场合。
+
 
 
 #### normalize.css
@@ -1271,9 +1288,9 @@ import 'normalize.css'
 
 
 
-#### saas
+#### sass
 
-> Vite 对 .scss, .sass, .less, .styl 和 .stylus 文件提供了内置支持。没有必要为它们安装特定的 Vite 插件，但必须安装相应的预处理器依赖。
+> Vite 对 .scss, .sass, .less, .styl 和 .stylus 文件提供了内置支持。没有必要为它们安装特定的 Vite 插件，但必须安装相应的预处理器依赖。比如npm install -D sass
 
 
 

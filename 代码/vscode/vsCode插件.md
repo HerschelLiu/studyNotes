@@ -36,15 +36,17 @@
 
 ## vscode功能补充
 
-* Chinese （Simplified）Language Pack for Visual Studio Code中文
+* **Chinese**（Simplified）(vscode 自带)Language Pack for Visual Studio Code中文
 
-* bookmarks(书签) - visual Studio中的Bookmark能加速代码导航能力。可能有一些代码，需要频繁的相互切换。通常你可能是滚动页面，找到该代码块的。Visual Studio已经提供了通过使用快捷键，非常快速地移动到指定的代码段。这就是代码的书签功能。
+* **Dyno File Utils**：通过 vscode 的命令操作文件
+
+* **bookmarks(书签)** - visual Studio中的Bookmark能加速代码导航能力。可能有一些代码，需要频繁的相互切换。通常你可能是滚动页面，找到该代码块的。Visual Studio已经提供了通过使用快捷键，非常快速地移动到指定的代码段。这就是代码的书签功能。
 
 * live-server   预览页面（ctrl+F1）  
 
 * vscode-icons 侧栏的图标，对于一个有视觉强迫症的人是必须要的
 
-* TODO Highlight:这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
+* **TODO Highlight**:这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
 
 * Quokka:Quokka 是一个调试工具插件，能够根据你正在编写的代码提供实时反馈。它易于配置，并能够预览变量的函数和计算值结果。另外，在使用 JSX 或 TypeScript 项目中，它能够开箱即用。 
 
@@ -52,13 +54,13 @@
 
 * Path Intellisense ：路径自动补齐(vscode自带有路径补全)
 
-* npm包代码提示 Npm Intellisense 
+* **npm包代码提示** Npm Intellisense 
 
 * vscode-Faker:使用流行的 JavaScript 库 – Faker，能够帮你快速的插入用例数据。Faker 可以随机生成姓名、地址、图像、电话号码，或者经典的乱数假文段落，并且每个类别还包含了各种子类别，你可以根据自身的需求来使用这些数据。 
 
 * SVG Viewer:此插件在 Visual Studio 代码中添加了许多实用的 SVG 程序，你无需离开编辑器，便可以打开 SVG 文件并查看它们。同时，它还包含了用于转换为 PNG 格式和生成数据 URI 模式的选项。
 
-* CSS Peek:使用此插件，你可以追踪至样式表中 CSS 类和 ids 定义的地方。当你在 HTML 文件中右键单击选择器时，选择“ Go to Definition 和 Peek definition ”选项，它便会给你发送样式设置的 CSS 代码。 
+* **CSS Peek**:使用此插件，你可以追踪至样式表中 CSS 类和 ids 定义的地方。当你在 HTML 文件中右键单击选择器时，选择“ Go to Definition 和 Peek definition ”选项，它便会给你发送样式设置的 CSS 代码。 
 
 * Icon Fonts:这是一个能够在项目中添加图标字体的插件。该插件支持超过 20 个热门的图标集，包括了 Font Awesome、Ionicons、Glyphicons 和 Material Design Icons。
 
@@ -68,13 +70,13 @@
 
 * **View In Browser** 迅速通过浏览器打开html文件
 
-* TODO Tree: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
+* **TODO Tree**: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
 
 * git lens:查看每行代码的修改历史。
 
 * Image preview：光标悬浮在图片路径上时，显示图片预览，这样我们在敲代码的时候一下子就能知道有没有引用了正确的图片或图标。
 
-* Terminal：可以在编辑器底边栏添加一个控制台按钮，便于鼠标快速访问
+* **Terminal**：可以在编辑器底边栏添加一个控制台按钮，便于鼠标快速访问
 
 * Browser Preview：vscode直接预览效果.现在的默认地址确实烦人，每次都要重新输入，这是一个有贞操的程序员所不能忍受的。所以我们按住`ctrl + ,`打开设置，然后找到`Extensions`,再找到`Browser Preview`,找到`Start Url`写上你默认打开的地址就可以了。
 
@@ -127,9 +129,7 @@
   }
   ```
 
-* Quokka.js是编辑器中的原型平台，可以访问项目文件，内联报告等。代码中的值在运行时更新
-
-* jump-import：支持网易nej工程，vue工程，快速跳转到你import的文件里面去(无论你是 @还是 pool还是 ../都可以)，并支持跳转nei的mock数据data.json
+* **jump-import**：支持网易nej工程，vue工程，快速跳转到你import的文件里面去(无论你是 @还是 pool还是 ../都可以)，并支持跳转nei的mock数据data.json
 
 * JSON to TS：将JSON对象转换为Typescript接口 
 
