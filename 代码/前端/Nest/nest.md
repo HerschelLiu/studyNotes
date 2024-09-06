@@ -814,7 +814,7 @@ export PATH=$PATH:/usr/local/mysql/bin
 `ERROR 2002 (HY000): Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)`
 
 1. 第一步：找到mysql的安装目录，我的是：/usr/local/mysql，不用去mysql底下的bin目录
-2. 第二步：执行 sudo ./support-files/mysql.server start
+2. 第二步：执行 sudo ./support-files/mysql.server start，停止就是 stop
 
 ### prisma
 
