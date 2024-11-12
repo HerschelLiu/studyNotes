@@ -1078,6 +1078,8 @@ app.dock.hide()
 
 ## 开发桌面摄像头软件
 
+https://github.com/HerschelLiu/camera.git
+
 [WebAPI](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices)
 
 ### 安装 
