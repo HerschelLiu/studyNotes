@@ -541,7 +541,56 @@ export default ChildComponent;
 
 ```
 
+## css
 
+在 react 中，class 名称不是 class，而是`className`
+
+### css文件
+
+直接在组件中`import 'xxx.css'`。
+
+实现 vue 中的`scoped`模式，将`xxx.css`修改为`xxx.module.css`。
+
+可以使用预编译器，同样可以加`module`.
+
+module与普通 css 文件用法不同，css 文件可以直接引用，module 引入时需要规定名称`import [name] from 'xxx.module.css'`，使用时`[name].[类名]` 
+
+### style-component
+
+`pnpm add style-component`
+
+用法
+
+```tsx
+// 组件中
+import styled from 'style-component'
+
+interface Props {
+  $isActive: boolean
+}
+const StyleDiv = styled.div<Props>`
+	background: ${props => props.$isActive ? 'red' : 'green'};
+`
+
+return (
+	<StyleDiv $isActive={true}>...</StyleDiv>
+)
+```
+
+其实际上就是创建了个组件。
+
+如果想跟`tailwindcss`结合，需要安装一个库`tailwind-styled-components`
+
+> 解决 props 报错有两种方法：
+>
+> 1. 加上`$`符号，在组件中`$isActive`， 在interface 中也要加上。
+>
+> 2. 包裹在`<StyleSheetManager shouldForwardProp={...}>...</StyleSheetManager>`中，shouldForwardProp中的参数生效需要另一个包`@emotion/is-prop-valid`
+>
+>    ```tsx
+>    import isPropValid from '@emotion/is-prop-valid'
+>    <StyleSheetManager shouldForwardProp={isPropValid}>...</StyleSheetManager>
+>    ```
 
 ## 在react中，如何实现类似vue中的插槽
 
@@ -644,6 +693,8 @@ function ExampleWithManyStates() {
 
 ### useImmer
 
+useState处理单个数据，useImmer 对象数据
+
 查看[更新 state 中的数组 – React 中文文档](https://zh-hans.react.dev/learn/updating-arrays-in-state)
 
 ```bash
@@ -728,6 +779,12 @@ function FriendStatus(props) {
 >
 > 2. 在设置的参数的`useEffect`中加非空判断
 > 3. 把初始化放到`useReducer`里面
+
+> 通过闭包理解
+>
+> 在 useEffect 中 log 一个数据，此数据不会改变，相当于闭包中，数据在使用，外部数据就不会释放，即使数据变了，打印还是原来的数据，所以这种情况下，第二个参数中就要监听这个数据。
+>
+> 比如其中是addEventListener方法，那么需要在 return 中清除掉监听，这样数据更新后，就不会重复创建addEventListener监听
 
 ### useReducer
 
@@ -1028,56 +1085,88 @@ React的useContext可以用于在组件之间共享数据，避免了通过props
 
 具体使用步骤如下：
 
-1. 创建一个Context对象
+```ts
+// data.ts
+export interface DataType {
+  id: number
+  content: string
+}
 
-```javascript
-const MyContext = React.createContext(defaultValue);
+export const codes: DataType[] = [
+  {
+    id: 1,
+    content: 'Dolor do excepteur eiusmod qui amet adipisicing aute.'
+  },
+  {
+    id: 2,
+    content: 'Sint enim commodo in est consequat ut labore veniam.'
+  },
+  { id: 3, content: 'Veniam culpa in laboris proident nostrud dolore cillum.' },
+  { id: 4, content: 'Exercitation do mollit laborum esse ipsum anim incididunt sint dolor.' },
+  { id: 5, content: 'Anim proident eiusmod pariatur culpa qui officia tempor eu.' },
+  { id: 6, content: 'Quis non fugiat nostrud enim nulla anim sint officia occaecat.' },
+  { id: 7, content: 'Elit laborum aute commodo minim dolore nostrud fugiat est duis velit elit do esse minim.' }
+]
+
 ```
 
-其中defaultValue是可选的，表示当没有匹配到Provider时的默认值。
 
-2. 在需要共享数据的组件中使用useContext获取Context对象中的数据
 
-```javascript
-const myData = useContext(MyContext);
+```tsx
+// CodeContext.tsx
+import { DataType } from '@renderer/data'
+import { createContext, Dispatch, SetStateAction } from 'react'
+
+interface ContextProps {
+  data: DataType[]
+  setData: Dispatch<SetStateAction<DataType[]>> // 用来描述 setData
+}
+export const CodeContext = createContext<ContextProps | undefined>(undefined)
+
 ```
 
-其中MyContext是上一步创建的Context对象。
+```tsx
+// App.tsx
 
-3. 在需要提供数据的组件中使用Provider提供数据
+import { useState } from 'react'
+import Result from './components/Result'
+import Search from './components/Search'
+import { CodeContext } from './context/CodeContext'
+import { codes } from './data'
 
-```javascript
-<MyContext.Provider value={myData}>
-  <ChildComponent />
-</MyContext.Provider>
-```
-
-其中value是需要共享的数据，ChildComponent是需要共享数据的组件。
-
-完整示例代码如下：
-
-```javascript
-import React, { useContext } from 'react';
-
-const MyContext = React.createContext('default value');
-
-function ParentComponent() {
+function App(): JSX.Element {
+  const [data, setData] = useState(codes)
   return (
-    <MyContext.Provider value="hello world">
-      <ChildComponent />
-    </MyContext.Provider>
-  );
+    <CodeContext.Provider value={{ data, setData }}>
+      <Search />
+      <Result />
+    </CodeContext.Provider>
+  )
 }
 
-function ChildComponent() {
-  const myData = useContext(MyContext);
-  return <div>{myData}</div>;
-}
+export default App
 
-export default ParentComponent;
 ```
 
-在上面的示例中，ParentComponent提供了一个MyContext.Provider，将数据"hello world"提供给了ChildComponent。ChildComponent中使用useContext获取了MyContext中的数据，并将其渲染到了页面上。
+```tsx
+// Result.tsx
+import { CodeContext } from '@renderer/context/CodeContext'
+import { useContext } from 'react'
+
+export default function Result(): JSX.Element {
+  const { data } = useContext(CodeContext)!
+  return (
+    <main className="bg-slate-50 px-3 rounded-bl-lg rounded-br-lg -mt-[7px] pb-2">
+      {data.map(item => (
+        <div key={item.id} className="text-slate-700 truncate mb-2">
+          {item.content}
+        </div>
+      ))}
+    </main>
+  )
+}
+
+```
 
 #### useId
 
@@ -1452,9 +1541,11 @@ export default defineConfig({
 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 ```
 
+### 状态管理
 
+#### [zustand](https://awesomedevin.github.io/zustand-vue/)
 
-
+类似 Pinia 用法
 
 ## 其他
 

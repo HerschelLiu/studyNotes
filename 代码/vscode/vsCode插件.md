@@ -32,7 +32,17 @@
 * api提示：flutter-stylizer
 * 导包：Pubspec Assist：所有你需要做的就是打开你的pubspec.yaml文件，打开命令面板，选择“pubspec assist：add dependency”并输入你需要的依赖项的名称。您将自动将其添加到pubspec.yaml文件中，更新到最新版本，所有这些都不会留下代码。
 
-## 
+## react
+
+* **ES7+ React/Redux/React-Native snippets**: react 代码片段
+
+## vue3
+
+* **Vue - Official**: vue3
+
+## Tailwind
+
+* **Tailwind CSS IntelliSense**: 提示插件
 
 ## vscode功能补充
 
@@ -71,6 +81,10 @@
 * **View In Browser** 迅速通过浏览器打开html文件
 
 * **TODO Tree**: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
+
+* **Lorem ipsum**： 生成随机数据
+
+* **Chinese Lorem**: 生成中文随机数据
 
 * git lens:查看每行代码的修改历史。
 
