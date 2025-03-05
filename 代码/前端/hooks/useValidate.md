@@ -68,5 +68,10 @@ export function isVersion(str: string): boolean {
   return /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(str) && str.split('.').every(num => Number(num).toString().length === num.length)
 }
 
+/** 格式化金额 */
+export const useMoneyFormat = (value: string) => value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1').replace(/^0+(\d)/, '$1').replace(/^\./, '').replace(/(\.\d{2})\d+/, '$1')
+
+/** 格式化金额 */
+export const useMoneyFormat = (value: string) => value.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1').replace(/^0+(\d)/, '$1').replace(/^\./, '').replace(/(\.\d{2})\d+/, '$1')
 ```
 
