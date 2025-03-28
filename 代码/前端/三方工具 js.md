@@ -30,3 +30,8 @@
     ```
 
 * [VueDraggablePlus | 支持 Vue2 和 Vue3 的拖拽组件 (vue-draggable-plus.pages.dev)](https://vue-draggable-plus.pages.dev/)
+
+* **动画**
+
+  * **[GSAP](https://gsap.com/docs/v3/)**： 前端页面动效
+  * **[Lottie](https://lottiefiles.com/)**

@@ -4,6 +4,8 @@ uniapp 本身不支持组件类型，安装[`@uni-helper/uni-typed`](https://uni
 
 **不是直接安装@uni-helper/uni-typed**，没有。而是安装他的子包
 
+## [UniUse](https://uni-helper.github.io/uni-use/guide/)
+
 ##  uni-ui
 
 * [uview-plus](https://uiadmin.net/uview-plus/)

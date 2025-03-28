@@ -250,7 +250,9 @@ export const userStore = defineStore('user', {
 })
 ```
 
+## uniapp中的数据持久化
 
+[pinia-plugin-unistorage](https://ext.dcloud.net.cn/plugin?id=8081)
 
 ## 引用
 

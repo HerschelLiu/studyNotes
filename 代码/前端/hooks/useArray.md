@@ -93,6 +93,12 @@ export const useFlat = (list, name = 'children') => {
   return arr
 }
 
+type DeepestDataAndParent<T> = {
+  item: T
+  parent: T | null
+  depth: number
+}
+
 /**
  * 获取多级数组每个元素最深层级数据及其父级数据
  * @param {Array<Object>} arr 数组
@@ -100,11 +106,16 @@ export const useFlat = (list, name = 'children') => {
  * @param {Number} depth 层级
  * @returns Array<{ item: Object;parent: Object | null;depth: Number; }>
  */
-export const useDeepestDataAndParent = (arr, parent = null, depth = 1) => {
-  let deepestItems = []
+export const useDeepestDataAndParent = <T extends object>(
+  arr: T[],
+  parent: T | null = null,
+  depth = 1,
+  key = 'children'
+): DeepestDataAndParent<T>[] => {
+  let deepestItems: DeepestDataAndParent<T>[] = []
   for (let item of arr) {
-    if (item.children) {
-      const results = useDeepestDataAndParent(item.children, item, depth + 1)
+    if (Reflect.has(item, key)) {
+      const results = useDeepestDataAndParent(Reflect.get(item, key) as T[], item, depth + 1, key)
       if (results.length > 0) {
         deepestItems.push(...results)
       }
@@ -119,21 +130,67 @@ export const useDeepestDataAndParent = (arr, parent = null, depth = 1) => {
   return deepestItems
 }
 
-/**
-	* 获取对应id的数据项以及其父级数据
-	*/
-function findNode(data, id, parent) {
+/** 获取对应id的数据项 */
+export function useFindNode<T extends object>(data: T[], id: string, idKey = 'id', key = 'children'): T | null {
   for (let i = 0; i < data.length; i++) {
-    if (data[i].id === id) {
-      return [data[i], parent]
-    } else if (data[i].children) {
-      const result = findNode(data[i].children, id, data[i])
+    if (Reflect.get(data[i], idKey) === id) {
+      return data[i]
+    } else if (Reflect.has(data[i], key)) {
+      const result = useFindNode(Reflect.get(data[i], key) as T[], id, idKey, key)
       if (result) {
         return result
       }
     }
   }
   return null
+}
+
+/** 获取对应id的数据项以及其父级数据 */
+export function useFindNode<T extends object>(data: T[], id: string, idKey = 'id', key = 'children', parent: T): T[] | null {
+  for (let i = 0; i < data.length; i++) {
+    if (Reflect.get(data[i], idKey) === id) {
+      return [data[i], parent]
+    } else if (Reflect.has(data[i], key)) {
+      const result = useFindNode(Reflect.get(data[i], key) as T[], id, idKey, key, parent)
+      if (result) {
+        return result
+      }
+    }
+  }
+  return null
+}
+
+/**
+ * 获取对象的最深层级数
+ * @param obj 要计算深度的对象
+ * @param key 子对象的键名，默认为 'children'
+ * @returns 对象的最深层级
+ */
+export const useGetObjMaxDepth = <T extends object>(obj: T, key = 'children'): number => {
+  if (!Reflect.has(obj, key)) {
+    return 1
+  }
+
+  const children = Reflect.get(obj, key) as T[]
+  if (!Array.isArray(children) || children.length === 0) {
+    return 1
+  }
+
+  return 1 + Math.max(...children.map(child => useGetObjMaxDepth(child, key)))
+}
+
+/**
+ * 获取对象数组中最深层级数
+ * @param arr 对象数组
+ * @param key 子对象的键名，默认为 'children'
+ * @returns 数组中最深层级
+ */
+export const useGetArrayMaxDepth = <T extends object>(arr: T[], key = 'children'): number => {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return 0
+  }
+
+  return Math.max(...arr.map(item => useGetObjMaxDepth(item, key)))
 }
 ```
 
