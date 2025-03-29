@@ -22,7 +22,7 @@ const globalData = {
 export const topPosition = globalData.navigationStyle === 'default' ? 0 : globalData.titleBarHeight
 
 /** 页面主样式，position */
-export function useStyleTop({ top } = { top: '0rpx' }) {
+export function useStyleTop({ top } = { top: '0px' }) {
   return useStyle({
     top: `calc(${top} + ${useUnit(topPosition, 'px')})`
   })
@@ -44,8 +44,8 @@ export interface IStylePadding {
 export function useStylePadding(options: IStylePadding = {}) {
   const { top, bottom, hasSafeArea, heightMode, hasPaddingTop } = Object.assign(
     {
-      top: '0rpx',
-      bottom: '0rpx',
+      top: '0px',
+      bottom: '0px',
       hasSafeArea: true,
       heightMode: 'minHeight',
       hasPaddingTop: true

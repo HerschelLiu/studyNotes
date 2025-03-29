@@ -1112,3 +1112,7 @@ svg 文件名
 - dir/icon1.svg # icon-dir-icon1
 - dir/dir2/icon1.svg # icon-dir-dir2-icon1
 ```
+
+### 自动导入'unplugin-auto-import’
+
+见《个人使用创建新项目准备》
