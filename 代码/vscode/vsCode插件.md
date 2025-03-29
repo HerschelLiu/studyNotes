@@ -171,13 +171,19 @@
 
 * **驼峰翻译助手**： 作者svenzhao
 
-* **live-server **  预览页面（ctrl+F1）  
-
-* **vscode-icons** 侧栏的图标，对于一个有视觉强迫症的人是必须要的
-
 * **TODO Highlight**: 这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
 
 * **TODO Tree**: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
+
+* **#region folding for VS Code**：在 VS Code 中，可以使用 *#region* 和 *#endregion* 注释来定义一个可折叠的代码区域。此插件对`// #region`提供更好的支持
+
+  * **region-generator**: 自动生成*#region*注释，选中文本后，按下快捷键`Ctrl+Shift+/`（Mac: `Cmd+Shift+/`）
+
+  
+
+* **vscode-icons** 侧栏的图标，对于一个有视觉强迫症的人是必须要的
+
+* **live-server **  预览页面（ctrl+F1）  
 
 * **Quokka**:Quokka 是一个调试工具插件，能够根据你正在编写的代码提供实时反馈。它易于配置，并能够预览变量的函数和计算值结果。另外，在使用 JSX 或 TypeScript 项目中，它能够开箱即用。 
 

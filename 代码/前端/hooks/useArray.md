@@ -192,5 +192,32 @@ export const useGetArrayMaxDepth = <T extends object>(arr: T[], key = 'children'
 
   return Math.max(...arr.map(item => useGetObjMaxDepth(item, key)))
 }
+
+/**
+ * 返回目标节点的所有祖先节点数组
+ * @returns { node: T | null; ancestors: T[] } node - 目标节点，ancestors - 所有祖先节点数组
+ */
+export function useFindNodeWithAncestors<T extends object>(
+  data: T[],
+  id: string,
+  idKey = 'id',
+  key = 'children',
+  ancestors: T[] = []
+): { node: T | null; ancestors: T[] } {
+  for (let i = 0; i < data.length; i++) {
+    const currentAncestors = [...ancestors, data[i]]
+    if (Reflect.get(data[i], idKey) === id) {
+      return { node: data[i], ancestors }
+    } else if (Reflect.has(data[i], key)) {
+      const result = useFindNodeWithAncestors(Reflect.get(data[i], key) as T[], id, idKey, key, currentAncestors)
+      if (result.node) {
+        return result
+      }
+    }
+  }
+  return { node: null, ancestors: [] }
+}
 ```
+
+
 
