@@ -21,7 +21,7 @@ const globalData = {
 /** 顶部的距离，区别于系统titlebar和自定义titlebar */
 export const topPosition = globalData.navigationStyle === 'default' ? 0 : globalData.titleBarHeight
 
-/** 页面主样式，position */
+/** 页面主样式，position，使用0px而非0rpx，uniapp编译后calc的0和0rpx都无法正确计算 */
 export function useStyleTop({ top } = { top: '0px' }) {
   return useStyle({
     top: `calc(${top} + ${useUnit(topPosition, 'px')})`
