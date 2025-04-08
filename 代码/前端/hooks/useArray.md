@@ -72,7 +72,6 @@ export const useArraySet = <T extends Object>(target: T[], key: keyof T, value: 
  */
 export const useChunk = <T extends []>(array: T[], size: number) =>
   Array.from({ length: Math.ceil(array.length / size) }, (_v: number, i: number) => array.slice(i * size, i * size + size))
-        
 ```
 
 
@@ -216,6 +215,52 @@ export function useFindNodeWithAncestors<T extends object>(
     }
   }
   return { node: null, ancestors: [] }
+}
+
+/** 判断两个数组中的值是否相等（不校验顺序）equality = true 校验顺序 */
+export const useArraysEqual = (arr1, arr2, equality = false) => {
+  if (equality) return JSON.stringify(arr1) === JSON.stringify(arr2)
+  if (arr1.length !== arr2.length) return false
+  const arr = []
+  arr2.forEach(item => {
+    const obj = arr1.find(it => JSON.stringify(it) === JSON.stringify(item))
+    arr.push(!!obj)
+  })
+
+  return arr.every(item => item)
+}
+
+/** 数组排序 */
+export function useSort<T extends Record<K, Key>, K extends keyof T>(originalArray: T[], fieldKey: K, sortOrder?: T[K][]): T[] {
+  // 创建数组副本避免修改原数组
+  const sortedArray = [...originalArray]
+
+  // 当有自定义排序顺序时
+  if (sortOrder && sortOrder.length) {
+    const orderMap = new Map(sortOrder.map((value, index) => [value, index]))
+    return sortedArray.sort((a, b) => {
+      const aIndex = orderMap.get(a[fieldKey]) ?? Infinity
+      const bIndex = orderMap.get(b[fieldKey]) ?? Infinity
+      return aIndex - bIndex
+    })
+  }
+
+  // 自然排序逻辑（数字优先 -> 字符串）
+  return sortedArray.sort((a, b) => {
+    const aVal = a[fieldKey]
+    const bVal = b[fieldKey]
+
+    // 处理数字类型比较
+    if (typeof aVal === 'number' && typeof bVal === 'number') {
+      return aVal - bVal
+    }
+
+    // 处理混合类型和字符串类型比较
+    return String(aVal).localeCompare(String(bVal), undefined, {
+      numeric: true,
+      sensitivity: 'variant'
+    })
+  })
 }
 ```
 
