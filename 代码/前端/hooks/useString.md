@@ -42,5 +42,9 @@ export function useRandomPassword(): string {
   return str.map(item => randomChar(item)).join('')
 }
 
+/** 转义特殊字符 */
+export const useEscapeRegExp = (keyword: string) => {
+  return keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
 ```
 
