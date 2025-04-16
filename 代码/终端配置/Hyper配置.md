@@ -16,6 +16,12 @@
 
 [Hyper的官方插件地址](https://hyper.is/plugins)
 
+```bash
+hyper i 插件名
+```
+
+
+
 在plugin选项填写。字段中写入需要的插件名称，然后保存配置文件即可，Hyper 会自动完成插件的安装。
 
 * hyper-snazzy：提供终端颜色主题
@@ -25,6 +31,11 @@
 * Hyper-letters：安装后每次字符输入都会在光标处迸发出当前字母
 * hyper-search：这个插件主要是可以让你在终端里面按ctrl-f的时候可以搜索。
 * hyper-pane：这就是一个增强的多多窗口插件，通过快捷键你可以快速切换窗口。在gif里你可以看到创建窗口和切换窗口的快捷键。
+  * Mac
+    * 新建Panl <kbd>cmd</kbd> + <kbd>D</kbd>
+    * 跳转到panl：<kbd>ctrl</kbd> + <kbd>option</kbd> + 数字
+    * 删除panl：<kbd>cmd</kbd> + <kbd>w</kbd>
+  
 * hyper-launch-menu：从菜单启动多种shell
 * hyper-fading-scrollbar：不使用时淡化滚动条
 * hyper-quit：关闭最后一个window时退出Hyper
@@ -33,6 +44,9 @@
 * hyper-drop-file：支持文件拖入方式输入地址（不用再复制地址了）
 * hyperborder： 效果图最外面一圈炫彩（其实就是官方图标的炫彩）就是它弄出来的，甚至还能加动画
 * hyper-font-ligatures：支持字体 ligature 显示（前提是你的 fontFamily 自带了 ligature）
+* hyper-yes 自动填y
+* hyper-tabs-enhanced 增强选项卡插件。匹配任何主题。
+* hyper-shellect: 打开新窗口时选择shell（zsh powershell等）
 
 例如`plugins: ["hyper-snazzy", "hyper-transparent-dynamic"]`
 

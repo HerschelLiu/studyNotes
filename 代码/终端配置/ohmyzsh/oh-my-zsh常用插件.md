@@ -20,6 +20,8 @@ sudo apt install zsh
 
 安装oh-my-zsh
 
+**注意：**mac默认使用的是zsh，安装oh-my-zsh会替换掉mac的`~/.zshrc`，在安装前请备份下自己加的配置
+
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 ```
