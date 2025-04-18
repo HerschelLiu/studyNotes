@@ -204,6 +204,103 @@ pnpm -F portal i common
 pnpm -F admin i common
 ```
 
+## 从0创建
+
+### 快速开始
+
+创建`package.json`
+
+```bash
+pnpm init
+```
+
+加入 `"private": true`,package.json的name改为`%NAMESPACE%`，子包的package.json的name为`%NAMESPACE%/name`
+
+创建工作区`pnpm-workspace.yaml`[pnpm说明](`https://pnpm.io/zh/pnpm-workspace_yaml)
+
+```yaml
+packages:
+  # 指定根目录直接子目录中的包
+  - 'my-app'
+  # packages/ 直接子目录中的所有包 - 所有前端项目存储的目录
+  - 'packages/*'
+  # components/ 子目录中的所有包 - 给所有项目使用的公共组件
+  - 'components/**'
+  # utils/ 子目录中的所有包 - 给所有项目使用的公共工具库
+  - 'utils/**'
+  # 排除测试目录中的包
+  - '!**/test/**'
+```
+
+上面这段配置的意思就是通过 glob 语法将`packages`下的所有文件夹都当做一个package，添加到 monorepo 中进行管理。
+
+根目录下创建 **.npmrc**，用于确保后续下载依赖时，优先从本地查找，而非远程npm。
+
+```bash
+# 解决pnpm add时优先在本地查找依赖
+link-workspace-packages=true
+```
+
+### 工具子包
+
+在 **utils目录** 下，执行`pnpm init`，此时出现 **package.json**，修改name为 **@xxx/utils** 格式，并加入 `"private": true`
+
+**utils目录**下创建 **index.js**，**`注意：`** 文件名要与 package.json 中的 main 字段一致，默认为 index.js
+
+ndex.js 中整合所有方法并导出
+
+
+
+### 全局依赖
+
+类似于`TypeScript`或`lodash`这样通用的依赖，我们通常可以把他们安装到根目录，：
+
+```bash
+pnpm install typescript -D -w
+```
+
+* `-D`把依赖作为`devDependencies`安装
+* `-w`把依赖安装到根目录的`node_modules`当中
+
+```lua
+├── node_modules
+│   ├── @types
+│   └── typescript -> .pnpm/typescript@4.4.4/node_modules/typescript
+├── package.json
+├── packages
+│   ├── server
+│   ├── tools
+│   └── web
+├── pnpm-lock.yaml
+└── pnpm-workspace.yaml
+```
+
+### 启动与开发
+
+一个 monorepo 往往是一个整体的项目，所以我们需要同时执行多个指令，在 pnpm 中，可以通过`-C`进行配置：
+
+```json
+"scripts": {
+    "start": "pnpm -C ./packages/server start:server & pnpm -C ./packages/web dev",
+  }
+```
+
+这条命令的含义就是同时运行服务端和前端代码。
+
+而`start:server`和`dev`都是我们在子项目的`scripts`中自己配置的。
+
+如果经过了 git 合码后，项目的依赖变化比较大，可以配置一条 clean 指令：
+
+```json
+  "scripts": {
+    "clean": "rm -rf node_modules **/*/node_modules",
+  }
+```
+
+这样根目录和子应用下的`node_modules`都会被删除。再次执行`pnpm install`也会同时为根目录和所有 package 安装需要的依赖。
+
+
+
 ## 命令
 
 ```bash
@@ -311,6 +408,8 @@ lerna run dev --scope=packageA
 
 ## 二者组合
 
+实际上pnpm天然具备 monorepo 能力，支持全局依赖管理，所有子包之间共享依赖
+
 ### 使用 Lerna 命令的核心场景
 
 #### 1. 版本管理与发布自动化
@@ -382,3 +481,9 @@ strict-peer-dependencies = true
 优势 ：pnpm 的 node_modules 结构扁平但隔离性强，避免非法依赖访问
 
 > 实际来说这俩没什么必要组合，用pnpm的话不用lerna
+
+
+
+## 注意
+
+### 子package之间的引用要引用其打包后的产物
