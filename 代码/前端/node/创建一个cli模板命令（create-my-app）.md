@@ -17,7 +17,7 @@ npx tsc --init
 - `degit`: 克隆模板仓库
 - `replace-in-files`: 批量替换文件内容
 - `ora` & `chalk`: 美化控制台输出
-- `inquirer`：让用户在初始化时选择包管理工具（pnpm、npm、yarn）
+- `inquirer`：在命令行中有询问的效果，还可以用prompts 库
 - `tsup`: 打包工具
 
 
@@ -174,7 +174,7 @@ create-herschel-project test
 用户只需执行：
 
 ```bash
-npx create-herschel-monorepo my-project
+npx package.json的name my-project
 ```
 
 工具会自动完成：

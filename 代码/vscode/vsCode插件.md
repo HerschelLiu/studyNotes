@@ -64,6 +64,32 @@
 
 * **Dev Containers**
 
+## 注释
+
+* **koroFileHeader**：作为一个有思想有个性的程序员写的代码一定是要有风格的，比如什么`佛祖保佑永无Bug`、`神兽护体`等形式的注释，既有趣又个性。这个插件目前有1300+Star,全五星好评，8万次下载，所以是个非常不错的插件。插件的作用是生成文件头部注释和函数注释。如果你是windows电脑，使用`ctrl+shift+p`键,Mac电脑使用`shift+command+p`键，然后输入`codeDesign`插件里边的图案有`佛祖`、`佛曰`、`美女`、`龙图腾`......等等，你可以下载下来自己测试一下。其实这个"骚注释"只是插件的功能之一，更多的应用是自动根据我们的需求快速生成注释，比如在`test.js`中点击快捷键`ctrl+alt+i`（Windows）,如果你是Mac电脑点击`ctrl+cmd+i`.就会快速生成这样的代码注释(我这里以JS代码注释为例，但这个插件可以支持所有主流语言，支持自定义语言).这时候你会发现这里的`Author`是需要配置的，其实配置这个也非常的容易，我们简单配置一下。在`VSCode`菜单栏点击`File`-`Preferences`-`Settings`-`Extensions`里找到`File header Configuration`，在文件头部模块中(Fileheader)点击`Edit in settings.json`在光标处添加函数注释：windows:`ctrl+alt+t`,mac:"ctrl+cmd+t"
+
+  ```json
+  {
+      "fileheader.configObj": {
+  
+      },
+      "fileheader.customMade": {
+          "Author": "技术胖",
+          "Date": "Do not edit", // 文件创建时间(不变)
+          "LastEditors": "技术胖", // 文件最后编辑者
+          "LastEditTime": "Do not edit", // 文件最后编辑时间
+          "FilePath": "Do not edit" ,// 增加此项配置即可
+      } 
+  
+  
+  }
+  ```
+
+  * **Nested Comments**：嵌套注释
+    * mac: **<kbd>cmd + option + /</kbd>
+    * Windows: **<kbd>ctrl + alt + /</kbd>
+    * 自定义: **<kbd>cmd + option + /</kbd>
+
 ## 前端
 
 ### 格式化相关
@@ -175,9 +201,13 @@
 
 * **TODO Tree**: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
 
-* **#region folding for VS Code**：在 VS Code 中，可以使用 *#region* 和 *#endregion* 注释来定义一个可折叠的代码区域。此插件对`// #region`提供更好的支持
+* **#region**：在 VS Code 中，可以使用 *#region* 和 *#endregion* 注释来定义一个可折叠的代码区域。
 
-  * **region-generator**: 自动生成*#region*注释，选中文本后，按下快捷键`Ctrl+Shift+/`（Mac: `Cmd+Shift+/`）
+  * **#region folding for VS Code**: 此插件对`// #region`提供更好的支持
+  * **region-generator**: 自动生成*#region*注释，选中文本后，按下快捷键`Ctrl+Shift+/`（Mac: `Cmd+Shift+/`）(自定义改为了**<kbd>ctrl + shift + cmd + /</kbd>)
+  * **Region Highlighter**: 高亮region.通过`Ctrl+Shift+P`执行命令`Region Highlighter: Mark Region`配置颜色
+
+  > 注意，在#region部分没有折叠标记：设置：Editor: Folding Strategy设置为auto
 
   
 
@@ -211,26 +241,7 @@
 
 * **Browser Preview**：vscode直接预览效果.现在的默认地址确实烦人，每次都要重新输入，这是一个有贞操的程序员所不能忍受的。所以我们按住`ctrl + ,`打开设置，然后找到`Extensions`,再找到`Browser Preview`,找到`Start Url`写上你默认打开的地址就可以了。
 
-* **koroFileHeader**：作为一个有思想有个性的程序员写的代码一定是要有风格的，比如什么`佛祖保佑永无Bug`、`神兽护体`等形式的注释，既有趣又个性。这个插件目前有1300+Star,全五星好评，8万次下载，所以是个非常不错的插件。插件的作用是生成文件头部注释和函数注释。如果你是windows电脑，使用`ctrl+shift+p`键,Mac电脑使用`shift+command+p`键，然后输入`codeDesign`插件里边的图案有`佛祖`、`佛曰`、`美女`、`龙图腾`......等等，你可以下载下来自己测试一下。其实这个"骚注释"只是插件的功能之一，更多的应用是自动根据我们的需求快速生成注释，比如在`test.js`中点击快捷键`ctrl+alt+i`（Windows）,如果你是Mac电脑点击`ctrl+cmd+i`.就会快速生成这样的代码注释(我这里以JS代码注释为例，但这个插件可以支持所有主流语言，支持自定义语言).这时候你会发现这里的`Author`是需要配置的，其实配置这个也非常的容易，我们简单配置一下。在`VSCode`菜单栏点击`File`-`Preferences`-`Settings`-`Extensions`里找到`File header Configuration`，在文件头部模块中(Fileheader)点击`Edit in settings.json`在光标处添加函数注释：windows:`ctrl+alt+t`,mac:"ctrl+cmd+t"
-
-  ```json
-  {
-      "fileheader.configObj": {
-  
-      },
-      "fileheader.customMade": {
-          "Author": "技术胖",
-          "Date": "Do not edit", // 文件创建时间(不变)
-          "LastEditors": "技术胖", // 文件最后编辑者
-          "LastEditTime": "Do not edit", // 文件最后编辑时间
-          "FilePath": "Do not edit" ,// 增加此项配置即可
-      } 
-  
-  
-  }
-  ```
-
-* **Polacode**: 生成代码截图。使用：F1-> 输入Polacode（会在代码右侧出现新标签页） -> 在左侧选中代码 -> 点击Polacode标签页中，图片下方的按钮保存图片
+* Polacode**: 生成代码截图。使用：F1-> 输入Polacode（会在代码右侧出现新标签页） -> 在左侧选中代码 -> 点击Polacode标签页中，图片下方的按钮保存图片
 
 * **any-rule**：正则表达式
 
@@ -242,18 +253,17 @@
 
 * **Microsoft Edge Tools for VS Code**
 
-* **Nested Comments**：嵌套注释
-
 * **open in browser**：打开网页到浏览器
 
 * **Shader lanaguages support for VS code**： 对 ShaderLab、CG/HLSL 等语法进行高亮显示，帮助开发者快速识别代码结构、代码自动补全
 
 ## Git
 
-* **Git Graph**
+* **Git Graph** - mhutchie： 该插件提供了`可视化存储库并跟踪所有正在进行的工作`
+* **Git History** - donjayamanne：该插件提供了`确定对文件的影响最大的更改以及由谁进行的更改`在当前文件下，使用 `cmd+shift+p/ctrl+shift+p` 输入 `file history` (<kbd>option + h</kbd>)即可得到右侧见历史提交信息
 * **GitHub Pull Requests**： 会在插片商店同级有切换
 * **GitHub Repositories*预览版***
-* **GitLens — Git supercharged**
+* **GitLens — Git supercharged**付费。不要
 
 ## Java
 

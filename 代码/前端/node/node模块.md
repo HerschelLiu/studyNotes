@@ -62,3 +62,4 @@ console.log(mime.getType('http://127.0.0.1:3000/views/index.js'))
 console.log(mime.getType('http://127.0.0.1:3000/images/aa.jpg'))
 console.log(mime.getType('http://127.0.0.1:3000/images/aa.gif'))
 ```
+

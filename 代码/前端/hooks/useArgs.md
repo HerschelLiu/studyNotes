@@ -6,8 +6,6 @@
 // vue3.x
 import { useRouter } from 'vue-router'
 
-import router from '@/router'
-
 /**
  * 验证参数是否存在
  * @param args 参数名
@@ -15,6 +13,7 @@ import router from '@/router'
  * @returns 参数值
  */
 export async function useValidateArgs(args: string, required = true): Promise<string> {
+  const router = useRouter();
   const route = router.currentRoute.value
   const arg = route.query[args] || route.params[args]
   if (arg && typeof arg === 'string') return Promise.resolve(arg)

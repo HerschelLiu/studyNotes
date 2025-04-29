@@ -147,4 +147,144 @@ export function useTimePickerByForm(form: Record<string, any>, startKey: string,
 > 
 > ```
 >
-> 
+
+`date-picker`
+
+```vue
+<template>
+  <el-date-picker
+    v-if="isArea"
+    v-model="value"
+    :shortcuts="showOptions ? defineDatePickerShortcuts(isFuture) : []"
+    :type="type || 'datetimerange'"
+    :start-placeholder="`${label}开始日期`"
+    range-separator="-"
+    :end-placeholder="`${label}结束日期`"
+    :disabled="disabled"
+  >
+    <template v-if="slots.rangeSeparator" #range-separator>
+      <slot name="range-separator" />
+    </template>
+  </el-date-picker>
+
+  <el-date-picker
+    v-else
+    v-model="value"
+    :shortcuts="showOptions ? defineDatePickerShortcut(isFuture) : []"
+    :type="type || 'datetime'"
+    :placeholder="label || '选择日期'"
+    :disabled="disabled"
+  >
+    <template v-if="slots.rangeSeparator" #range-separator>
+      <slot name="range-separator" />
+    </template>
+  </el-date-picker>
+</template>
+
+<script lang="ts">
+export default {
+  name: 'DatePicker'
+}
+</script>
+
+<script lang="ts" setup>
+import type { IDatePickerType } from 'element-plus/es/components/date-picker/src/date-picker.type'
+import type { PropType } from 'vue'
+import { computed, onBeforeMount, ref, useSlots, watch } from 'vue'
+
+import { useDateFormat } from '@/hooks/useDate'
+import { defineDatePickerShortcut, defineDatePickerShortcuts } from '@/hooks/useDatePicker'
+import { defineModelValueProps } from '@/hooks/useModelValue'
+import { isArray } from '@/hooks/useValidate'
+
+type Element = Key | Date
+
+const props = defineProps({
+  /** 定义model值参数 */
+  ...defineModelValueProps<Element | Element[]>([String, Array, Number]),
+  /** 是否选择将来的时间 */
+  isFuture: {
+    type: Boolean,
+    default: false
+  },
+  /** 显示类型 */
+  type: {
+    type: String as PropType<IDatePickerType>,
+    default: ''
+  },
+  /** 日期格式 */
+  format: {
+    type: String,
+    default: 'Y-M-D h:m:s'
+  },
+  /** 返回数据指定为时间戳 */
+  isTimeStamp: {
+    type: Boolean,
+    default: true
+  },
+  /** 是否显示快捷选项 */
+  showOptions: {
+    type: Boolean,
+    default: true
+  },
+  /** 项目名称 */
+  label: {
+    type: String,
+    default: ''
+  },
+  /** 是否禁用 */
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const emit = defineEmits(['update:modelValue'])
+const slots = useSlots()
+
+/** value */
+const value = ref<Key | Date | (Key | Date)[] | undefined>()
+
+onBeforeMount(() => {
+  if (isArray(props.modelValue)) value.value = props.modelValue.map(item => _getDate(item))
+  else value.value = _getDate(props.modelValue)
+})
+
+const _getDate = (val: Element) => {
+  if (typeof val === 'string') return val
+  else if (val === null) return ''
+  else return new Date(val)
+}
+
+const isArea = computed(() => {
+  return isArray(props.modelValue)
+})
+
+watch(
+  () => props.modelValue,
+  () => {
+    if (isArray(props.modelValue)) value.value = props.modelValue.map(item => _getDate(item))
+    else value.value = _getDate(props.modelValue)
+  }
+)
+
+const getTimeStamp = (val: Element) => {
+  if (val === null || val === '') return ''
+  else return +new Date(val)
+}
+
+watch(
+  () => value.value,
+  () => {
+    if (isArray(value.value)) {
+      emit(
+        'update:modelValue',
+        value.value.map(item => (item ? (props.isTimeStamp ? getTimeStamp(item) : useDateFormat(item, props.format)) : ''))
+      )
+    } else emit('update:modelValue', value.value ? (props.isTimeStamp ? getTimeStamp(value.value) : useDateFormat(value.value, props.format)) : '')
+  }
+)
+</script>
+
+```
+

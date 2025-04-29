@@ -23,6 +23,8 @@ Tauri 是一个构建适用于所有主流桌面和移动平台的轻快二进�
 
 #### [anime.js](https://anime.js.cool/documentation/)
 
+#### [animejs](https://animejs.com/)
+
 #### [Installation | GSAP | Docs & Learning](https://gsap.com/docs/v3/Installation/?tab=npm&module=esm&method=private+registry&tier=free&club=false&require=false&trial=true): 动画库。scrollTrigger视差滚动
 
 #### **[GSAP](https://gsap.com/docs/v3/)**： 前端页面动效
@@ -63,6 +65,42 @@ Tauri 是一个构建适用于所有主流桌面和移动平台的轻快二进�
 - 可视化运行测试用例，调试友好。
 - 支持跨浏览器测试。
 - 内置等待机制，减少显式等待代码。
+
+### npkill
+
+是一个用于快速查找和删除系统中旧的和占用大量空间的 **node_modules** 文件夹的工具。它可以帮助你释放宝贵的磁盘空间，并且使用起来非常简单
+
+可以通过以下命令直接使用 npkill，而无需安装
+
+```bash
+npx npkill
+```
+
+默认情况下，npkill 会从执行命令的路径开始扫描 **node_modules** 文件夹。你可以使用上下箭头键（或 *j* 和 *k* 键）在列出的文件夹之间移动，并按空格键或删除键来删除选定的文件夹。按 *o* 键可以打开选定结果所在的目录，按 *Q* 或 *Ctrl + c* 键可以退出[1](https://www.npmjs.com/package/npkill)
+
+选项
+
+npkill 提供了多种选项来定制搜索和删除操作，例如：
+
+
+
+- *-c, --bg-color*：更改行高亮颜色（可选颜色：blue, cyan, magenta, white, red, yellow）。
+- *-d, --directory*：设置开始搜索的目录（默认是当前目录）。
+- *-D, --delete-all*：自动删除找到的所有 node_modules 文件夹。
+- *-e, --hide-errors*：隐藏错误信息。
+- *-E, --exclude*：排除指定目录。
+- *-f, --full*：从用户的主目录开始搜索。
+- *-gb*：以 GB 为单位显示文件夹大小。
+- *-s, --sort*：按大小、路径或最后修改时间排序结果。
+- *-t, --target*：指定要搜索的目录名称（默认是 node_modules）。
+- *-x, --exclude-hidden-directories*：排除隐藏目录。
+- *--dry-run*：模拟删除操作，不实际删除任何内容。
+
+### 数据库
+
+#### idb
+
+最热门的`IndexedDB`包装库
 
 ---------------------
 

@@ -1053,7 +1053,7 @@ const ParentComponent = ({ count }) => {
 
 在这个例子中，handleClick函数被缓存，并且依赖于count变量。每当count变量发生变化时，handleClick函数会被重新创建。
 
-3. 当需要在使用useEffect时，避免函数作为依赖项时，可以使用useCallback来缓存函数。例如：
+3. 当需要在使用useEffect/useMemo时，避免函数作为依赖项时，可以使用useCallback来缓存函数。例如：
 
 ```react
 const ParentComponent = ({ count }) => {
@@ -1072,6 +1072,10 @@ const ParentComponent = ({ count }) => {
 在这个例子中，handleClick函数被缓存，并作为useEffect的依赖项。由于handleClick函数不会在每次重新渲染时重新创建，因此可以避免useEffect的不必要调用。
 
 总之，当需要缓存函数以提高性能时，可以使用useCallback。
+
+> 1. 父组件传递给子组件的回调函数（见1）
+> 2. 函数作为其他Hook的依赖项。当函数被其他Hook（如`useEffect`、`useMemo`）依赖时，若函数引用频繁变化，会导致依赖该函数的Hook频繁执行（见3）
+> 3. 高频交互场景：如拖拽、动画、滚动事件等高频触发的回调函数，避免频繁创建新函数导致内存压力和性能损耗。
 
 #### useContext
 
