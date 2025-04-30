@@ -195,6 +195,8 @@
   * **别名路径跳转**: 作者lihuiwang
   * **jump-import**：支持网易nej工程，vue工程，快速跳转到你import的文件里面去(无论你是 @还是 pool还是 ../都可以)，并支持跳转nei的mock数据data.json
 
+* **Dot Log**：xxx.log自动变成console.log(xxx)
+
 * **驼峰翻译助手**： 作者svenzhao
 
 * **TODO Highlight**: 这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
