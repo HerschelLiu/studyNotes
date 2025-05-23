@@ -102,6 +102,10 @@ npkill 提供了多种选项来定制搜索和删除操作，例如：
 
 最热门的`IndexedDB`包装库
 
+### Canvas
+
+* [modern-screenshot](https://github.com/qq15725/modern-screenshot)：生成图片
+
 ---------------------
 
 ## vue

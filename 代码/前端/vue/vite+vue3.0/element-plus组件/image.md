@@ -14,6 +14,8 @@
         :z-index="5000"
         preview-teleported
         :initial-index="initialIndex"
+        :show-progress="showProgress"
+        :hide-on-click-modal="hideOnClickModal"
       >
         <template #placeholder>
           <div class="image-box">
@@ -25,18 +27,16 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  name: 'Image'
-}
-</script>
-
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import { computed, onMounted, onUnmounted } from 'vue'
 
 import { useRefs } from '@/hooks/useRefs'
 import { useStyle, useUnit } from '@/hooks/useStyle'
+  
+defineOptions({
+  name: 'Image'
+})
 
 const props = defineProps({
   /** 图片地址 */
@@ -103,7 +103,16 @@ const props = defineProps({
   initialIndex: {
     type: Number,
     default: 0
-  }
+  },
+  showProgress: {
+    type: Boolean,
+    default: false
+  },
+  /** 当开启 preview 功能时，是否可以通过点击遮罩层关闭 preview */
+  hideOnClickModal: {
+    type: Boolean,
+    default: true
+  },
 })
 
 /** 图片地址 */
@@ -117,8 +126,8 @@ const style = computed(() => {
     display: props.center ? 'flex' : '',
     alignItems: props.center ? 'center' : '',
     borderRadius: props.borderRadius,
-    width: useUnit(props.width),
-    height: useUnit(props.height)
+    width: props.size ? useUnit(props.size) : useUnit(props.width),
+    height: props.size ? useUnit(props.size) : useUnit(props.height)
   })
 })
 
@@ -169,7 +178,7 @@ onUnmounted(() => {
   }
 }
 
-.el-image {
+:deep(.el-image) {
   width: 100%;
   height: 100%;
   vertical-align: top;

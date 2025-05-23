@@ -6,6 +6,13 @@
 
 ### IDE主题
 
+* **Catppuccin for VSCode**:(德古拉风格主题)
+
+* Gradient Theme： 暗黑颜色渐变主题
+
+  * 开启渐变：通过按 `Ctrl + Shift + P` 或者 `Shift + ⌘ + P` 并选择“**Gradient Theme: Enable Gradient**”来实现此操作。
+  * 关闭渐变：通过按 `Ctrl + Shift + P` 或者 `Shift + ⌘ + P` 并选择“**Gradient Theme: Disable Gradient**”来实现此操作。
+
 * Atom One Dark Theme :atom主题
 
 * Material Icon Theme： 图标主题
@@ -23,7 +30,7 @@
 * Windows opacity:透明。现在的透明度可能看片还是有一点问题的，那我们就把透明度调的高一点。在VSCode中使用快捷键`Ctrl + ,`,打开设置界面，在左边找到`Extensions`选项卡，然后找到`Windows opacity`进行设置。
 
   这里边只有一个设置项，就是`Opacity`，也就是我们要设置的透明度，值从`0-255`,数值越小透明度越高，数值越大透明度越低。我一般摸鱼的透明度在230左右，再小就容易被发现了。
-  
+
 * **Dracula Theme Official**
 
 * **Easy icon theme**

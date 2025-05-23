@@ -115,53 +115,5 @@ export function isArray(arg: any): arg is any[] {
 export function isVersion(str: string): boolean {
   return /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(str) && str.split('.').every(num => Number(num).toString().length === num.length)
 }
-
-/** 格式化金额 */
-export const useInputMoneyFormat = (value: string) =>
-  value
-    .replace(/[^\d.]/g, '')
-    .replace(/(\..*)\./g, '$1')
-    .replace(/^0+(\d)/, '$1')
-    .replace(/^\./, '')
-    .replace(/(\.\d{2})\d+/, '$1')
-
-/** 格式化纯整数字 */
-export const useInputNumberFormat = (value: string) => value.replace(/[^\d]/g, '')
-
-/** 格式化小数 */
-export const useInputDigitFormat = (value: string, decimalPlaces: number = 2) =>
-  value
-    .replace(/[^\d.]/g, '')
-    .replace(/(\..*)\./g, '$1')
-    .replace(/^0+(\d)/, '$1')
-    .replace(/^\./, '')
-    .replace(new RegExp(`(\\.\\d{${decimalPlaces}})\\d+`), '$1')
-
-/**
- * 将数值/字符串格式化为金额形式
- * @param value 输入值（数字或字符串）
- * @param decimal 保留小数位数（默认2位）
- * @param thousand 是否启用千分位（默认false）
- * @returns 格式化后的金额字符串（无效输入返回空字符串）
- */
-export function useFormatMoney(value: string | number, decimal: number = 2, thousand: boolean = false): string {
-  // 输入处理（兼容字符串中的逗号和非数字字符）
-  let numStr = String(value)
-    .replace(/,/g, '') // 移除现有逗号
-    .replace(/[^\d.-]/g, '') // 移除非数字字符
-
-  const num = parseFloat(numStr)
-  if (isNaN(num)) return '' // 无效输入处理
-
-  // 处理小数部分（四舍五入）
-  const fixedNum = num.toFixed(decimal)
-  const [integerPart, decimalPart] = fixedNum.split('.')
-
-  // 千分位格式化正则处理
-  const formattedInteger = thousand ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : integerPart
-
-  // 组合最终结果
-  return decimal > 0 ? `${formattedInteger}.${decimalPart}` : formattedInteger
-}
 ```
 

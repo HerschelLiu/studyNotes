@@ -2,18 +2,10 @@
 
 ## 推荐的工具链
 
-- **学习 React** 或**创建一个新的[单页](https://react.docschina.org/docs/glossary.html#single-page-application)应用**，请使用 [Create React App](https://react.docschina.org/docs/create-a-new-react-app.html#create-react-app)。
 - **用 Node.js 构建服务端渲染的网站**，试试 [Next.js](https://react.docschina.org/docs/create-a-new-react-app.html#nextjs)。[Next.js官方指南](https://nextjs.org/learn/)
-- 构建**面向内容的静态网站**，试试 [Gatsby](https://react.docschina.org/docs/create-a-new-react-app.html#gatsby)。
-- 打造**组件库**或**将 React 集成到现有代码仓库**，尝试[更灵活的工具链](https://react.docschina.org/docs/create-a-new-react-app.html#more-flexible-toolchains)。
-
-## 更灵活的工具链
-
-以下工具链为 React 提供更多更具灵活性的方案。推荐给更有经验的使用者：
-
-- **[Neutrino](https://neutrinojs.org/)** 把 [webpack](https://webpack.js.org/) 的强大功能和简单预设结合在一起。并且包括了 [React 应用](https://neutrinojs.org/packages/react/)和 [React 组件](https://neutrinojs.org/packages/react-components/)的预设。
-- **[Parcel](https://parceljs.org/)** 是一个快速的、零配置的网页应用打包器，并且可以[搭配 React 一起工作](https://parceljs.org/recipes.html#react)。
-- **[Razzle](https://github.com/jaredpalmer/razzle)** 是一个无需配置的服务端渲染框架，但它提供了比 Next.js 更多的灵活性。
+- 路由框架[React Router v7](https://reactrouter.com.cn/start/declarative/installation)
+- 请求[TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview)；[中文文档](https://cangsdarm.github.io/react-query-web-i18n/react/getstarted/quick-start/)
+- 状态管理[Zustand](https://zustand-cn.js.org/)
 
 ## Create React App
 
