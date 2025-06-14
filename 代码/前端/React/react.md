@@ -7,7 +7,7 @@
 - 请求[TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview)；[中文文档](https://cangsdarm.github.io/react-query-web-i18n/react/getstarted/quick-start/)
 - 状态管理[Zustand](https://zustand-cn.js.org/)
 
-## Create React App
+## ~~Create React App~~（弃用）
 
 > ```bash
 > npx create-react-app my-app
@@ -232,7 +232,7 @@ ReactDOM.render(
 );
 ```
 
-### 向实践处理程序传递参数
+### 向事件处理程序传递参数
 
 在循环中，通常我们会为事件处理函数传递额外的参数。例如，若 `id` 是你要删除那一行的 ID，以下两种方式都可以向事件处理函数传递参数：
 

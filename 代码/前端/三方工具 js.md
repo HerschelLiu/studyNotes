@@ -19,6 +19,8 @@ Tauri 是一个构建适用于所有主流桌面和移动平台的轻快二进�
 
 #### [shadcn](https://www.shadcn.com.cn/)
 
+#### 鼠标交互动画[cursify](https://cursify.vercel.app/)
+
 ### 动画
 
 #### [anime.js](https://anime.js.cool/documentation/)
@@ -118,13 +120,25 @@ npkill 提供了多种选项来定制搜索和删除操作，例如：
 
 #### 一个专门为Vue与Nuxt设计的组件集[inspira-ui](https://github.com/unovue/inspira-ui/tree/main)
 
+#### 高级图片裁剪工具[Advanced Cropper](https://advanced-cropper.github.io/vue-advanced-cropper/)
+
 ----------
 
 ## React
 
-### [ahooks](https://ahooks.js.org/zh-CN/)
+### hooks
 
-### [弹窗封装](https://github.com/eBay/nice-modal-react)
+#### [ahooks](https://ahooks.js.org/zh-CN/)
+
+### 通用
+
+#### [弹窗封装](https://github.com/eBay/nice-modal-react)
+
+#### [日程时间轴组件](https://planby.netlify.app/)
+
+### 动画
+
+#### [Framer Motion](https://motion.framer.wiki/introduction)
 
 --------------
 

@@ -266,3 +266,69 @@ export function useSort<T extends Record<K, Key>, K extends keyof T>(originalArr
 
 
 
+递归设置统一树路径的名称
+
+```ts
+interface TreeNodeBase {
+  [key: string]: any;
+}
+
+interface TreeNodeWithFullLabel<T extends TreeNodeBase> extends TreeNodeBase {
+  fullLabel: string;
+  [childrenKey: string]: TreeNodeWithFullLabel<T>[] | any; // 动态子节点字段
+}
+
+/**
+ * 为树形结构节点添加 fullLabel 字段（单函数递归）
+ * @param node 当前节点
+ * @param parentFullLabel 父级路径（内部递归使用）
+ * @param options 配置选项
+ * @returns 添加 fullLabel 后的新节点
+ */
+function addFullLabel<T extends TreeNodeBase>(
+  node: T,
+  parentFullLabel: string = '',
+  options: {
+    labelKey: keyof T;
+    childrenKey: keyof T;
+    separator?: string;
+  }
+): TreeNodeWithFullLabel<T> {
+  const { labelKey, childrenKey, separator = '/' } = options;
+  
+  // 1. 计算当前节点全路径
+  const currentLabel = String(node[labelKey]);
+  const fullLabel = parentFullLabel 
+    ? `${parentFullLabel}${separator}${currentLabel}`
+    : currentLabel;
+
+  // 2. 创建新节点（保留原始属性）
+  const newNode: any = {
+    ...node,
+    fullLabel
+  };
+
+  // 3. 递归处理子节点
+  const children = node[childrenKey];
+  if (Array.isArray(children)) {
+    newNode[childrenKey] = children.map(child => 
+      addFullLabel(child, fullLabel, options)  // 关键：递归调用同一函数
+    );
+  }
+
+  return newNode as TreeNodeWithFullLabel<T>;
+}
+```
+
+使用方式
+
+```ts
+
+areaList.value = res.data.map(item =>
+    addFullLabel(item, '', {
+      labelKey: 'areaName',
+      childrenKey: 'areaList'
+    })
+  )
+```
+

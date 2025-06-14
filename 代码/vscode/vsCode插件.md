@@ -103,6 +103,8 @@
 
 * **Prettier**: Prettier 是目前 Web 开发中最受欢迎的代码格式化程序。安装了这个插件，它就能够自动应用 Prettier，并将整个 JS 和 CSS 文档快速格式化为统一的代码样式。如果你还想使用 ESLint，那么还有个 **Prettier – Eslint **插件，你可不要错过咯！
 * **cssrem** 将css中的px自动转换为rem.再也不用计算器了
+* **Pretty TypeScript Errors** 让TypeScript错误在VSCode中更漂亮，更容易读懂
+* **CSS Modules**: CSS模块的Visual Studio Code扩展
 
 ### 预编译器
 
@@ -165,7 +167,9 @@
 
 * **taro-api-snippets**
 
+### css
 
+* **CSS Var Complete**: 支持CSS变量的智能感知
 
 ### Tailwind
 
@@ -193,6 +197,23 @@
 
 ## vscode功能补充
 
+#### TODO
+
+* **TODO Highlight**: 这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
+
+* **TODO Tree**: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
+
+* **Better Comments**：
+  * ！Alert
+  * ？Queries疑问
+  * TODO
+  * // Highlights
+
+* koroFileHeader
+
+
+#### 其他
+
 * **Dyno File Utils**：通过 vscode 的命令操作文件
 
 * **bookmarks(书签)** - visual Studio中的Bookmark能加速代码导航能力。可能有一些代码，需要频繁的相互切换。通常你可能是滚动页面，找到该代码块的。Visual Studio已经提供了通过使用快捷键，非常快速地移动到指定的代码段。这就是代码的书签功能。
@@ -206,9 +227,7 @@
 
 * **驼峰翻译助手**： 作者svenzhao
 
-* **TODO Highlight**: 这个插件能够在你的代码中标记出所有的 TODO 注释，以便更容易追踪任何未完成的业务。在默认的情况下，它会查找 TODO 和 FIXME 关键字。当然，你也可以添加自定义表达式。
-
-* **TODO Tree**: Todo 树扩展程序扫描您的源文件以查找Todo标记，并构建其找到的所有引用的树视图，然后您可以单击该treeview项，它将打开并转到相应源文件中的引用。方便您快速找到您想要解决的项目。
+* **Iconify IntelliSense**: icon图标预览插件
 
 * **#region**：在 VS Code 中，可以使用 *#region* 和 *#endregion* 注释来定义一个可折叠的代码区域。
 

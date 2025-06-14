@@ -117,7 +117,7 @@ export function useAfterListGroup(list: List<any, any>, res: any, target = 'list
  */
 export function useErrorList(list: List<any, any>) {
   list.loading = false
-  list.reGet = true
+  list.reGet = !list.haveAny
 
   return list
 }

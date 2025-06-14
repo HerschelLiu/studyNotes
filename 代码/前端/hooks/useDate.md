@@ -3,8 +3,9 @@ import { useStorage } from '@/hooks/useStorage'
 import { isDate } from '@/hooks/useValidate'
 
 
-/** 获取日期格式 */
-export function useDateFormat(date: string | undefined | Date | number | null, format = 'Y-M-D h:m:s'): string {
+export type IDate = string | undefined | Date | number | null
+
+export function useGetDate(date: IDate) {
   if (typeof date === 'string') {
     date = date.trim() // 清理前后空格
   }
@@ -19,6 +20,12 @@ export function useDateFormat(date: string | undefined | Date | number | null, f
     date = new Date(date)
   }
 
+  return date
+}
+
+/** 获取日期格式 */
+export function useDateFormat(date: IDate, format = 'Y-M-D h:m:s'): string {
+  date = useGetDate(date)
   let obj: Record<string, string | number> = {}
 
   if (date instanceof Date) {
@@ -342,5 +349,16 @@ export function useDateFormat(
   });
 }
 
+/**
+ * 获取传入日期之前的日期
+ * @param date 传入日期
+ * @param days 天数
+ * @returns 之前的日期
+ */
+export function useSetDate(date: IDate, days: number = 365) {
+  date = useGetDate(date)
+  date.setDate(date.getDate() + days)
+  return date
+}
 ```
 
