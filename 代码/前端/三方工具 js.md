@@ -13,8 +13,6 @@ Tauri 是一个构建适用于所有主流桌面和移动平台的轻快二进�
 * tauri更安全
 * tauri编译后包体积轻量
 
-### 请求增强多框架：[TanStack Query](https://cangsdarm.github.io/react-query-web-i18n/vue)
-
 ### 样式
 
 #### [shadcn](https://www.shadcn.com.cn/)
@@ -107,6 +105,79 @@ npkill 提供了多种选项来定制搜索和删除操作，例如：
 ### Canvas
 
 * [modern-screenshot](https://github.com/qq15725/modern-screenshot)：生成图片
+
+### PDF
+
+#### **html2pdf.js**
+
+将内容导出为 PDF`npm i html2pdf.js`.图片需要先加载再导出为pdf，不然回事空白，将图片地址变为base64；部分图片的宽度会过大，导致图片加载不全的问题，这在预览的情况下也存在，加上样式：
+
+```css
+img {
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: middle;
+  height: auto !important;
+  width: auto !important;
+  margin: 10px 0;
+}
+
+作者：前端充电站
+链接：https://zhuanlan.zhihu.com/p/1921151470918673625
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+故此需要在导出pdf前，添加以上样式。
+
+为什么要前端导出？因为后端抓取的数据中前端标签会不闭合，但是浏览器会自动补全，所以后有一种方法，即前端获取innerHTML然后交给后端
+
+```html
+作者：前端充电站
+链接：https://zhuanlan.zhihu.com/p/1921151470918673625
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+
+// 使用示例，纯在标签闭合不完整的情况
+let element = `
+  <div>
+    <img src='http://t13.baidu.com/it/u=2041049195,1001882902&fm=224&app=112&f=JPEG?w=500&h=500' style="width: 300px;" >
+    <p>职业：前端</p>
+    <p>技能：唱、跳、rap</p
+  </div
+`;
+
+function generatePDF() {
+  element =`<style>
+  img {
+      max-width: 100%;
+      max-height: 100%;
+      vertical-align: middle;
+      height: auto !important;
+      width: auto !important;
+      margin: 10px 0;
+    }
+  </style>` + element;
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = element;
+  // 获取到完整的html结构，提交给后端处理
+  console.log(tempDiv.innerHTML);
+}
+```
+
+
+
+### 请求工具集
+
+#### [alovajs](https://alova.js.org/zh-CN/tutorial/getting-started/introduce)
+
+```bash
+npm install alova --save
+```
+
+支持uniapp、taro
+
+#### 请求增强多框架：[TanStack Query](https://cangsdarm.github.io/react-query-web-i18n/vue)
 
 ---------------------
 

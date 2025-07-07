@@ -62,55 +62,61 @@ export async function useValidateArgs(args: string, required = true): Promise<st
 ## 微信小程序
 
 ```ts
-interface AnyObject {
-  [x: string]: any
-}
+import { useShowToast } from './useTip'
+import { isHaveValue } from './useValidate'
+
 /**
  * 验证参数是否存在
  * @param args 参数名
  * @param required 是否必填，默认[是]
  * @returns 参数值
- * @note await useValidateArgs.call(this, args, required)。useValidateArgs中this参数是为了声明类型，call方法第一个就是this，会改变函数中this指向，如果怕在js中this报错，去掉也可以
  */
-export function useValidateArgs(this: WxPage, args: string, required = true): Promise<string> {
+export function useValidateArgs<T>(options: AnyObject | undefined, args: string, required = true): Promise<T | string> {
   return new Promise((resolve, reject) => {
-    const arg = this.options[args]
-    if (arg && typeof arg === 'string') return resolve(arg)
-    if (required) {
-      this.setData({
+    if (isHaveValue(options) && required) {
+      useShowToast({ title: '页面缺少必要参数', mask: true })
+
+      return reject({
         loading: false,
-        /** TODO: 错误处理
         fail: true,
         failContent: '页面缺少必要参数',
         failButtonContent: '返回',
-        failRouterBack: true */
+        failRouterBack: true
       })
-      return reject()
-    } else return resolve('')
+    } else {
+      const arg = options![args]
+      if (arg && isHaveValue(arg)) return resolve(arg)
+      return resolve('')
+    }
   })
+}
+
+export function useArgsStrToObj(url: string) {
+  const obj: AnyObject = {}
+  const query = url.split('&')
+  query.forEach(item => {
+    const [key, value] = item.split('=')
+    if (isHaveValue(value)) obj[key] = decodeURIComponent(value)
+  })
+
+  return obj
 }
 
 /** 获取链接中的参数对象 */
 export function useArgsUrl(url: string): AnyObject {
   const [, search] = url.split('?')
   if (!search) return {}
-  const obj: AnyObject = {}
-  const query = search.split('&')
-  query.forEach(item => {
-    const [key, value] = item.split('=')
-    obj[key] = decodeURIComponent(value)
-  })
-  return obj
+  return useArgsStrToObj(search)
 }
 
 /** 获取参数 */
-export function useArgsObj(obj: AnyObject): string {
+export function useArgsObjToStr(obj: AnyObject): string {
   let url = ''
   for (const key in obj) {
     url += (url ? '&' : '') + `${key}=${obj[key]}`
   }
   return url
 }
-
+ 
 ```
 
