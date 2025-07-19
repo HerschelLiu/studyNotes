@@ -193,6 +193,14 @@ npm install alova --save
 
 #### 高级图片裁剪工具[Advanced Cropper](https://advanced-cropper.github.io/vue-advanced-cropper/)
 
+### 截图（canvas）
+
+#### [SnapDOM](https://zumerlab.github.io/snapdom/)
+
+### 其他
+
+#### [Vue hooks plus](https://inhiblabcore.github.io/vue-hooks-plus/zh/)
+
 ----------
 
 ## React

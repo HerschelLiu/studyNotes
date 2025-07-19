@@ -44,3 +44,8 @@ export const useLargeScreen = (options?: LargeScreenOptions) => {
 
 ```
 
+## 插件
+
+### [autofit.js](https://github.com/Auto-Plugin/autofit.js)
+
+[官网](https://auto-plugin.github.io/autofit.js/)

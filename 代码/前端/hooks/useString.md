@@ -46,5 +46,33 @@ export function useRandomPassword(): string {
 export const useEscapeRegExp = (keyword: string) => {
   return keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
+
+/** 数字转中文 */
+export function useNum2Chinese(num) {
+  const digits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+  const units = ['', '十', '百', '千', '万', '十', '百', '千', '亿'];
+  let result = '';
+  let strNum = String(num);
+  
+  // 处理10~19的特殊情况（如“十”而非“一十”）
+  if (strNum.length === 2 && strNum[0] === '1') {
+    result = '十' + (strNum[1] === '0' ? '' : digits[strNum[1]]);
+    return result;
+  }
+
+  for (let i = 0; i < strNum.length; i++) {
+    const digit = strNum[i];
+    const unit = units[strNum.length - 1 - i];
+    if (digit !== '0') {
+      result += digits[digit] + unit;
+    } else {
+      // 避免重复零（如“一千零一”）
+      if (result[result.length - 1] !== '零') {
+        result += '零';
+      }
+    }
+  }
+  return result.replace(/零+/g, '零').replace(/零$/, '');
+}
 ```
 
