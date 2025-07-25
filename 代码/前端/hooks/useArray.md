@@ -179,6 +179,50 @@ export const useGetObjMaxDepth = <T extends object>(obj: T, key = 'children'): n
 }
 
 /**
+ * 截取树形数组到指定层级(根数组为1级)
+ * @param {Array} arr 待处理的树形数组
+ * @param {string} childrenKey 子节点的键名
+ * @param {number} level 目标层级
+ * @returns {Array} 处理后的树形数组
+ */
+export function useTruncateTreeToLevel(arr, childrenKey = 'children', level) {
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return [];
+  }
+
+  // 获取数组的最大深度
+  const maxDepth = useGetArrayMaxDepth(arr, childrenKey);
+  // 如果目标层级大于等于最大深度，返回原数组
+  if (level >= maxDepth || !level) {
+    return arr;
+  }
+
+  // 递归截取函数
+  const truncateNode = (node, currentDepth) => {
+    // 复制节点对象，避免修改原数据
+    const newNode = { ...node };
+
+    // 如果当前深度已达到目标层级的下一个层级，移除children
+    if (currentDepth === level) {
+      if (childrenKey in newNode) {
+        delete newNode[childrenKey];
+      }
+      return newNode;
+    }
+
+    // 处理子节点
+    if (Array.isArray(node[childrenKey])) {
+      newNode[childrenKey] = node[childrenKey].map((child) => truncateNode(child, currentDepth + 1));
+    }
+
+    return newNode;
+  };
+
+  // 从第一层开始处理数组中的每个节点
+  return arr.map((node) => truncateNode(node, 1));
+}
+
+/**
  * 获取对象数组中最深层级数
  * @param arr 对象数组
  * @param key 子对象的键名，默认为 'children'
@@ -285,7 +329,7 @@ interface TreeNodeWithFullLabel<T extends TreeNodeBase> extends TreeNodeBase {
  * @param options 配置选项
  * @returns 添加 fullLabel 后的新节点
  */
-function addFullLabel<T extends TreeNodeBase>(
+function useAddFullLabel<T extends TreeNodeBase>(
   node: T,
   parentFullLabel: string = '',
   options: {
@@ -312,7 +356,7 @@ function addFullLabel<T extends TreeNodeBase>(
   const children = node[childrenKey];
   if (Array.isArray(children)) {
     newNode[childrenKey] = children.map(child => 
-      addFullLabel(child, fullLabel, options)  // 关键：递归调用同一函数
+      useAddFullLabel(child, fullLabel, options)  // 关键：递归调用同一函数
     );
   }
 
