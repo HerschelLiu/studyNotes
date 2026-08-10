@@ -1,4 +1,140 @@
-## vue3
+## vue3(与element-plus配合精简版)
+
+```ts
+import { reactive } from 'vue'
+import { useStorage } from '@vueuse/core'
+
+/**
+ * 定义列表参数
+ */
+export const defineListProps = <T>() => {
+  return {
+    /** 数据列表 */
+    list: {
+      type: Object,
+      required: true
+    }
+  }
+}
+
+/** 定义列表emits */
+export const defineListEmits = () => {
+  return ['update:list']
+}
+
+/**
+ * 插入分页参数
+ * @function
+ * @param { boolean } enablePage 是否启用分页
+ * @returns { pageNum: number, pageSize: number } 分页参数
+ */
+const getPage = (enablePage = true): ListBaseQuery => {
+  /**
+   * 分页参数
+   * @type { Ref<number> }
+   */
+  const pageSize = useStorage('pageSize', 20)
+  return enablePage ? { pageNum: 1, pageSize: pageSize.value } : {}
+}
+
+/**
+ * 列表数据
+ * @typedef { Reactive<Object> } List
+ * @property { Object } query 查询条件
+ * @property { Object[] } items 列表数据
+ * @property { boolean } loading 加载状态
+ * @property { number } total 总数
+ * @property { (callback: () => Promise<any>) => Promise<void>} request 请求方法
+ */
+export const useList = <Q = null, R = object>(otherQuery: Partial<Q>, enablePage = true) => {
+  const list = reactive<List<Q, R>>({
+    query: {
+      ...getPage(enablePage),
+      ...otherQuery
+    } as unknown as Q & ListBaseQuery,
+    items: [],
+    loading: false,
+    total: 0,
+    request: async function (callback: any) {
+      if (this.loading) return
+      this.loading = true
+      try {
+        const data = await callback()
+        this.items = Array.isArray(data.rows) ? data.rows : Array.isArray(data) ? data : []
+        this.total = typeof data.total === 'number' ? data.total : Array.isArray(data) ? data.length : 0
+        this.loading = false
+      } catch (error) {
+        console.error(error)
+      }
+      this.loading = false
+    }
+  })
+
+  return list
+}
+
+/**
+ * 列表数据组件化
+ * @param { any } props
+ * @param { { emit: (event: any, ...args: any[]) => void } } context
+ */
+export const useListRef = <Q = null, R = object>(props, context) => {
+  /** 列表数据组件化 */
+  const list = computed({
+    get() {
+      return props.list
+    },
+    set(value) {
+      context.emit('update:list', value)
+    }
+  })
+
+  return {
+    list
+  }
+}
+
+```
+
+```type
+declare global {
+  /** 列表请求参数基础数据 */
+  interface ListBaseQuery {
+    /** 当前页码 */
+    pageNum?: number
+    /** 分页大小 */
+    pageSize?: number
+  }
+
+  /** 列表基础数据 */
+  interface ResponseList<T> {
+    /** 数据列表 */
+    records: T[]
+    /** 数据总量 */
+    total: number
+  }
+
+  interface List<Q = null, R = object> {
+    /** 数据列表 */
+    items: R[]
+    /** 请求参数 */
+    query: Q & ListBaseQuery
+    /** 数据总量 */
+    total: number
+    /** 是否加载中 */
+    loading: boolean
+    /** 请求方法 */
+    request: (callback: () => Promise<any>) => Promise<void>
+  }
+}
+```
+
+
+
+
+
+## vue3uniapp
+
 ```ts
 import { reactive } from 'vue'
 

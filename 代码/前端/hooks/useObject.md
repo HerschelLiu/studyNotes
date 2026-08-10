@@ -67,3 +67,37 @@ export function useCleanObject<T extends object>(target: T, match: any[] = [unde
 
 ```
 
+
+
+新增
+
+```ts
+/**
+ * 创建带初始值记忆的响应式对象
+ * 创建时自动冻结初始值并保存深拷贝，调用 reset 可将对象恢复到初始状态（含删除多余 key）。
+ * @param initial 初始值对象（会被深冻结，后续修改无效）
+ * @returns [state, reset] 元组：state 为响应式对象，reset 为重置函数
+ */
+export function useReactive<T extends object>(initial: T): [T, () => void] {
+  // 递归冻结初始值对象（深冻结）
+  ;(function freeze(obj: object) {
+    Object.freeze(obj)
+    Object.getOwnPropertyNames(obj).forEach(key => {
+      const val = obj[key as keyof typeof obj]
+      if (val && typeof val === 'object' && !Object.isFrozen(val)) {
+        freeze(val)
+      }
+    })
+  })(initial)
+
+  // 创建响应式对象（深拷贝，避免引用冻结对象）
+  const state = reactive(useClone(initial)) as T
+  // 重置函数：先删除所有自有属性，再赋初始值的深拷贝
+  const reset = () => {
+    Object.keys(state).forEach(key => Reflect.deleteProperty(state, key))
+    Object.assign(state, useClone(initial))
+  }
+  return [state, reset]
+}
+```
+

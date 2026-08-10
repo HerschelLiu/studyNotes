@@ -154,3 +154,121 @@ export const useListRef = <Q = null, R = object>(props: any, context: { emit: (e
 
 ```
 
+
+
+
+
+精简
+
+```ts
+/**
+ * @import { Ref, Reactive } from 'vue
+ */
+
+import { reactive } from 'vue';
+import { useStorage } from '@/hooks/useStorage'
+
+/**
+ * 定义列表参数
+ */
+export const defineListProps = () => {
+  return {
+    /** 数据列表 */
+    list: {
+      type: Object,
+      required: true,
+    },
+  };
+};
+
+/** 定义列表emits */
+export const defineListEmits = () => {
+  return ['update:list'];
+};
+
+/**
+ * 插入分页参数
+ * @function
+ * @param { boolean } enablePage 是否启用分页
+ * @returns { pageNum: number, pageSize: number } 分页参数
+ */
+const getPage = (enablePage = true) => {
+  /**
+   * 分页参数
+   * @type { Ref<number> }
+   */
+  const pageSize = useStorage('pageSize', '20');
+  return enablePage ? { pageNum: 1, pageSize: pageSize.value } : {};
+};
+
+/**
+ * 列表数据
+ * @typedef { Reactive<Object> } List
+ * @property { Object } query 查询条件
+ * @property { Object[] } items 列表数据
+ * @property { boolean } loading 加载状态
+ * @property { number } total 总数
+ * @property { (callback: () => Promise<any>) => Promise<void>} request 请求方法
+ */
+
+/**
+ * 列表 hooks
+ * @template Q = null
+ * @name useList
+ * @function
+ * @param { Partial<Q> } otherQuery 其他查询条件
+ * @param { boolean } [enablePage=true] 是否启用分页
+ * @returns { Reactive<List> } 列表数据
+ */
+export const useList = (otherQuery, enablePage = true) => {
+  /** @type { Reactive<List> } */
+  let list = reactive({
+    query: {
+      ...getPage(enablePage),
+      ...otherQuery,
+    },
+    items: [],
+    loading: false,
+    total: 0,
+    request: async function (callback) {
+      if (this.loading) return;
+      this.loading = true;
+      try {
+        const data = await callback();
+
+        this.items = Array.isArray(data.records) ? data.records : Array.isArray(data) ? data : [];
+        this.total = typeof data.total === 'number' ? data.total : Array.isArray(data) ? data.length : 0;
+        this.loading = false;
+      } catch (error) {
+        console.error(error);
+      }
+      this.loading = false;
+    },
+  });
+
+  return list;
+};
+
+/**
+ * 列表数据组件化
+ * @param { any } props
+ * @param { { emit: (event: any, ...args: any[]) => void } } context
+ */
+export const useListRef = (props, context) => {
+  /** 列表数据组件化 */
+  const list = computed({
+    get() {
+      return props.list;
+    },
+    set(value) {
+      context.emit('update:list', value);
+    },
+  });
+  
+  return {
+    list,
+  };
+};
+
+```
+
