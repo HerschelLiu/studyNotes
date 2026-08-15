@@ -144,6 +144,62 @@ export function useFindNode<T extends object>(data: T[], id: string, idKey = 'id
   return null
 }
 
+/** 查找选项 */
+interface SearchOptions {
+  /** 是否启用模糊查询（字段值包含关键词即匹配），默认 true */
+  fuzzy?: boolean
+  /** 子节点字段名，默认 'children' */
+  childrenKey?: string
+  /** 是否忽略大小写，默认 true */
+  ignoreCase?: boolean
+}
+/**
+ * 递归查找树形数据中匹配的节点
+ *
+ * @param data 树形数据数组
+ * @param keyword 要查找的值
+ * @param fields 需要联合查找的字段（任一字段匹配即返回），支持单个字段名或字段名数组
+ * @param options 查找选项
+ * @returns 所有匹配的节点数组（保持原始结构，包含 children）
+ */
+export function useFindNodes<T extends object>(data: T[], keyword: string, fields: string | string[], options: SearchOptions = {}): T[] {
+  const { fuzzy = true, childrenKey = 'children', ignoreCase = true } = options
+  const fieldList = Array.isArray(fields) ? fields : [fields]
+
+  /** 大小写归一化 */
+  const normalize = (str: string): string => (ignoreCase ? str.toLowerCase() : str)
+  const target = normalize(String(keyword))
+
+  /** 判断节点是否匹配：任一字段包含关键词即匹配 */
+  const isMatch = (item: T): boolean => {
+    return fieldList.some(field => {
+      const fieldValue = Reflect.get(item, field)
+      if (fieldValue == null) return false
+      const strValue = normalize(String(fieldValue))
+      return fuzzy ? strValue.includes(target) : strValue === target
+    })
+  }
+
+  /** 递归遍历收集所有匹配项 */
+  const results: T[] = []
+  const traverse = (nodes: T[]) => {
+    nodes.forEach(item => {
+      if (isMatch(item)) {
+        results.push(item)
+      }
+      if (Reflect.has(item, childrenKey)) {
+        const children = Reflect.get(item, childrenKey) as T[]
+        if (children?.length) {
+          traverse(children)
+        }
+      }
+    })
+  }
+
+  traverse(data)
+  return results
+}
+
 /** 获取对应id的数据项以及其父级数据 */
 export function useFindNode<T extends object>(data: T[], id: string, idKey = 'id', key = 'children', parent: T): T[] | null {
   for (let i = 0; i < data.length; i++) {

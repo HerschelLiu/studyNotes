@@ -23,6 +23,10 @@ export function useEnumValue<T = Key>(key: T, obj: EnumArray<T>[]): string {
   return ''
 }
 
+/** 从枚举对象中取值 */
+export function getEnumValue<T>(value: T, enu: object): string {
+  return useEnumValue<T>(value, useEnumArray(enu))
+}
 ```
 
 通用
