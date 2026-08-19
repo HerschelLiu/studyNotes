@@ -59,6 +59,76 @@ export async function useValidateArgs(args: string, required = true): Promise<st
 }
 ```
 
+## 若依
+
+```ts
+import router from '@/router'
+import useTagsViewStore from '@/store/modules/tagsView'
+import { useError } from './useTip'
+
+/**
+ * 验证参数是否存在
+ * @param args 参数名
+ * @param required 是否必填，默认[是]
+ * @returns 参数值
+ */
+export async function useValidateArgs(args: string, required = true): Promise<string> {
+  const route = router.currentRoute.value
+  const arg = route.query[args] || route.params[args]
+  if (arg && typeof arg === 'string') return Promise.resolve(arg)
+  if (required) {
+    const msg = `缺少关键参数${args}`
+    useError(msg)
+    try {
+      const { visitedViews } = await useTagsViewStore().delView(route)
+      const latestView = visitedViews.slice(-1)[0]
+      if (latestView) {
+        await router.push(latestView.fullPath)
+      } else {
+        await router.push('/')
+      }
+    } catch {
+      // 导航重复 / 守卫取消类良性错误吞掉，不影响 rejection 抛出
+    }
+    return Promise.reject(new Error(msg))
+  } else return Promise.resolve('')
+}
+import router from '@/router'
+import useTagsViewStore from '@/store/modules/tagsView'
+import { useError } from './useTip'
+
+/**
+ * 验证参数是否存在
+ * @param args 参数名
+ * @param required 是否必填，默认[是]
+ * @returns 参数值
+ */
+export async function useValidateArgs(args: string, required = true): Promise<string> {
+  const route = router.currentRoute.value
+  const arg = route.query[args] || route.params[args]
+  if (arg && typeof arg === 'string') return Promise.resolve(arg)
+  if (required) {
+    const msg = `缺少关键参数${args}`
+    useError(msg)
+    try {
+      const { visitedViews } = await useTagsViewStore().delView(route)
+      const latestView = visitedViews.slice(-1)[0]
+      if (latestView) {
+        await router.push(latestView.fullPath)
+      } else {
+        await router.push('/')
+      }
+    } catch {
+      // 导航重复 / 守卫取消类良性错误吞掉，不影响 rejection 抛出
+    }
+    return Promise.reject(new Error(msg))
+  } else return Promise.resolve('')
+}
+
+```
+
+
+
 ## 微信小程序
 
 ```ts
