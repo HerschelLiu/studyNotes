@@ -36,11 +36,19 @@ export interface UseListQueryOptions {
  */
 export const useListQuery = <Q = Record<string, any>, R = object, TData = TableDataInfo<R>>(
   otherQuery: Partial<Q> = {},
-  queryKey: QueryKey,
+  queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
   queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
   options: UseListQueryOptions = {}
 ) => {
-  const { enablePage = true, enabled = true, onError = err => console.error(`useListQuery[${queryKey[0]}] error:`, err) } = options
+  const queryKeyResolver = typeof queryKey === 'function' ? (queryKey as (query: Q & ListBaseQuery) => QueryKey) : undefined
+
+  const queryKeyPrefix = ref<QueryKey[number] | 'dynamic'>(queryKeyResolver ? 'dynamic' : (queryKey as QueryKey)[0])
+
+  const {
+    enablePage = true,
+    enabled = true,
+    onError = err => console.error(`useListQuery[${JSON.stringify(queryKeyPrefix.value)}] error:`, err)
+  } = options
 
   const list = reactive<List<Q, R>>({
     query: {
@@ -57,8 +65,18 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
   })
 
   const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
+
+  const queryKeyRef = computed<QueryKey>(() => {
+    if (queryKeyResolver) {
+      const key = queryKeyResolver(queryParams.value)
+      queryKeyPrefix.value = Array.isArray(key) ? key[0] : key
+      return key
+    }
+    return [...(queryKey as QueryKey)]
+  })
+
   const queryResult = useQuery<TData, Error>({
-    queryKey: [...queryKey],
+    queryKey: queryKeyRef,
     queryFn: async () => {
       try {
         const res = await queryFn(queryParams.value)

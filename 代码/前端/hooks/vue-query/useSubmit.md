@@ -75,6 +75,8 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
       if (showLoading) loading = useLoading(loadingTitle || '加载中')
       try {
         return await apiFn(...variables)
+      } catch (error) {
+        throw error
       } finally {
         loading?.close()
       }
