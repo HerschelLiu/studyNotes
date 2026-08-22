@@ -1,18 +1,30 @@
 ```ts
-/** 获取枚举的不重复数组 */
-export function useEnumArray<T = number>(object: object): EnumArray<T>[] {
-  return Object.entries(object)
-    .filter(item => /^[A-Za-z0-9-_]+$/.test(item[1]) || item[1] === '')
-    .map(item => {
-      return {
-        key: item[1] === '' ? '' : isNaN(Number(item[1])) ? item[1] : Number(item[1]),
-        value: item[0]
-      }
-    }) as any
-}
 export interface EnumArray<T> {
   key: T
   value: string
+}
+
+/** 获取枚举的不重复数组 */
+export function useEnumArray<T = number | string>(object: object): EnumArray<T>[]
+export function useEnumArray<T = number | string, K extends string = string, V extends string = string>(
+  object: object,
+  fieldNames: { key: K; value: V }
+): (Record<K, T> & Record<V, string>)[]
+export function useEnumArray<T = number | string>(
+  object: object,
+  fieldNames: { key?: string; value?: string } = {}
+): EnumArray<T>[] | Record<string, T | string>[] {
+  const { key: keyName = 'key', value: valueName = 'value' } = fieldNames
+  return Object.entries(object)
+    .filter(item => /^[A-Za-z0-9-_]+$/.test(item[1]) || item[1] === '')
+    .map(item => {
+      const raw = item[1]
+      const shouldConvert = typeof raw === 'string' && raw !== '' && !isNaN(Number(raw)) && String(Number(raw)) === raw
+      return {
+        [keyName]: shouldConvert ? Number(raw) : raw,
+        [valueName]: item[0]
+      }
+    }) as any
 }
 
 /** 直接从枚举改造对象中取值 */

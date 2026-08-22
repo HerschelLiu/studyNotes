@@ -1,10 +1,19 @@
 **TODO位置需要根据实际代码修改**
 
+`router.currentRoute.value` 拿的是 router 实例的当前路由快照，但 vue-router 4 在路由切换过程中：
+
+1. 新组件的 `setup` 先执行（此时 `currentRoute` 可能还指向旧路由）
+2. 然后才 commit 新的 `currentRoute`
+3. 最后 `onMounted` 触发 —— 但偶发情况下步骤 2 还没完成
+
+所以在 `onMounted` 里 `await useValidateArgs('type')` 偶现拿不到 `type`，特别是在某些标签页缓存场景、路由中间态、或 keep-alive 复用组件的情况下。
+
 ## VUE
 
 ```tsx
 // vue3.x
 import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import router from '@/router'
 
 /**
@@ -14,7 +23,8 @@ import router from '@/router'
  * @returns 参数值
  */
 export async function useValidateArgs(args: string, required = true): Promise<string> {
-  const route = router.currentRoute.value
+  // const route = router.currentRoute.value
+  const route = useRoute()
   const arg = route.query[args] || route.params[args]
   if (arg && typeof arg === 'string') return Promise.resolve(arg)
   if (required) {
@@ -63,6 +73,7 @@ export async function useValidateArgs(args: string, required = true): Promise<st
 
 ```ts
 import router from '@/router'
+import { useRoute } from 'vue-router'
 import useTagsViewStore from '@/store/modules/tagsView'
 import { useError } from './useTip'
 
@@ -73,7 +84,8 @@ import { useError } from './useTip'
  * @returns 参数值
  */
 export async function useValidateArgs(args: string, required = true): Promise<string> {
-  const route = router.currentRoute.value
+  // const route = router.currentRoute.value
+  const route = useRoute()
   const arg = route.query[args] || route.params[args]
   if (arg && typeof arg === 'string') return Promise.resolve(arg)
   if (required) {

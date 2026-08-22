@@ -17,11 +17,11 @@ const getPage = (enablePage = true): ListBaseQuery => {
 }
 
 /** useListQuery 配置项 */
-export interface UseListQueryOptions {
+export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
   /** 是否启用分页，默认 true */
   enablePage?: boolean
-  /** 是否在挂载时自动请求，默认 true */
-  enabled?: MaybeRef<boolean>
+  /** 是否在挂载时自动请求，默认 true；可传函数拿到 list 上下文做条件判断 */
+  enabled?: MaybeRef<boolean> | ((list: List<Q, R>) => boolean)
   /** 错误处理，默认 console.error */
   onError?: (err: unknown) => void
 }
@@ -62,7 +62,10 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
     request: async function (_callback: () => Promise<any>) {
       await refetch()
     }
-  })
+  }) as List<Q, R>
+
+  const enabledRef: MaybeRef<boolean> =
+    typeof enabled === 'function' ? computed(() => (enabled as (list: List<Q, R>) => boolean)(list as unknown as List<Q, R>)) : enabled
 
   const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
 
@@ -89,7 +92,7 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
         throw err
       }
     },
-    enabled
+    enabled: enabledRef
   })
 
   const { isLoading, refetch } = queryResult
