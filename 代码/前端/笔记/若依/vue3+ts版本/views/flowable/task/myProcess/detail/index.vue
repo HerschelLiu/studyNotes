@@ -8,7 +8,7 @@
             已发任务
           </span>
           <el-button
-            style="float: right;"
+            style="float: right"
             size="small"
             type="danger"
             @click="goBack">
@@ -27,7 +27,8 @@
           <el-col
             :span="16"
             :offset="4">
-            <v-form-render ref="vFormRef" />
+            <!-- <v-form-render ref="vFormRef" /> -->
+            <FlowableBizDetails :task-id="taskForm.taskId" />
           </el-col>
         </el-tab-pane>
         <!--流程流转记录-->
@@ -40,7 +41,7 @@
             <div class="block">
               <el-timeline>
                 <el-timeline-item
-                  v-for="(item,index ) in flowRecordList"
+                  v-for="(item, index) in flowRecordList"
                   :key="index"
                   :icon="setIcon(item.finishTime)"
                   :color="setColor(item.finishTime)">
@@ -136,6 +137,8 @@
   import BpmnViewer from '@/components/Process/viewer/index.vue'
   import { Document, User, Calendar, Clock, Tickets } from '@element-plus/icons-vue'
 
+  import FlowableBizDetails from '@/views/flowable/components/details.vue'
+
   defineOptions({ name: 'Record' })
 
   const route = useRoute()
@@ -152,9 +155,9 @@
     comment: '', // 意见内容
     procInsId: '', // 流程实例编号
     instanceId: '', // 流程实例编号
-    deployId: '',  // 流程定义编号
+    deployId: '', // 流程定义编号
     taskId: '', // 流程任务编号
-    procDefId: '',  // 流程编号
+    procDefId: '', // 流程编号
   })
   const vFormRef = ref<any>(null)
 
@@ -166,16 +169,22 @@
   /** 流程流转记录 */
   const getFlowRecordList = (procInsId: string, deployIdVal: string) => {
     const params = { procInsId: procInsId, deployId: deployIdVal }
-    flowRecord(params).then((res: any) => {
-      flowRecordList.value = res.data.flowList
-    }).catch(() => {
-      goBack()
-    })
+    flowRecord(params)
+      .then((res: any) => {
+        flowRecordList.value = res.data.flowList
+      })
+      .catch(() => {
+        goBack()
+      })
   }
   /** 获取流程变量内容 */
   const processVariables = (taskId: string) => {
     if (taskId) {
       getProcessVariables(taskId).then((res: any) => {
+        // 无动态表单的流程（如项目论证）跳过表单渲染
+        if (!res.data || !res.data.formJson) {
+          return
+        }
         nextTick(() => {
           vFormRef.value.setFormJson(res.data.formJson)
           nextTick(() => {
@@ -190,9 +199,11 @@
   }
   const handleClick = (tab: any) => {
     if (tab.paneName === '3') {
-      flowXmlAndNode({ procInsId: taskForm.procInsId, deployId: taskForm.deployId }).then((res: any) => {
-        flowData.value = res.data
-      })
+      flowXmlAndNode({ procInsId: taskForm.procInsId, deployId: taskForm.deployId }).then(
+        (res: any) => {
+          flowData.value = res.data
+        }
+      )
     }
   }
   const setIcon = (val: any) => {
@@ -227,10 +238,10 @@
   .clearfix:before,
   .clearfix:after {
     display: table;
-    content: "";
+    content: '';
   }
   .clearfix:after {
-    clear: both
+    clear: both;
   }
 
   .box-card {
@@ -243,6 +254,6 @@
   }
 
   .my-label {
-    background: #E1F3D8;
+    background: #e1f3d8;
   }
 </style>

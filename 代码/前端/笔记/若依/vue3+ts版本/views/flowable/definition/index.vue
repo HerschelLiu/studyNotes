@@ -13,7 +13,7 @@
           v-model="queryParams.name"
           placeholder="请输入名称"
           clearable
-          size="small"
+          size="default"
           @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item
@@ -21,7 +21,7 @@
         prop="deployTime">
         <el-date-picker
           clearable
-          size="small"
+          size="default"
           v-model="queryParams.deployTime"
           type="date"
           value-format="YYYY-MM-DD"
@@ -55,6 +55,16 @@
           size="small"
           @click="handleLoadXml">
           新增
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="default"
+          plain
+          icon="Upload"
+          size="small"
+          @click="() => (upload.open = true)">
+          导入流程
         </el-button>
       </el-col>
       <el-col :span="1.5">
@@ -126,7 +136,7 @@
           </el-button>
         </template>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         label="业务表单"
         align="center"
         :show-overflow-tooltip="true">
@@ -139,6 +149,16 @@
             <span>{{ scope.row.formName }}</span>
           </el-button>
           <label v-else>暂无表单</label>
+        </template>
+      </el-table-column> -->
+
+      <el-table-column
+        label="关联业务"
+        align="center"
+        min-width="120">
+        <template #default="scope">
+          <label v-if="scope.row.bizKey">{{ scope.row.bizName }}</label>
+          <label v-else>暂无业务</label>
         </template>
       </el-table-column>
       <el-table-column
@@ -183,7 +203,7 @@
             size="small">
             设计
           </el-button>
-          <el-button
+          <!-- <el-button
             @click="handleAddForm(scope.row)"
             icon="Promotion"
             link
@@ -191,7 +211,27 @@
             size="small"
             v-if="scope.row.formId == null">
             配置主表单
+          </el-button> -->
+
+          <el-button
+            v-if="!scope.row.bizKey"
+            @click="handleCorrelation(scope.row)"
+            icon="Promotion"
+            link
+            type="primary"
+            size="small">
+            关联业务
           </el-button>
+          <el-button
+            v-else
+            @click="handleCorrelationCancel(scope.row)"
+            icon="Promotion"
+            link
+            type="danger"
+            size="small">
+            解绑业务
+          </el-button>
+
           <el-button
             @click="handleUpdateSuspensionState(scope.row)"
             icon="VideoPause"
@@ -224,7 +264,7 @@
     </el-table>
 
     <Pagination
-      v-show="total>0"
+      v-show="total > 0"
       :total="total"
       v-model:page="queryParams.pageNum"
       v-model:limit="queryParams.pageSize"
@@ -272,7 +312,7 @@
         :limit="1"
         accept=".xml"
         :headers="upload.headers"
-        :action="upload.url + '?name=' + upload.name+'&category='+ upload.category"
+        :action="upload.url + '?name=' + upload.name + '&category=' + upload.category"
         :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
@@ -302,7 +342,7 @@
           </div>
           <div
             class="el-upload__tip"
-            style="color:red">
+            style="color: red">
             提示：仅允许导入"bpmn20.xml"格式文件！
           </div>
         </template>
@@ -385,7 +425,7 @@
           <Pagination
             small
             layout="prev, pager, next"
-            v-show="formTotal>0"
+            v-show="formTotal > 0"
             :total="formTotal"
             v-model:page="formQueryParams.pageNum"
             v-model:limit="formQueryParams.pageSize"
@@ -416,12 +456,16 @@
     updateDeployment,
     exportDeployment,
     definitionStart,
-    flowXmlAndNode
+    flowXmlAndNode,
   } from '@/api/flowable/definition'
   import { getToken } from '@/utils/auth'
   import { getForm, addDeployForm, listForm } from '@/api/flowable/form'
   import BpmnViewer from '@/components/Process/viewer/index.vue'
   import { Upload } from '@element-plus/icons-vue'
+  import { bindBizHandler, unBindBizHandler } from '@/api/flowable/biz'
+  import { ElSelect, ElOption, ElMessageBox } from 'element-plus'
+  import { useError, useSuccess } from '@/hooks/useTip'
+  import { useReactive, useValue } from '@/hooks/useObject'
 
   defineOptions({ name: 'Definition' })
 
@@ -467,7 +511,7 @@
     name: null as any,
     category: null as any,
     headers: { Authorization: 'Bearer ' + getToken() },
-    url: import.meta.env.VITE_APP_BASE_API + '/flowable/definition/import'
+    url: import.meta.env.VITE_APP_BASE_API + '/flowable/definition/import',
   })
   // 查询参数
   const queryParams = reactive({
@@ -481,7 +525,7 @@
     derivedFrom: null as any,
     derivedFromRoot: null as any,
     parentDeploymentId: null as any,
-    engineVersion: null as any
+    engineVersion: null as any,
   })
   const formQueryParams = reactive({
     pageNum: 1,
@@ -490,7 +534,7 @@
   // 挂载表单到流程实例
   const formDeployParam = reactive({
     formId: null as any,
-    deployId: null as any
+    deployId: null as any,
   })
   const deployId = ref('')
   const currentRow = ref<any>(null)
@@ -518,9 +562,12 @@
     })
   }
   const handleClose = (done: () => void) => {
-    proxy.$modal.confirm('确定要关闭吗？关闭未保存的修改都会丢失？').then(() => {
-      done()
-    }).catch(() => {})
+    proxy.$modal
+      .confirm('确定要关闭吗？关闭未保存的修改都会丢失？')
+      .then(() => {
+        done()
+      })
+      .catch(() => {})
   }
   // 取消按钮
   const cancel = () => {
@@ -539,7 +586,7 @@
       derivedFrom: null,
       derivedFromRoot: null,
       parentDeploymentId: null,
-      engineVersion: null
+      engineVersion: null,
     }
     proxy.resetForm('formRef')
   }
@@ -567,7 +614,10 @@
   }
   /** 跳转到流程设计页面 */
   const handleLoadXml = (row: any) => {
-    proxy.$router.push({ path: '/flowable/definition/model', query: { deployId: row.deploymentId } })
+    proxy.$router.push({
+      path: '/flowable/definition/model',
+      query: { deployId: row.deploymentId },
+    })
   }
   /** 流程图查看 */
   const handleReadImage = (deployIdVal: any) => {
@@ -637,7 +687,7 @@
     }
     const params = {
       deployId: row.deploymentId,
-      state: state
+      state: state,
     }
     updateState(params).then((res: any) => {
       proxy.$modal.msgSuccess(res.msg)
@@ -667,21 +717,29 @@
   /** 删除按钮操作 */
   const handleDelete = (row: any) => {
     const deploymentIds = row.deploymentId || ids.value
-    proxy.$modal.confirm('是否确认删除流程定义编号为"' + deploymentIds + '"的数据项?').then(function () {
-      return delDeployment(deploymentIds)
-    }).then(() => {
-      getList()
-      proxy.$modal.msgSuccess('删除成功')
-    }).catch(() => {})
+    proxy.$modal
+      .confirm('是否确认删除流程定义编号为"' + deploymentIds + '"的数据项?')
+      .then(function () {
+        return delDeployment(deploymentIds)
+      })
+      .then(() => {
+        getList()
+        proxy.$modal.msgSuccess('删除成功')
+      })
+      .catch(() => {})
   }
   /** 导出按钮操作 */
   const handleExport = () => {
     const exportQueryParams = queryParams
-    proxy.$modal.confirm('是否确认导出所有流程定义数据项?').then(function () {
-      return exportDeployment(exportQueryParams)
-    }).then((response: any) => {
-      proxy.download(response.msg)
-    }).catch(() => {})
+    proxy.$modal
+      .confirm('是否确认导出所有流程定义数据项?')
+      .then(function () {
+        return exportDeployment(exportQueryParams)
+      })
+      .then((response: any) => {
+        proxy.download(response.msg)
+      })
+      .catch(() => {})
   }
   /** 导入bpmn.xml文件 */
   const handleImport = () => {
@@ -715,4 +773,99 @@
       getList()
     }
   })
+
+  const { data: correlationList } = useFlowableStore().useGetListBizHandlers()
+  const [bindForm, resetBindForm] = useReactive({
+    bizKey: '',
+    flowKey: '',
+  })
+  /** 绑定业务 */
+  const { submit: handleCorrelationSubmit } = useSubmit(
+    async () => {
+      try {
+        if (bindForm.bizKey === '' || bindForm.flowKey === '') {
+          useError('请选择业务')
+          return Promise.reject()
+        }
+        await bindBizHandler(useValue(bindForm))
+        useSuccess('绑定成功')
+        handleQuery()
+        return Promise.resolve()
+      } catch (error) {
+        throw error
+      }
+    },
+    {
+      showLoading: false,
+      loadingTitle: `正在提交...`,
+    }
+  )
+
+  /** 关联业务 */
+  const handleCorrelation = async (row: any) => {
+    try {
+      await ElMessageBox({
+        title: '关联业务',
+        customClass: 'correlation-message',
+        message: () =>
+          h('div', { style: { width: '100%' } }, [
+            h(
+              ElSelect,
+              {
+                modelValue: bindForm.bizKey,
+                'onUpdate:modelValue': (val: string) => {
+                  bindForm.bizKey = val
+                  bindForm.flowKey = row.flowKey
+                },
+                style: { width: '100%' },
+              },
+              {
+                default: () =>
+                  correlationList.value?.map(item =>
+                    h(ElOption, {
+                      label: `[${item.bizKey}] ${item.bizName}`,
+                      value: item.bizKey,
+                    })
+                  ),
+                label: ({ label }) => h('span', null, label),
+              }
+            ),
+          ]),
+        showCancelButton: true,
+        confirmButtonText: '保存',
+        cancelButtonText: '取消',
+      })
+      await handleCorrelationSubmit()
+    } catch (error) {
+      throw error
+    } finally {
+      resetBindForm()
+    }
+  }
+
+  /** 解绑业务 */
+  const { submit: handleCorrelationCancel } = useSubmit(async (row: any) => {
+    try {
+      await unBindBizHandler(row.flowKey)
+      useSuccess('解绑成功')
+      handleQuery()
+    } catch (error) {
+      throw error
+    }
+  },  {
+    showConfirm: true,
+    confirmTitle: () => {
+      return `是否解绑业务？`
+    }
+  })
 </script>
+
+<style lang="scss">
+  .correlation-message {
+    width: 480px;
+
+    .el-message-box__message {
+      width: 100%;
+    }
+  }
+</style>

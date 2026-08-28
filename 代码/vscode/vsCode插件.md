@@ -336,6 +336,8 @@
 
 ## 其他
 
+* Redth.mobile-canvas：Mobile Canvas编辑器里直接跑 IOS、Android App
+
 * **Auto Rename Tag**自动同步修改标签 
 
 * **Auto Close Tag**

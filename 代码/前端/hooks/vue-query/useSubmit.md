@@ -82,9 +82,8 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
       }
     },
     onSuccess: async (data, variables, onMutateResult, context) => {
-      // 失效列表查询，触发自动刷新
       if (invalidateKeys?.length) {
-        await Promise.all(invalidateKeys.map(key => queryClient.invalidateQueries({ queryKey: key })))
+        await Promise.all(invalidateKeys.map(key => queryClient.invalidateQueries({ queryKey: [key[0]] })))
       }
       await onSuccess?.(data, variables, onMutateResult, context)
     }

@@ -3,7 +3,10 @@
     <el-card class="box-card">
       <template #header>
         <div class="clearfix">
-          <span><el-icon><Document /></el-icon> 已办任务</span>
+          <span>
+            <el-icon><Document /></el-icon>
+            已办任务
+          </span>
           <el-button
             style="float: right;"
             size="small"
@@ -24,7 +27,11 @@
           <el-col
             :span="16"
             :offset="4">
-            <v-form-render ref="vFormRef" />
+            <!-- <v-form-render ref="vFormRef" /> -->
+            <FlowableBizDetails
+              :task-id="taskForm.taskId"
+              :is-show-audit="true"
+              @change="goBack" />
           </el-col>
         </el-tab-pane>
         <!--流程流转记录-->
@@ -129,8 +136,10 @@
   import { useRoute } from 'vue-router'
   import { flowRecord } from '@/api/flowable/finished'
   import { getProcessVariables, flowXmlAndNode } from '@/api/flowable/definition'
-  import BpmnViewer from '@/components/Process/viewer'
   import { Document, User, Calendar, Clock, Tickets } from '@element-plus/icons-vue'
+
+  import BpmnViewer from '@/components/Process/viewer/index.vue'
+  import FlowableBizDetails from '@/views/flowable/components/details.vue'
 
   defineOptions({ name: 'Record' })
 

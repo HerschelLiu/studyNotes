@@ -12,34 +12,40 @@
 
 ```tsx
 // vue3.x
-import { useRouter } from 'vue-router'
-import { useRoute } from 'vue-router'
-import router from '@/router'
+import type { Ref } from 'vue'
+
+import { useError } from './useTip'
 
 /**
- * 验证参数是否存在
+ * 验证参数是否存在（从当前路由 query / params 中按优先级取值）
+ *
  * @param args 参数名
- * @param required 是否必填，默认[是]
- * @returns 参数值
+ * @param required 是否必填，默认 true：缺参数时提示并返回空串；false 时缺参返回空串、不提示
+ * @returns 响应式参数值（Ref<string>）
  */
-export async function useValidateArgs(args: string, required = true): Promise<string> {
-  // const route = router.currentRoute.value
+export function useValidateArgs(args: string, required = true): Ref<string> {
   const route = useRoute()
-  const arg = route.query[args] || route.params[args]
-  if (arg && typeof arg === 'string') return Promise.resolve(arg)
-  if (required) {
-    /** TODO: 错误提示 */
-    if (route.matched.filter(item => !item.redirect).length > 1) {
-      /** TODO: 返回操作 */
-    } else {
-      useRouter().push({
-        name: /** TODO: 404页面 */,
-        replace: true
-      })
-    }
-    return Promise.reject()
-  } else return Promise.resolve('')
+  const value = ref('')
+  let validated = false
+
+  watch(
+    () => route.query[args] ?? route.params[args],
+    arg => {
+      const str = typeof arg === 'string' ? arg : ''
+      if (str) {
+        value.value = str
+      } else if (required && !validated) {
+        // 仅在首次（immediate）且 required 时校验，避免后续路由切换反复报错
+        useError(`缺少关键参数${args}`)
+      }
+      validated = true
+    },
+    { immediate: true }
+  )
+
+  return value
 }
+
 
 // vue2.x
 /**
@@ -67,76 +73,6 @@ export async function useValidateArgs(args: string, required = true): Promise<st
     return Promise.reject()
   } else return Promise.resolve('')
 }
-```
-
-## 若依
-
-```ts
-import router from '@/router'
-import { useRoute } from 'vue-router'
-import useTagsViewStore from '@/store/modules/tagsView'
-import { useError } from './useTip'
-
-/**
- * 验证参数是否存在
- * @param args 参数名
- * @param required 是否必填，默认[是]
- * @returns 参数值
- */
-export async function useValidateArgs(args: string, required = true): Promise<string> {
-  // const route = router.currentRoute.value
-  const route = useRoute()
-  const arg = route.query[args] || route.params[args]
-  if (arg && typeof arg === 'string') return Promise.resolve(arg)
-  if (required) {
-    const msg = `缺少关键参数${args}`
-    useError(msg)
-    try {
-      const { visitedViews } = await useTagsViewStore().delView(route)
-      const latestView = visitedViews.slice(-1)[0]
-      if (latestView) {
-        await router.push(latestView.fullPath)
-      } else {
-        await router.push('/')
-      }
-    } catch {
-      // 导航重复 / 守卫取消类良性错误吞掉，不影响 rejection 抛出
-    }
-    return Promise.reject(new Error(msg))
-  } else return Promise.resolve('')
-}
-import router from '@/router'
-import useTagsViewStore from '@/store/modules/tagsView'
-import { useError } from './useTip'
-
-/**
- * 验证参数是否存在
- * @param args 参数名
- * @param required 是否必填，默认[是]
- * @returns 参数值
- */
-export async function useValidateArgs(args: string, required = true): Promise<string> {
-  const route = router.currentRoute.value
-  const arg = route.query[args] || route.params[args]
-  if (arg && typeof arg === 'string') return Promise.resolve(arg)
-  if (required) {
-    const msg = `缺少关键参数${args}`
-    useError(msg)
-    try {
-      const { visitedViews } = await useTagsViewStore().delView(route)
-      const latestView = visitedViews.slice(-1)[0]
-      if (latestView) {
-        await router.push(latestView.fullPath)
-      } else {
-        await router.push('/')
-      }
-    } catch {
-      // 导航重复 / 守卫取消类良性错误吞掉，不影响 rejection 抛出
-    }
-    return Promise.reject(new Error(msg))
-  } else return Promise.resolve('')
-}
-
 ```
 
 

@@ -90,7 +90,7 @@
         label="流程版本"
         align="center">
         <template #default="scope">
-          <el-tag size="medium">v{{scope.row.procDefVersion}}</el-tag>
+          <el-tag size="default">v{{scope.row.procDefVersion}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -138,17 +138,11 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, reactive, getCurrentInstance } from 'vue'
   import {
-    todoList as todoListApi,
-    complete,
-    returnList,
-    returnTask,
-    rejectTask,
-    getDeployment,
     delDeployment,
-    exportDeployment
+    todoList as todoListApi
   } from '@/api/flowable/todo'
+  import { getCurrentInstance, reactive, ref } from 'vue'
 
   defineOptions({ name: 'Deploy' })
 
@@ -177,7 +171,9 @@
     pageNum: 1,
     pageSize: 10,
     name: null as string | null,
-    category: null as string | null
+    category: null as string | null,
+    deployTime: null as string | null,
+    tenantId: null as string | null
   })
   // 表单参数
   const form = ref<any>({})
@@ -203,6 +199,7 @@
         deployId: row.deployId,
         taskId: row.taskId,
         taskName: row.taskName,
+        procDefName: row.procDefName,
         startUser: row.startUserName + '-' + row.startDeptName
       }
     })

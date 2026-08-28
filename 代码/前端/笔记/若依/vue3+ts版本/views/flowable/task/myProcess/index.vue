@@ -13,7 +13,7 @@
           v-model="queryParams.name"
           placeholder="请输入名称"
           clearable
-          size="small"
+          size="default"
           @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item
@@ -21,7 +21,7 @@
         prop="deployTime">
         <el-date-picker
           clearable
-          size="small"
+          size="default"
           v-model="queryParams.deployTime"
           type="date"
           value-format="YYYY-MM-DD"
@@ -47,7 +47,7 @@
     <el-row
       :gutter="10"
       class="mb8">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button
           type="primary"
           plain
@@ -57,7 +57,7 @@
           v-hasPermi="['system:deployment:add']">
           新增流程
         </el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -104,7 +104,7 @@
         align="center"
         width="80px">
         <template #default="scope">
-          <el-tag size="medium">v{{ scope.row.procDefVersion }}</el-tag>
+          <el-tag size="default">v{{ scope.row.procDefVersion }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -141,10 +141,11 @@
         prop="taskName" />
       <el-table-column
         label="办理人"
-        align="center">
+        align="center"
+        width="180">
         <template #default="scope">
           <label v-if="scope.row.assigneeName">
-            {{scope.row.assigneeName}}
+            <div>{{scope.row.assigneeName}}</div>
             <el-tag
               type="info"
               size="small">
@@ -241,7 +242,7 @@
           label="流程版本"
           align="center">
           <template #default="scope">
-            <el-tag size="medium">v{{ scope.row.version }}</el-tag>
+            <el-tag size="default">v{{ scope.row.version }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column

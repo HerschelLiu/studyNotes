@@ -13,7 +13,7 @@
           v-model="queryParams.formName"
           placeholder="请输入表单名称"
           clearable
-          size="small"
+          size="default"
           @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item>

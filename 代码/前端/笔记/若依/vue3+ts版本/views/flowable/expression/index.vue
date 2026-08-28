@@ -3,7 +3,7 @@
     <el-form
       :model="queryParams"
       ref="queryForm"
-      size="small"
+      size="default"
       :inline="true"
       v-show="showSearch"
       label-width="68px">
