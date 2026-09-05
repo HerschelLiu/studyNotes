@@ -78,7 +78,7 @@ export function useFormatTable(row: string | number, type?: string, formatStr?: 
  * @returns tableHeight 绑定到 el-table 的 max-height；refresh 手动重算（筛选展开/收起后调用）
  */
 export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottomOffset = 20 + 20 + 32) => {
-  const MIN_TABLE_HEIGHT = 200
+  const MIN_TABLE_HEIGHT = 140
 
   const tableHeight = ref<number>()
 
