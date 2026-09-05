@@ -2,7 +2,7 @@
 
 nest 使用 ts 装饰器功能， 此功能还处于实验性功能，需`tsconfig`中开启`emitDecoratorMetadata: true`和`experimentalDecorators: true`。nest 中已经自动开启。
 
-
+[Nest](https://docs.nestjs.cn/introduction)
 
 ### 起步
 
@@ -40,6 +40,22 @@ pnpm add -D prisma mockjs @types/mockjs @types/lodash @types/multer
 
 
 ## 基础知识
+
+| 前端概念                 | 类比 NestJS 概念                     | 职责                                                         |
+| :----------------------- | :----------------------------------- | :----------------------------------------------------------- |
+| 路由（Router）           | **Controller**                       | 决定哪个 URL 对应哪个处理函数，并返回响应                    |
+| 状态管理 / 业务逻辑      | **Service / Provider**               | 处理具体业务：计算、数据库操作、调用其他服务                 |
+| 模块（Module）           | **Module**                           | 把相关的 Controller 和 Service 打包成一个单元，类似于前端的功能模块 |
+| 依赖注入（DI）           | **Provider 注入**                    | 类似于前端的 `provide/inject`，但更强大，自动管理依赖        |
+| 中间件（类似前端拦截器） | **Middleware / Guard / Interceptor** | 拦截请求，做权限、日志、转换等操作                           |
+
+**Controller 的意义：路由和请求处理的“架子”**
+
+- 它只关心“这个请求来了，我应该调用哪个 Service 的方法”
+- 它不写复杂业务，只负责接收请求参数（`@Body`、`@Param`、`@Query`），并返回结果。
+- 它把路由逻辑从业务逻辑中解耦出来，让代码清晰可维护。
+
+相当于：**Controller 是“前台接待”，Service 是“专业部门”**。来了一个新请求，Controller 看一眼 URL 和请求方式，然后把案子交给对应的 Service 去办。
 
 约定上：
 

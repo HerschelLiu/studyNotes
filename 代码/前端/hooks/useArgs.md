@@ -21,21 +21,21 @@ import { useError } from './useTip'
  *
  * @param args 参数名
  * @param required 是否必填，默认 true：缺参数时提示并返回空串；false 时缺参返回空串、不提示
- * @returns 响应式参数值（Ref<string>）
+ * @returns Ref<T>
  */
-export function useValidateArgs(args: string, required = true): Ref<string> {
+export function useValidateArgs<T extends string>(args: string, required = true) {
   const route = useRoute()
-  const value = ref('')
+  const value = ref('' as T)
   let validated = false
 
   watch(
     () => route.query[args] ?? route.params[args],
     arg => {
-      const str = typeof arg === 'string' ? arg : ''
-      if (str) {
-        value.value = str
+      const has = arg !== undefined
+      const str = typeof arg === 'string' ? arg : Array.isArray(arg) ? arg[0] ?? '' : ''
+      if (has) {
+        value.value = str as T
       } else if (required && !validated) {
-        // 仅在首次（immediate）且 required 时校验，避免后续路由切换反复报错
         useError(`缺少关键参数${args}`)
       }
       validated = true
@@ -45,7 +45,6 @@ export function useValidateArgs(args: string, required = true): Ref<string> {
 
   return value
 }
-
 
 // vue2.x
 /**
