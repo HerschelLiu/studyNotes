@@ -10,7 +10,7 @@ export function isChecked<T extends object>(arr: T[], keys: string, item: T) {
 }
 
 /** 跨页选择-获取指定字段值的数据 */
-export function getArrayBySelectedList<T extends object>(arr: T[], keys: string, value: (Key | boolean)[], getKey: string): string[] {
+export function getArrayBySelectedList<T extends object>(arr: T[], keys: string, value: (string | number | boolean)[], getKey: string): string[] {
   const array: string[] = []
   arr.forEach(item => {
     if (keys.split('-').every(key => value.includes(Reflect.get(item, key) as any))) array.push(Reflect.get(item, getKey) as any)
@@ -55,10 +55,20 @@ export function defineCheckAllProps<R = object>() {
     }
   }
 }
+export interface DefineCheckAllProps<R = object> {
+  /** 跨页选择数据 */
+  selected?: R[]
+  /** 跨页选择主key */
+  keys?: string
+}
 
 /** 定义跨页选择emit */
 export function defineCheckAllEmits() {
   return ['update:selected', 'getPageList']
+}
+export interface DefineCheckAllEmits<R = object> {
+  'update:selected': [value: R[]]
+  getPageList: []
 }
 
 /**
@@ -69,7 +79,7 @@ export function defineCheckAllEmits() {
  * @param context 组件context，非必填
  * @param update 是否需要将数组更新至父组件，默认是
  */
-export function useCheckAll<Q, R extends object & { checked?: boolean }>(
+export function useCheckAll<Q, R extends object & { checked?: boolean; disabled?: boolean }>(
   id: string,
   list?: WritableComputedRef<List<Q, R>>,
   props?: any,

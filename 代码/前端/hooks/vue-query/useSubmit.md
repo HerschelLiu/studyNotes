@@ -112,3 +112,9 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
 
 ```
 
+## useMutation 的 loading 状态
+
+| 字段        | 含义                                         |
+| :---------- | :------------------------------------------- |
+| `isPending` | **正在执行中**（这就是 mutation 的 loading） |
+| `isIdle`    | 尚未调用                                     |

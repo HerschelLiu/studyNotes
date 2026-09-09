@@ -51,26 +51,6 @@ export const useTableForm = <T extends Record<string, any>>(cellRules: T) => {
   }
 }
 
-export function useFormatTable(row: string | number): string | number
-export function useFormatTable(row: string | number, type: string, formatStr?: string): string | number
-export function useFormatTable(row: string | number, type?: string, formatStr?: string) {
-  if (!isHaveValue(row)) return '--'
-  if (!type) return row
-
-  const formatters: Record<string, (value: string | number, fmt?: string) => string | number> = {
-    boolean: (row, fmt = '是:否') => {
-      const [t, f] = fmt.split(':')
-      return row == 0 ? f : t
-    },
-    date: (row, fmt = 'YYYY-MM-DD HH:mm:ss') => {
-      const m = moment(row)
-      return m.isValid() ? m.format(fmt) : '--'
-    }
-  }
-
-  return formatters[type]?.(row, formatStr) ?? row
-}
-
 /**
  * 根据视口高度自动计算表格 max-height
  * @param targetRef el-table 组件 ref 或表格容器元素 ref
@@ -90,12 +70,14 @@ export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottom
 
   /**
    * 表格下方的流式布局占位：分页器等后续兄弟元素（高度 + 垂直 margin）+ 父容器底部 padding。
+   * 从 comp-table 容器（或 el-table 父元素）开始查找其后续兄弟元素，
+   * 因为 pagination-container 通常在 comp-table 外部（app-container 的直接子元素）。
    */
   const calcFlowGap = (el: HTMLElement) => {
     let gap = 0
-    const parent = el.parentElement
-    if (parent) {
-      let node: Element | null = el.nextElementSibling
+    const container = el.closest('.comp-table') || el.parentElement
+    if (container) {
+      let node: Element | null = container.nextElementSibling
       while (node) {
         const style = getComputedStyle(node)
         if (style.display !== 'none' && style.position !== 'fixed' && style.position !== 'absolute') {
@@ -104,7 +86,10 @@ export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottom
         }
         node = node.nextElementSibling
       }
-      gap += parseFloat(getComputedStyle(parent).paddingBottom) || 0
+      const containerParent = container.parentElement
+      if (containerParent) {
+        gap += parseFloat(getComputedStyle(containerParent).paddingBottom) || 0
+      }
     }
     return Math.max(gap, bottomOffset)
   }
@@ -119,48 +104,86 @@ export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottom
     return footer && getComputedStyle(footer).display !== 'none' ? footer.offsetHeight : 0
   }
 
-  const calcHeight = () => {
+  /**
+   * 计算表格 max-height。
+   * @returns true 表示成功计算；false 表示 ref 未绑定或元素未布局（HMR 早期阶段），需重试
+   */
+  const calcHeight = (): boolean => {
     const el = getEl()
-    if (!el) return
-    const { top } = el.getBoundingClientRect()
-    tableHeight.value = Math.max(window.innerHeight - top - getFixedFooterHeight(el) - calcFlowGap(el), MIN_TABLE_HEIGHT)
+    if (!el) return false
+    const rect = el.getBoundingClientRect()
+    // 防御：元素已从 DOM 分离（HMR 卸载旧实例）或尚未布局，跳过本次计算等待重试
+    if (rect.top === 0 && rect.height === 0) return false
+    tableHeight.value = Math.max(window.innerHeight - rect.top - getFixedFooterHeight(el) - calcFlowGap(el), MIN_TABLE_HEIGHT)
+    return true
+  }
+
+  /**
+   * 双 rAF + setTimeout 兜底策略：
+   * - 首帧浏览器可能仍在布局中（HMR / 路由切换 / 懒渲染），getBoundingClientRect 不准
+   * - 第二帧布局已稳定，读取正确几何尺寸
+   * - 若首帧 ref 未绑定（HMR），用 rAF 轮询重试直到绑定
+   * - 最后用 setTimeout 做一次兜底计算，确保 HMR 多轮更新后最终值正确
+   */
+  let calcTimer: ReturnType<typeof setTimeout> | undefined
+  const scheduleCalc = () => {
+    if (calcTimer) clearTimeout(calcTimer)
+    requestAnimationFrame(() => {
+      if (calcHeight()) {
+        requestAnimationFrame(calcHeight)
+      } else {
+        // ref 未绑定，下一帧重试
+        requestAnimationFrame(() => {
+          if (calcHeight()) requestAnimationFrame(calcHeight)
+        })
+      }
+      // HMR 后额外兜底：等所有异步布局/过渡稳定后做最终校正
+      calcTimer = setTimeout(calcHeight, 200)
+    })
   }
 
   const onResize = () => requestAnimationFrame(calcHeight)
 
   /**
-   * 监听 ref 变化：表格在抽屉/弹窗中懒渲染（destroy-on-close）时，
-   * el-table 会在容器打开后才挂载，ref 赋值后需重新计算高度
+   * 分页器随数据加载由 v-show 切换显隐，占位出现/消失后自动重算。
+   * pagination-container 通常在 comp-table 外部（app-container 的直接子元素），
+   * 需从 comp-table 的父容器中查找。
    */
-  watch(
-    targetRef,
-    () => {
-      requestAnimationFrame(calcHeight)
-      observePagination()
-    },
-    { flush: 'post' }
-  )
-
-  /** 分页器随数据加载由 v-show 切换显隐，占位出现/消失后自动重算 */
   let resizeObserver: ResizeObserver | undefined
   const observePagination = () => {
     if (resizeObserver) return
-    const pagination = getEl()?.parentElement?.querySelector('.pagination-container')
+    const el = getEl()
+    const container = el?.closest('.comp-table') || el?.parentElement
+    const pagination = container?.parentElement?.querySelector('.pagination-container')
     if (!pagination) return
     resizeObserver = new ResizeObserver(() => requestAnimationFrame(calcHeight))
     resizeObserver.observe(pagination)
   }
 
-  onMounted(() => {
-    nextTick(() => {
-      calcHeight()
+  // 必须在 watch(immediate: true) 之前定义，否则 TDZ
+  watch(
+    targetRef,
+    () => {
+      scheduleCalc()
       observePagination()
-    })
+    },
+    { flush: 'post', immediate: true }
+  )
+
+  onMounted(() => {
+    scheduleCalc()
+    observePagination()
     window.addEventListener('resize', onResize)
   })
+
+  onActivated(() => {
+    scheduleCalc()
+  })
+
   onBeforeUnmount(() => {
     window.removeEventListener('resize', onResize)
     resizeObserver?.disconnect()
+    if (calcTimer) clearTimeout(calcTimer)
   })
 
   return { tableHeight, refresh: calcHeight }

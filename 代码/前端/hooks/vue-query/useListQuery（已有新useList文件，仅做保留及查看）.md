@@ -119,11 +119,20 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
 ```
 
 > ```ts
->     {},
->     ['BUDGET_DEPT_FILL_LIST'],
->     listBudgetDeptFill
->   )
+>  {},
+>  ['BUDGET_DEPT_FILL_LIST'],
+>  listBudgetDeptFill
+> )
 > ```
 >
-> 
+> - `isPending`：有无数据（禁用但无数据时也为 `true`）
+> - `isFetching`：是否真的在发请求（禁用时为 `false`）
+> - `isLoading`：首次加载中（`isPending && isFetching`）
+>
+> 简单记忆：**`isPending` 看数据，`isFetching` 看请求**。
 
+| 字段         | 含义                                                         | 适用场景                                                   |
+| :----------- | :----------------------------------------------------------- | :--------------------------------------------------------- |
+| `isLoading`  | `isPending && isFetching`，即**首次加载中**（无数据且正在请求） | 首屏骨架屏/loading 遮罩                                    |
+| `isFetching` | **任何请求中**（首次加载 + 后台刷新 + refetch）              | 需要在后台刷新时也显示 loading（如按钮转圈、局部 loading） |
+| `isPending`  | 暂无数据（**不代表在请求**，`enabled:false` 时也可能为 true） | 一般不用于 loading 判断                                    |

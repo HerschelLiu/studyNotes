@@ -1,13 +1,20 @@
-## vue3(与element-plus配合精简版)
+## vue3
 
 ```ts
-import { reactive } from 'vue'
-import { useStorage } from '@vueuse/core'
+import type { QueryKey } from '@tanstack/vue-query'
+import type { TableDataInfo } from '@/types/api/common'
+import type { MaybeRef, MaybeRefOrGetter } from 'vue'
 
+import { computed, reactive, ref, toValue, unref, watch } from 'vue'
+import { useStorage } from '@vueuse/core'
+import { useQuery } from '@tanstack/vue-query'
+import { useValue } from '@/hooks/useObject'
+
+// #region 列表 props/emits 定义（供 CompTable 等组件使用）
 /**
  * 定义列表参数
  */
-export const defineListProps = <T>() => {
+export const defineListProps = () => {
   return {
     /** 数据列表 */
     list: {
@@ -16,70 +23,80 @@ export const defineListProps = <T>() => {
     }
   }
 }
+export interface DefineListProps<T = Object, R = Object> {
+  /** 数据列表 */
+  list: List<T, R>
+}
 
 /** 定义列表emits */
 export const defineListEmits = () => {
   return ['update:list']
 }
+export interface DefineListEmits<T = Object, R = Object> {
+  'update:list': [value: List<T, R>]
+}
+// #endregion
 
+// #region List 骨架工厂与分页参数（共享内部工具）
 /**
  * 插入分页参数
- * @function
- * @param { boolean } enablePage 是否启用分页
- * @returns { pageNum: number, pageSize: number } 分页参数
+ * @param enablePage 是否启用分页
+ * @returns 分页参数
  */
 const getPage = (enablePage = true): ListBaseQuery => {
-  /**
-   * 分页参数
-   * @type { Ref<number> }
-   */
   const pageSize = useStorage('pageSize', 20)
   return enablePage ? { pageNum: 1, pageSize: pageSize.value } : {}
 }
 
 /**
- * 列表数据
- * @typedef { Reactive<Object> } List
- * @property { Object } query 查询条件
- * @property { Object[] } items 列表数据
- * @property { boolean } loading 加载状态
- * @property { number } total 总数
- * @property { (callback: () => Promise<any>) => Promise<void>} request 请求方法
+ * List工厂函数
+ */
+export const createListState = <Q = Record<string, any>, R = Record<string, any>>(init?: Partial<List<Q, R>>): List<Q, R> => ({
+  items: [],
+  loading: false,
+  total: 0,
+  query: {} as Q & ListBaseQuery,
+  request: async () => {},
+  ...init
+})
+// #endregion
+
+// #region useList —— 传统 callback 模式
+/**
+ *
+ * @param otherQuery 初始查询条件
+ * @param enablePage  是否启用分页
  */
 export const useList = <Q = null, R = object>(otherQuery: Partial<Q>, enablePage = true) => {
-  const list = reactive<List<Q, R>>({
-    query: {
-      ...getPage(enablePage),
-      ...otherQuery
-    } as unknown as Q & ListBaseQuery,
-    items: [],
-    loading: false,
-    total: 0,
-    request: async function (callback: any) {
-      if (this.loading) return
-      this.loading = true
-      try {
-        const data = await callback()
-        this.items = Array.isArray(data.rows) ? data.rows : Array.isArray(data) ? data : []
-        this.total = typeof data.total === 'number' ? data.total : Array.isArray(data) ? data.length : 0
+  const list = reactive(
+    createListState<Q, R>({
+      query: {
+        ...getPage(enablePage),
+        ...otherQuery
+      } as unknown as Q & ListBaseQuery,
+      request: async function (callback: any) {
+        if (this.loading) return
+        this.loading = true
+        try {
+          const data = await callback()
+          this.items = Array.isArray(data.rows) ? data.rows : Array.isArray(data) ? data : []
+          this.total = typeof data.total === 'number' ? data.total : Array.isArray(data) ? data.length : 0
+          this.loading = false
+        } catch (error) {
+          console.error(error)
+        }
         this.loading = false
-      } catch (error) {
-        console.error(error)
       }
-      this.loading = false
-    }
-  })
+    })
+  )
 
   return list
 }
 
 /**
- * 列表数据组件化
- * @param { any } props
- * @param { { emit: (event: any, ...args: any[]) => void } } context
+ * 列表数据组件化（CompTable 内部使用，建立 props.list 的双向绑定）
  */
 export const useListRef = <Q = null, R = object>(props, context) => {
-  /** 列表数据组件化 */
   const list = computed({
     get() {
       return props.list
@@ -93,6 +110,136 @@ export const useListRef = <Q = null, R = object>(props, context) => {
     list
   }
 }
+// #endregion
+
+// #region useListQuery —— 基于 @tanstack/vue-query 的列表查询（搜索列表页）
+/** useListQuery 配置项 */
+export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
+  /** 是否启用分页，默认 true */
+  enablePage?: MaybeRef<boolean>
+  /** 是否在挂载时自动请求，默认 true；可传函数拿到 list 上下文做条件判断 */
+  enabled?: MaybeRef<boolean> | ((list: List<Q, R>) => boolean)
+  /** 错误处理，默认 console.error */
+  onError?: (err: unknown) => void
+}
+
+/**
+ * 列表查询 hook（基于 @tanstack/vue-query）
+ *
+ * 适用于带分页/搜索/请求的搜索列表页。
+ *
+ * @param otherQuery 初始查询条件（不含分页字段，分页字段由内部按 enablePage 自动注入）
+ * @param queryKey   唯一标识前缀，或动态 key 工厂
+ * @param queryFn    请求函数
+ * @param options    其他配置（enablePage / enabled / onError）
+ */
+export const useListQuery = <Q = Record<string, any>, R = object, TData = TableDataInfo<R>>(
+  otherQuery: Partial<Q> = {},
+  queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
+  queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
+  options: UseListQueryOptions = {}
+) => {
+  const queryKeyResolver = typeof queryKey === 'function' ? (queryKey as (query: Q & ListBaseQuery) => QueryKey) : undefined
+
+  const queryKeyPrefix = ref<QueryKey[number] | 'dynamic'>(queryKeyResolver ? 'dynamic' : (queryKey as QueryKey)[0])
+
+  const {
+    enablePage = true,
+    enabled = true,
+    onError = err => console.error(`useListQuery[${JSON.stringify(queryKeyPrefix.value)}] error:`, err)
+  } = options
+
+  const list = reactive(
+    createListState<Q, R>({
+      query: {
+        ...getPage(unref(enablePage)),
+        ...otherQuery
+      } as unknown as Q & ListBaseQuery,
+      request: async function () {
+        await refetch()
+      }
+    })
+  ) as List<Q, R>
+
+  const enabledRef: MaybeRef<boolean> =
+    typeof enabled === 'function' ? computed(() => (enabled as (list: List<Q, R>) => boolean)(list as unknown as List<Q, R>)) : enabled
+
+  const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
+
+  const queryKeyRef = computed<QueryKey>(() => {
+    if (queryKeyResolver) {
+      const key = queryKeyResolver(queryParams.value)
+      queryKeyPrefix.value = Array.isArray(key) ? key[0] : key
+      return key
+    }
+    return [...(queryKey as QueryKey)]
+  })
+
+  const queryResult = useQuery<TData, Error>({
+    queryKey: queryKeyRef,
+    queryFn: async () => {
+      try {
+        const res = await queryFn(queryParams.value)
+        const body = res as unknown as TableDataInfo<R>
+        list.items = (body.rows ?? (Array.isArray(res) ? res : [])) as any
+        list.total = typeof body.total === 'number' ? body.total : Array.isArray(res) ? res.length : 0
+        return res
+      } catch (err) {
+        onError(err)
+        throw err
+      }
+    },
+    enabled: enabledRef
+  })
+
+  const { isLoading, refetch } = queryResult
+
+  watch(
+    isLoading,
+    loading => {
+      list.loading = loading
+    },
+    { immediate: true }
+  )
+
+  const getList = () => refetch()
+
+  return {
+    list,
+    getList,
+    queryResult,
+    ...queryResult
+  }
+}
+// #endregion
+
+// #region useListAdaptor —— 纯数组适配器（静态展示表 / 详情子表 / 弹窗表格 / CompTable公共组件）
+/**
+ * @param items   行数据（数组 / ref / getter）
+ * @param loading 加载状态（boolean / ref / getter）
+ */
+export const useListAdaptor = <R = Record<string, any>>(items: MaybeRefOrGetter<R[]>, loading: MaybeRefOrGetter<boolean>) => {
+  const list = reactive(createListState<Record<string, any>, R>())
+
+  watch(
+    () => toValue(items),
+    v => {
+      list.items = v as any
+      list.total = v.length
+    },
+    { immediate: true, deep: true }
+  )
+  watch(
+    () => toValue(loading),
+    v => {
+      list.loading = v
+    },
+    { immediate: true }
+  )
+
+  return list
+}
+// #endregion
 
 ```
 
