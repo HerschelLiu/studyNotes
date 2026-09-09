@@ -218,7 +218,7 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
  * @param items   行数据（数组 / ref / getter）
  * @param loading 加载状态（boolean / ref / getter）
  */
-export const useListAdaptor = <R = Record<string, any>>(items: MaybeRefOrGetter<R[]>, loading: MaybeRefOrGetter<boolean>) => {
+export const useListAdaptor = <R = Record<string, any>>(items: MaybeRefOrGetter<R[]>, loading: MaybeRefOrGetter<boolean> = false) => {
   const list = reactive(createListState<Record<string, any>, R>())
 
   watch(
