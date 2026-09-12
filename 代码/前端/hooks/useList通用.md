@@ -5,7 +5,7 @@ import type { QueryKey } from '@tanstack/vue-query'
 import type { TableDataInfo } from '@/types/api/common'
 import type { MaybeRef, MaybeRefOrGetter } from 'vue'
 
-import { computed, reactive, ref, toValue, unref, watch } from 'vue'
+import { computed, reactive, toValue, unref, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 import { useQuery } from '@tanstack/vue-query'
 import { useValue } from '@/hooks/useObject'
@@ -137,17 +137,9 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
   otherQuery: Partial<Q> = {},
   queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
   queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
-  options: UseListQueryOptions = {}
+  options: UseListQueryOptions<Q, R> = {}
 ) => {
-  const queryKeyResolver = typeof queryKey === 'function' ? (queryKey as (query: Q & ListBaseQuery) => QueryKey) : undefined
-
-  const queryKeyPrefix = ref<QueryKey[number] | 'dynamic'>(queryKeyResolver ? 'dynamic' : (queryKey as QueryKey)[0])
-
-  const {
-    enablePage = true,
-    enabled = true,
-    onError = err => console.error(`useListQuery[${JSON.stringify(queryKeyPrefix.value)}] error:`, err)
-  } = options
+  const { enablePage = true, enabled = true, onError = err => console.error('useListQuery error:', err) } = options
 
   const list = reactive(
     createListState<Q, R>({
@@ -155,28 +147,17 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
         ...getPage(unref(enablePage)),
         ...otherQuery
       } as unknown as Q & ListBaseQuery,
-      request: async function () {
+      request: async () => {
         await refetch()
       }
     })
   ) as List<Q, R>
 
-  const enabledRef: MaybeRef<boolean> =
-    typeof enabled === 'function' ? computed(() => (enabled as (list: List<Q, R>) => boolean)(list as unknown as List<Q, R>)) : enabled
-
+  // 查询参数：剔除空值；只有真正变化时才会触发 queryKey / queryFn 重算
   const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
 
-  const queryKeyRef = computed<QueryKey>(() => {
-    if (queryKeyResolver) {
-      const key = queryKeyResolver(queryParams.value)
-      queryKeyPrefix.value = Array.isArray(key) ? key[0] : key
-      return key
-    }
-    return [...(queryKey as QueryKey)]
-  })
-
   const queryResult = useQuery<TData, Error>({
-    queryKey: queryKeyRef,
+    queryKey: computed<QueryKey>(() => (typeof queryKey === 'function' ? queryKey(queryParams.value) : [...queryKey])),
     queryFn: async () => {
       try {
         const res = await queryFn(queryParams.value)
@@ -189,24 +170,16 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
         throw err
       }
     },
-    enabled: enabledRef
+    enabled: typeof enabled === 'function' ? computed(() => enabled(list)) : enabled
   })
 
   const { isLoading, refetch } = queryResult
 
-  watch(
-    isLoading,
-    loading => {
-      list.loading = loading
-    },
-    { immediate: true }
-  )
-
-  const getList = () => refetch()
+  watch(isLoading, loading => (list.loading = loading), { immediate: true })
 
   return {
     list,
-    getList,
+    getList: refetch,
     queryResult,
     ...queryResult
   }

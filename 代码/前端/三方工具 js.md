@@ -179,6 +179,12 @@ npm install alova --save
 
 #### 请求增强多框架：[TanStack Query](https://cangsdarm.github.io/react-query-web-i18n/vue)
 
+### 格式化
+
+#### 中文转数字
+
+[nzh](https://github.com/cnwhy/nzh)
+
 ---------------------
 
 ## vue
