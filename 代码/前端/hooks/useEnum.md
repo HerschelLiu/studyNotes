@@ -28,9 +28,10 @@ export function useEnumArray<T = number | string>(
 }
 
 /** 直接从枚举改造对象中取值 */
-export function useEnumValue<T = Key>(key: T, obj: EnumArray<T>[]): string {
+export function useEnumValue<T = number | string>(key: T, obj: EnumArray<T>[]): string {
+  const lookupKey = String(key)
   for (const forkey in obj) {
-    if (key === obj[forkey].key) return obj[forkey].value
+    if (lookupKey === String(obj[forkey].key)) return obj[forkey].value
   }
   return ''
 }

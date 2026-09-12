@@ -118,11 +118,6 @@
   });
 </script>
 
-<!--
-  注意：el-drawer 的节点会被 teleport 到 body 下，scoped 样式的 data-v 属性
-  无法落到 .el-drawer / .el-drawer__body 上，因此结构与滚动相关样式
-  统一写在下方非 scoped 的 <style> 中，并以 .comp-drawer-box 类名限定
--->
 <style lang="scss">
   .comp-drawer-box {
     color: #54585e;
@@ -242,63 +237,44 @@
   </el-drawer>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import { onBeforeMount, ref } from 'vue';
 
   defineOptions({
     name: 'Drawer',
   });
 
-  const props = defineProps({
+  interface Props {
     /** 标题 */
-    title: {
-      type: String,
-      default: '',
-    },
+    title?: string
     /** 提示 */
-    tip: {
-      type: String,
-      default: '',
-    },
+    tip?: string
     /** 是否显示保存按钮 */
-    showSaveButton: {
-      type: Boolean,
-      default: true,
-    },
+    showSaveButton?: boolean
     /** 嵌套层级 */
-    zIndex: {
-      type: Number,
-      default: 1,
-    },
-    /**
-     * 已废弃：内容区统一由 .drawer-content 滚动（header 固定）。
-     * 保留仅为兼容既有调用，传入任何值都不再影响布局
-     */
-    enableScroll: {
-      type: Boolean,
-      default: true,
-    },
+    zIndex?: number
     /** 控制是否在关闭 Drawer 之后将子元素全部销毁 */
-    destroyOnClose: {
-      type: Boolean,
-      default: true,
-    },
+    destroyOnClose?: boolean
     /** 保存按钮名称 */
-    buttonName: {
-      type: String,
-      default: '保存',
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-  });
-  const emit = defineEmits(['update:modelValue', 'save']);
+    buttonName?: string
+    /** 加载中 */
+    loading?: boolean
+  }
+  const props = withDefaults(defineProps<Props>(), {
+    title: '',
+    tip: '',
+    showSaveButton: true,
+    zIndex: 1,
+    destroyOnClose: true,
+    buttonName: '保存',
+    loading: false
+  })
 
-  /** model值
-   * @type { boolean }
-   */
-  const value = defineModel({ required: true, defalut: false });
+  const emit = defineEmits<{
+    save: []
+  }>();
+
+  const value = defineModel<boolean>({ required: true, default: false });
 
   /** 保存 */
   const handleSave = () => {
@@ -320,11 +296,6 @@
   });
 </script>
 
-<!--
-  注意：el-drawer 的节点会被 teleport 到 body 下，scoped 样式的 data-v 属性
-  无法落到 .el-drawer / .el-drawer__body 上，因此结构与滚动相关样式
-  统一写在下方非 scoped 的 <style> 中，并以 .comp-drawer-box 类名限定
--->
 <style lang="scss">
   .comp-drawer-box {
     color: #54585e;
@@ -360,9 +331,6 @@
       }
     }
 
-    /* 内容区：el-scrollbar 填满 header 以下空间，成为唯一滚动容器
-       注意：必须用 > 直接子选择器限定，el-table 内部也使用 el-scrollbar，
-       不能让 padding / overflow 规则命中表格内部滚动层 */
     .el-scrollbar.drawer-content {
       flex: 1;
       min-height: 0;

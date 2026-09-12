@@ -1,4 +1,5 @@
 ## 普通写法
+
 ```ts
 import type { ComponentOptions } from 'vue'
 import { ref } from 'vue'
@@ -134,7 +135,7 @@ import { useTemplateRefsList } from '@vueuse/core'
 
 type RefKeys = 'ELSearch' | 'ELHeader' | 'ELTable' | 'ELForm' | 'ELInput' | 'ELScrollbar' | 'ELElement' | 'ELList' | 'ELTempList'
 
-type TempRefsResult<T, K extends RefKeys> = {
+type TempRefsResult<T, K extends string> = {
   [P in K]: P extends 'ELList'
     ? Ref<(T | null)[]>
     : P extends 'ELTempList'
@@ -149,12 +150,19 @@ type TempRefsResult<T, K extends RefKeys> = {
  *   - 数组：useTempRefs(['ELForm', 'ELTable']) → { ELForm, ELTable }，各自绑定同名 template ref
  *   - 对象：useTempRefs({ ELForm: 'myForm' }) → { ELForm }，绑定指定 template ref
  *   - 无参：返回空对象
+ * @example
+ *   // 内置 key（ELList/ELTempList 有特殊处理）
+ *   const { ELForm, ELList } = useTempRefs(['ELForm', 'ELList'])
+ *   // 自定义 key
+ *   const { categoryTreeRef } = useTempRefs('categoryTreeRef')
+ *   // 自定义 key + 自定义 template ref 名
+ *   const { treeRef } = useTempRefs({ treeRef: 'categoryTreeRef' })
  */
 // 重载：ELList 专用，只需传 T 即可获得类型安全的 ref 数组
 export function useTempRefs<T = ComponentOptions>(keys: 'ELList'): TempRefsResult<T, 'ELList'>
-// 重载：通用，K 从参数推断
-export function useTempRefs<T = ComponentOptions, K extends RefKeys = never>(keys: K | K[] | Partial<Record<K, string>>): TempRefsResult<T, K>
-export function useTempRefs<T = ComponentOptions, K extends RefKeys = never>(
+// 重载：通用（兼容内置 key 与任意自定义 key，K 从参数推断）
+export function useTempRefs<T = ComponentOptions, K extends string = string>(keys: K | K[] | Partial<Record<K, string>>): TempRefsResult<T, K>
+export function useTempRefs<T = ComponentOptions, K extends string = string>(
   keys: K | K[] | Partial<Record<K, string>> = {} as Partial<Record<K, string>>
 ): TempRefsResult<T, K> {
   /** 收集 name → templateKey 映射 */
@@ -196,4 +204,4 @@ export function useTempRefs<T = ComponentOptions, K extends RefKeys = never>(
 > const { ELList } = useTempRefs<InstanceType<typeof TheList>>('ELList')
 > ```
 >
-> 
+>  

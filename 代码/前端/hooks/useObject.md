@@ -101,3 +101,75 @@ export function useReactive<T extends object>(initial: T): [T, () => void] {
 }
 ```
 
+
+
+```ts
+import type { MaybeRefOrGetter, Ref, UnwrapRef } from 'vue'
+
+import { isRef, toValue } from 'vue'
+
+/**
+ * 以原对象字段为准，从赋值对象中按同名字段递归取值并原地写回（保持引用）
+ * @param target 原对象 / ref（会被原地修改）
+ * @param source 赋值对象 / ref / getter
+ * @returns 传入的 target 本身（ref 原样返回该 ref）
+ */
+export function useAssign<T extends object>(target: T, source?: MaybeRefOrGetter<Record<string, any> | null | undefined>): T {
+  const src = toValue(source)
+  if (src == null) return target
+
+  // 普通对象（排除数组、Date、File、Map 等）
+  const isPlainObject = (val: unknown): val is Record<string, any> => Object.prototype.toString.call(val) === '[object Object]'
+
+  const targetRef = isRef(target) ? (target as Ref) : undefined
+  const targetObj: unknown = targetRef ? targetRef.value : target
+
+  if (!isPlainObject(targetObj) || !isPlainObject(src)) {
+    if (targetRef) targetRef.value = src
+    return target
+  }
+
+  for (const key of Object.keys(targetObj)) {
+    if (!Object.prototype.hasOwnProperty.call(src, key)) continue
+    const targetVal = targetObj[key]
+    const sourceVal = src[key]
+
+    if (isPlainObject(targetVal) && isPlainObject(sourceVal)) useAssign(targetVal, sourceVal)
+    else targetObj[key] = sourceVal
+  }
+
+  return target
+}
+```
+
+
+
+```ts
+/**
+ * 判断对象字段是否有值（响应式）
+ * @param source 待判断对象（reactive / ref / getter）
+ * @param excludeKeys 需排除的 key（必须为 source 自身的 key，支持 ref / getter，默认不排除）
+ * @param mode 匹配模式：'some'（默认）至少一个字段有值；'every' 所有字段都有值
+ * @returns ComputedRef<boolean>
+ */
+export function useHasValue<T extends object>(
+  source: MaybeRefOrGetter<T | null | undefined>,
+  excludeKeys: MaybeRefOrGetter<(keyof T)[]> = [],
+  mode: 'some' | 'every' = 'some'
+): ComputedRef<boolean> {
+  return computed(() => {
+    const obj = toValue(source)
+    if (!obj) return false
+
+    const excludes = toValue(excludeKeys) as (keyof T)[]
+
+    const entries = Object.entries(obj).filter(([key]) => !excludes.includes(key as keyof T))
+
+    if (!entries.length) return false
+
+    const match = entries.filter(([, value]) => isHaveValue(value))
+    return mode === 'every' ? match.length === entries.length : match.length > 0
+  })
+}
+```
+
