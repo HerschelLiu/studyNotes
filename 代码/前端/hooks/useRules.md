@@ -1,21 +1,32 @@
 `npm i validing`
 
 ```ts
-import validing from 'validing'
-import { reactive } from 'vue'
+import type { MaybeRef } from 'vue'
+import type { FormItemRule } from 'element-plus'
 
+import validing from 'validing'
 import { isArray, isHaveValue, isPhone } from '@/hooks/useValidate'
 
-interface RulesOptions {
-  key: string
+/**
+ * 单条校验规则，基于 Element Plus 的 FormItemRule（其底层即 async-validator 的 RuleItem）
+ */
+type RuleItem = Omit<FormItemRule, 'required'> & {
+  required?: MaybeRef<boolean>
+}
+
+/** 单条规则或规则数组，对应 Element Plus FormRules 的值类型 */
+export type RuleValue = RuleItem | RuleItem[]
+
+interface RulesOptions<T> {
+  key: keyof T
   type?: 'text' | 'upload' | 'checked'
   label?: string
   message?: string
-  required?: boolean
+  required?: MaybeRef<boolean>
   trigger?: string[]
 }
 
-function getMessage(type: RulesOptions['type']) {
+function getMessage<T>(type: RulesOptions<T>['type']) {
   switch (type) {
     case 'text':
     default:
@@ -33,8 +44,11 @@ function getMessage(type: RulesOptions['type']) {
  * @param haveRules 后置的规则，前面有key时会追加，否则补充值，可以是对象，也可以是数组，key值是要插入的key
  * @returns element-plus的rules
  */
-export function useRules(options: RulesOptions[], haveRules?: { [key: string]: any }) {
-  const rules: AnyObject = {}
+export function useRules<T extends Record<string, any>>(
+  options: RulesOptions<T>[],
+  haveRules?: Partial<Record<NoInfer<keyof T> | (string & {}), RuleValue>>
+) {
+  const rules: Record<PropertyKey, any> = {}
   options.forEach(item => {
     rules[item.key] = [
       {
@@ -46,10 +60,11 @@ export function useRules(options: RulesOptions[], haveRules?: { [key: string]: a
   })
   if (haveRules) {
     for (const key in haveRules) {
-      if (Reflect.has(rules, key)) {
-        if (isArray(haveRules[key])) rules[key] = [...rules[key], ...haveRules[key]]
-        else rules[key] = [...rules[key], haveRules[key]]
-      } else rules[key] = haveRules[key]
+      const k = key as keyof T
+      if (Reflect.has(rules, k)) {
+        if (isArray(haveRules[k])) rules[k] = [...rules[k], ...haveRules[k]]
+        else rules[k] = [...rules[k], haveRules[k]]
+      } else rules[k] = haveRules[k]
     }
   }
 
@@ -96,6 +111,14 @@ export const useValidateCount = (tip = '数量格式不正确，只能输入大�
   }
 }
 
+/** 校验金额：大于0的数，最多保留2位小数 */
+export const useValidateAmount = (tip = '金额格式不正确，只能输入大于0的数，最多保留2位小数') => {
+  return {
+    validator: validing.rules.validateNumber({ required: false, range: '(0,-)', decimal: 2, tip }),
+    trigger: ['blur']
+  }
+}
+
 /** 校验手机号码 */
 export const useValidateMobile = (tip = '手机号码格式不正确') => {
   return {
@@ -111,6 +134,20 @@ export const useValidatePhone = (rule: any, value: any, callback: any) => {
     return
   }
   callback(new Error('电话号码格式不正确'))
+}
+
+/** 校验编码：只能输入数字和英文大小写，长度1-50位；空值放行（由必填规则提示） */
+export const useValidateCode = (tip = '编码格式不正确，只能输入数字和英文大小写') => {
+  return {
+    validator: (rule: any, value: any, callback: any) => {
+      if (!isHaveValue(value) || /^[a-zA-Z0-9]{1,50}$/.test(value)) {
+        callback()
+        return
+      }
+      callback(new Error(tip))
+    },
+    trigger: ['blur', 'change']
+  }
 }
 
 /** 校验配置编码 */

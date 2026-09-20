@@ -62,15 +62,6 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
           throw error
         }
       }
-      if (showConfirm) {
-        const resolvedConfirmTitle = typeof confirmTitle === 'function' ? confirmTitle(...variables) : confirmTitle ?? '是否执行该操作'
-        await useConfirm(resolvedConfirmTitle, title || '操作提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: type || 'warning',
-          dangerouslyUseHTMLString: true
-        })
-      }
       let loading: LoadingInstance | null = null
       if (showLoading) loading = useLoading(loadingTitle || '加载中')
       try {
@@ -91,13 +82,29 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
 
   const { mutateAsync } = mutation
 
-  const submit = (...variables: TVariables) => {
+  const submit = async (...variables: TVariables) => {
     if (state.busy) return
     state.busy = true
 
-    return mutateAsync(variables).finally(() => {
+    try {
+      // 二次确认放在 mutation 之外：用户取消属于正常操作，直接结束，不产生异常
+      if (showConfirm) {
+        const resolvedConfirmTitle = typeof confirmTitle === 'function' ? confirmTitle(...variables) : confirmTitle ?? '是否执行该操作'
+        const confirmed = await useConfirm(resolvedConfirmTitle, title || '操作提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: type || 'warning',
+          dangerouslyUseHTMLString: true
+        })
+          .then(() => true)
+          .catch(() => false)
+        if (!confirmed) return
+      }
+
+      return await mutateAsync(variables)
+    } finally {
       state.busy = false
-    })
+    }
   }
 
   return {

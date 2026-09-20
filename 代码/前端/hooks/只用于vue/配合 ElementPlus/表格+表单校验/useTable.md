@@ -12,7 +12,7 @@ import { isHaveValue } from '@/hooks/useValidate'
 export const useTableForm = <T extends Record<string, any>>(cellRules: T) => {
   /** 获取指定字段的校验规则 */
   const getCellRules = (fieldName: keyof T) => {
-    return cellRules[fieldName]
+    return cellRules[fieldName] ?? ''
   }
 
   /**
