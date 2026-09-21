@@ -303,22 +303,18 @@ export type CommonSearchItemOptionsType = 'input' | 'select' | 'date' | 'treeSel
 
 export type FieldKeys<T> = T extends string ? T : Extract<keyof T, string>
 
-/** select 选项数据及取值配置，仅用于生成选项，不会透传给控件 */
-export interface SelectOptionProps {
-  data?: MaybeRefOrGetter<Record<string, any>[]>
+/** select 选项数据及取值配置 */
+export interface SelectOptionProps<R = any> {
+  data?: MaybeRefOrGetter<R[] | undefined>
   label?: string
   key?: string
   changeFn?: (val: any) => void
 }
 
-/** ElSelect 的全部对外属性，并兼容选项字段 */
-export type SelectControlProps = SelectPropsPublic & SelectOptionProps
+export type SelectControlProps<R = any> = SelectPropsPublic & SelectOptionProps<R>
 
-/** ElTreeSelect 的全部对外属性（由组件实例 $props 推导），并兼容 changeFn。data 接受 Ref/getter，由控件内部解包 */
-export type TreeSelectControlProps = Omit<InstanceType<typeof ElTreeSelect>['$props'], 'data'> & {
-  /** 树形数据，可传 Ref/getter（允许 undefined 占位），由 CommonSearchItem 内部用 toValue 解包后透传 */
-  data?: MaybeRefOrGetter<Record<string, any>[] | undefined>
-  /** 值变化回调，由 CommonSearchItem 消费，不会透传给控件 */
+export type TreeSelectControlProps<R = any> = Omit<InstanceType<typeof ElTreeSelect>['$props'], 'data'> & {
+  data?: MaybeRefOrGetter<R[] | undefined>
   changeFn?: (val: any) => void
 }
 
@@ -346,22 +342,19 @@ export interface InputSearchItemOptions<T> extends CommonSearchItemBaseOptions<T
   props?: InputPropsPublic
 }
 
-export interface SelectSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
+export interface SelectSearchItemOptions<T, R = any> extends CommonSearchItemBaseOptions<T> {
   type: 'select'
-  /** ElSelect 及选项数据配置，控件属性通过 v-bind 透传 */
-  props?: SelectControlProps
+  props?: SelectControlProps<R>
 }
 
 export interface DatePickerSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
   type: 'date'
-  /** ElDatePicker 的属性，通过 v-bind 透传 */
   props?: DatePickerPropsPublic
 }
 
-export interface TreeSelectSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
+export interface TreeSelectSearchItemOptions<T, R = any> extends CommonSearchItemBaseOptions<T> {
   type: 'treeSelect'
-  /** ElTreeSelect 的属性（含 data 树形数据），通过 v-bind 透传 */
-  props?: TreeSelectControlProps
+  props?: TreeSelectControlProps<R>
 }
 
 /**

@@ -1,99 +1,39 @@
-## VUE
+### VUE
 
 ```ts
-import { reactive, ref } from 'vue'
+import { computed, reactive } from 'vue'
 
-type ModalName = `show${Cap}`
+/**
+ * 弹窗管理
+ * @param list 弹窗初始状态
+ */
+export function useModal<T extends Record<string, boolean>>(list: T) {
+  const modalList = reactive(list) as { [K in keyof T]: boolean }
 
-interface ModalList {
-  toast?: string
-  [key: ModalName]: boolean
-}
+  const showModal = computed(() => Object.values(modalList).some(Boolean))
 
-/** 弹窗 */
-export function useModal(list: ModalList) {
-  /** 是否显示弹窗 */
-  const showModal = ref(false)
-
-  /** 弹窗列表 */
-  const modalList = reactive(list)
-
-  /** 目标操作 */
-  const callbackType = ref('')
-
-  /** 显示弹窗 */
-  const handleShowModal = (target: ModalName, type?: string) => {
-    callbackType.value = type || ''
-    Reflect.set(modalList, target, true)
-    showModal.value = true
+  const handleShowModal = (target: keyof T) => {
+    modalList[target] = true
   }
 
-  /** 关闭弹窗 */
-  const handleCloseModal = () => {
-    for (const key in modalList) {
-      Reflect.set(modalList, key, false)
+  const handleCloseModal = (target?: keyof T) => {
+    if (target === undefined) {
+      for (const key in modalList) {
+        modalList[key as keyof T] = false
+      }
+      return
     }
-    showModal.value = false
-  }
-
-  /** 显示toast */
-  const handleShowToast = (title: string) => {
-    modalList.toast = title
-    handleShowModal('showToast')
-    setTimeout(() => {
-      handleCloseModal()
-    }, 1500)
+    modalList[target] = false
   }
 
   return {
-    /** 是否显示弹窗 */
     showModal,
-    /** 弹窗列表 */
     modalList,
-    /** 目标操作 */
-    callbackType,
-    /** 显示弹窗 */
     handleShowModal,
-    /** 关闭弹窗 */
-    handleCloseModal,
-    /** 显示toast */
-    handleShowToast
+    handleCloseModal
   }
 }
 
-```
-
-```ts
-type Words =
-  | 'a'
-  | 'b'
-  | 'c'
-  | 'd'
-  | 'e'
-  | 'f'
-  | 'g'
-  | 'h'
-  | 'i'
-  | 'j'
-  | 'k'
-  | 'l'
-  | 'm'
-  | 'n'
-  | 'o'
-  | 'p'
-  | 'q'
-  | 'r'
-  | 's'
-  | 't'
-  | 'u'
-  | 'v'
-  | 'w'
-  | 'x'
-  | 'y'
-  | 'z'
-
-/** 限定首字母大写 */
-type Cap = `${Capitalize<Words>}${string}`
 ```
 
 使用

@@ -292,9 +292,9 @@
     visibleColumns.value.find(col => col.prop === 'index')
   )
 
-  /** 数据列（过滤掉 prop='index'，序号列已单独渲染） */
+  /** 数据列（过滤掉 prop='index'和disabled=true的列，序号列已单独渲染，序号列已单独渲染） */
   const dataColumns = computed(() =>
-    visibleColumns.value.filter(col => col.prop !== 'index')
+    visibleColumns.value.filter(col => col.prop !== 'index' && !col.disabled)
   )
 </script>
 

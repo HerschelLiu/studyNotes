@@ -10,43 +10,108 @@
 
 ## VUE
 
+`vue3.x`
+
 ```tsx
-// vue3.x
-import type { Ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 import { useError } from './useTip'
 
-/**
- * 验证参数是否存在（从当前路由 query / params 中按优先级取值）
- *
- * @param args 参数名
- * @param required 是否必填，默认 true：缺参数时提示并返回空串；false 时缺参返回空串、不提示
- * @returns Ref<T>
- */
-export function useValidateArgs<T extends string>(args: string, required = true) {
+const FALSY = new Set(['', '0', 'false', 'null', 'undefined', 'void 0'])
+
+function toNumber(value: string) {
+  const number = Number(value)
+  return value && Number.isFinite(number) ? number : undefined
+}
+
+const toBoolean = (value: string) => !FALSY.has(value)
+
+function toJson<T>(value: string): T | undefined {
+  if (!value) return undefined
+
+  try {
+    return JSON.parse(value) as T
+  } catch {
+    return undefined
+  }
+}
+
+/** 获取路由参数并转换：number、boolean、array、json，数组方法逐项处理。 */
+export function useValidateArgs<T extends string = string>(args: string, required = true) {
   const route = useRoute()
   const value = ref('' as T)
   let validated = false
 
   watch(
     () => route.query[args] ?? route.params[args],
-    arg => {
-      const has = arg !== undefined
-      const str = typeof arg === 'string' ? arg : Array.isArray(arg) ? arg[0] ?? '' : ''
-      if (has) {
-        value.value = str as T
-      } else if (required && !validated) {
+    raw => {
+      value.value = (Array.isArray(raw) ? raw.join(',') : raw ?? '') as T
+      if (raw == null && required && !validated) {
         useError(`缺少关键参数${args}`)
+        validated = true
       }
-      validated = true
     },
     { immediate: true }
   )
 
-  return value
+  const getList = () => (value.value ? value.value.split(',').filter(Boolean) : [])
+  const setList = (items: string[]) => {
+    value.value = (items.join(',') || '') as T
+  }
+
+  const mapList = <R>(parse: (item: string) => R | undefined, stringify: (item: R) => string) =>
+    computed<R[]>({
+      get: () =>
+        getList().flatMap(item => {
+          const parsed = parse(item)
+          return parsed === undefined ? [] : [parsed]
+        }),
+      set: items => setList(items.map(stringify))
+    })
+
+  const array = () =>
+    Object.assign(computed<string[]>({ get: getList, set: setList }), {
+      number: () => mapList(toNumber, String),
+      boolean: () => mapList(toBoolean, String),
+      json: <R = unknown>() => mapList(toJson<R>, item => JSON.stringify(item) ?? '')
+    })
+
+  return Object.assign(value, {
+    number: <R extends number = number>() =>
+      computed({
+        get: () => toNumber(value.value) as R | undefined,
+        set: newValue => {
+          value.value = (newValue == null ? '' : String(newValue)) as T
+        }
+      }),
+
+    boolean: () =>
+      computed({
+        get: () => toBoolean(value.value),
+        set: newValue => {
+          value.value = (newValue ? 'true' : 'false') as T
+        }
+      }),
+
+    json: <R = unknown>() =>
+      computed({
+        get: () => toJson<R>(value.value),
+        set: newValue => {
+          value.value = (newValue == null ? '' : JSON.stringify(newValue)) as T
+        }
+      }),
+
+    array
+  })
 }
 
-// vue2.x
+```
+
+
+
+`vue2.x`
+
+```ts
 /**
  * 验证参数是否存在
  * @param args 参数名

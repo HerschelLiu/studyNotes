@@ -39,4 +39,6 @@ export interface TableColumn<T> {
   price?: boolean
   /** CompPrice 配置项，仅当 price=true 时生效 */
   priceConfig?: PriceConfig
+  /** true → 禁用列，不显示在表格中 */
+  disabled?: boolean
 }
