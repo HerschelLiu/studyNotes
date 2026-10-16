@@ -1,3 +1,5 @@
+### 通用
+
 `npm i validing`
 
 ```ts
@@ -213,5 +215,78 @@ export const validateTcp = (rule: any, value: any, callback: any) => {
   callback(new Error('域名格式不正确'))
 }
 
+```
+
+
+
+### `获取async-validator的某个字段的required是否为true`
+
+```ts
+import type { MaybeRefOrGetter } from 'vue'
+import { toValue, unref } from 'vue'
+
+/**
+ * 递归判断规则中是否存在 required
+ * 兼容 async-validator 的三种形态：单条规则、规则数组、深层校验 fields
+ * @param rules 单条规则 / 规则数组
+ */
+const hasRequiredRule = (rules: unknown): boolean => {
+  if (!rules) return false
+
+  const list = isArray(rules) ? rules : [rules]
+  return list.some(rule => {
+    const item = rule as RuleItem
+    if (!item) return false
+    if (unref(item.required)) return true
+    if (!item.fields) return false
+
+    return Object.values(item.fields).some(fieldRules => hasRequiredRule(fieldRules))
+  })
+}
+
+/**
+ * 判断某个 key 的 required 是否为 true
+ * 支持 async-validator 的三种形态：单条规则、规则数组、深层校验 fields（递归判定）
+ * @param rules 校验规则集合（useRules 生成或 element-plus 的 FormRules），传 true 表示全部必填
+ * @returns 判定函数 (key) => boolean，可对任意字段复用
+ */
+export function useRulesRequired(rules: MaybeRefOrGetter<boolean | Record<string, any> | undefined>): (key: string) => boolean
+export function useRulesRequired(rules: MaybeRefOrGetter<boolean | Record<string, any> | undefined>, key: string): boolean
+export function useRulesRequired(rules: MaybeRefOrGetter<boolean | Record<string, any> | undefined>, key?: string) {
+  const checkRequired = (fieldKey: string) => {
+    const value = toValue(rules)
+    if (value === true) return true
+    if (!value) return false
+
+    return hasRequiredRule(value[fieldKey])
+  }
+
+  return key === undefined ? checkRequired : checkRequired(key)
+}
+```
+
+#### `示例`
+
+```ts
+// rules 是「字段名 → 规则」的集合，如 { pkAccountId: [{ required: true }] }
+
+// 1. 柯里化：先传 rules，得到判定函数
+const isRequired = useRulesRequired(() => props.required)
+isRequired('pkAccountId') // true
+isRequired('absinfo')     // false
+
+// 2. 一次性：rules + key 一起传，直接拿布尔
+const required = useRulesRequired(() => props.required, 'pkAccountId') // true
+
+// 3. 三种规则形态都能识别
+const rules = {
+  single: { required: true },                                    // 单条规则
+  arrayField: [{ required: true }, { type: 'array' }],           // 规则数组
+  items: { fields: { 0: { required: true } } },                  // 深层 fields（递归）
+}
+const fn = useRulesRequired(rules)
+fn('single')     // true
+fn('arrayField') // true
+fn('items')      // true
 ```
 

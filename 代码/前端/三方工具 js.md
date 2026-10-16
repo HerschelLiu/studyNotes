@@ -179,6 +179,33 @@ npm install alova --save
 
 #### 请求增强多框架：[TanStack Query](https://cangsdarm.github.io/react-query-web-i18n/vue)
 
+### 文件预览
+
+#### open-file-viewer
+
+支持：
+
+* Vanilla JavaScript：@open-file-viewer/core
+* Vue： @open-file-viewer/vue
+* React： @open-file-viewer/react
+* Svelte：@open-file-viewer/svelte
+
+```bash
+# vue 3
+npm i @open-file-viewer/core @open-file-viewer/vue
+# pdf 
+pdfjs-dist
+```
+
+#### Vue-office
+
+```bash
+@vue-office/docx
+@vue-office/excel
+```
+
+
+
 ### 格式化
 
 #### 中文转数字

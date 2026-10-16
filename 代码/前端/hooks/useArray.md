@@ -1,4 +1,4 @@
-
+### 基础
 
 ```ts
 import { isHaveValue } from '@/hooks/useValidate'
@@ -76,7 +76,7 @@ export const useChunk = <T extends []>(array: T[], size: number) =>
 
 
 
-自己新增
+### 自己新增
 
 ```ts
  // 以下代码为js，还未ts化
@@ -198,21 +198,6 @@ export function useFindNodes<T extends object>(data: T[], keyword: string, field
 
   traverse(data)
   return results
-}
-
-/** 获取对应id的数据项以及其父级数据 */
-export function useFindNode<T extends object>(data: T[], id: string, idKey = 'id', key = 'children', parent: T): T[] | null {
-  for (let i = 0; i < data.length; i++) {
-    if (Reflect.get(data[i], idKey) === id) {
-      return [data[i], parent]
-    } else if (Reflect.has(data[i], key)) {
-      const result = useFindNode(Reflect.get(data[i], key) as T[], id, idKey, key, parent)
-      if (result) {
-        return result
-      }
-    }
-  }
-  return null
 }
 
 /**
@@ -366,7 +351,7 @@ export function useSort<T extends Record<K, Key>, K extends keyof T>(originalArr
 
 
 
-递归设置统一树路径的名称
+### 递归设置统一树路径的名称
 
 ```ts
 interface TreeNodeBase {
@@ -432,3 +417,304 @@ areaList.value = res.data.map(item =>
   )
 ```
 
+
+
+### 按 key 去重合并数组（编辑/生成场景）
+
+```ts
+import type { MaybeRefOrGetter } from 'vue'
+
+import { toValue } from 'vue'
+
+/**
+ * 按 key 去重合并数组（编辑/生成场景）
+ * - 原数组中仍存在于新增数组的项保留（kept，已编辑的内容不丢失）
+ * - 新增数组中新出现的项追加（added）
+ * - 原数组中不存在于新增数组的项移除
+ *
+ * @param original  原数组（数组 / ref / reactive / getter）
+ * @param incoming  新增数组（数组 / ref / reactive / getter）
+ * @param keys      去重依据，支持三种形式：
+ *                  - 单字段：'id'
+ *                  - 多字段组合：['salaryYear', 'salaryPeriod']
+ *                  - 对比函数：(item) => `${item.salaryYear}-${item.salaryPeriod}`
+ * @param delimiter 多字段组合 key 的分隔符，默认 SOH 控制字符（避免值拼接碰撞）
+ * @returns 组合后的数组 [...kept, ...added]
+ */
+export const useMergeArrayByKey = <T extends Record<string, any>>(
+  original: MaybeRefOrGetter<T[]>,
+  incoming: MaybeRefOrGetter<T[]>,
+  keys: keyof T | (keyof T)[] | ((item: T) => string | number),
+  delimiter: string = String.fromCharCode(1)
+): T[] => {
+  const keyOf = typeof keys === 'function' ? keys : (item: T) => (Array.isArray(keys) ? keys : [keys]).map(k => String(item[k] ?? '')).join(delimiter)
+
+  const originalArr = toValue(original)
+  const incomingArr = toValue(incoming)
+
+  const incomingKeys = new Set(incomingArr.map(keyOf))
+  const existingKeys = new Set(originalArr.map(keyOf))
+
+  return [...originalArr.filter(item => incomingKeys.has(keyOf(item))), ...incomingArr.filter(item => !existingKeys.has(keyOf(item)))]
+}
+```
+
+使用
+
+```ts
+// 方式1
+const handleGenerateChange = (arr: RequestUpdateHrSalaryPeriodDetailList[]) => {
+    form.detailList = useMergeArrayByKey(form.detailList, arr, ['salaryYear', 'salaryPeriod'])
+  }
+
+// 方式2
+const createAccess = (item: ResponseListAuxAcctInfo): DetailRow => ({
+  id: '',
+  itemCode: item.code,
+  itemName: item.name,
+  pkEntityId: item.id,
+  isBalanceControl: YesOrNo.否,
+  isUmprint: YesOrNo.否,
+  isEmpty: YesOrNo.否,
+  isNonleafUsed: YesOrNo.否,
+  createBy: '',
+  updateBy: ''
+})
+
+const handleSelectAuxAcctInfoChange = (arr: ResponseListAuxAcctInfo[]) => {
+  list.value = useMergeArrayByKey(list.value, arr.map(createAccess), 'pkEntityId')
+}
+```
+
+
+
+### 为树增加若干属性
+
+```ts
+/**
+ *  为树增加若干属性
+ *
+ * @param tree   原始树数组
+ * @param mapper 转换函数，接收当前节点，返回要合并到节点上的额外字段
+ * @param children  子节点名
+ * @returns 转换后的新树
+ */
+export const useMapTree = <T extends Record<string, any>>(tree: T[], mapper: (node: T) => Record<string, any>, children = 'children'): T[] => {
+  return tree.map(node => {
+    const childrenArr = Array.isArray(node[children]) ? { [children]: useMapTree(node[children], mapper, children) } : {}
+    return { ...node, ...mapper(node), ...childrenArr }
+  })
+}
+```
+
+
+
+#### 使用
+
+```ts
+// 为每个节点增加 level / expanded
+useMapTree(tree, () => ({ level: 0, expanded: true }))
+
+// 基于节点值计算
+useMapTree(tree, node => ({ hasChildren: node.children?.length > 0 }))
+
+// 自定义 children key
+useMapTree(tree, node => ({ checked: false }), 'subNodes')
+```
+
+
+
+### 层级异字段归一树
+
+```ts
+/** 每层字段名配置 */
+export interface TreeLevelConfig {
+  /** 原节点中充当 id 的字段名 */
+  idField: string
+  /** 原节点中充当 name 的字段名 */
+  nameField: string
+  /** 原节点中子节点数组的字段名，默认 'children' */
+  childrenField?: string
+}
+
+/** treeId 生成策略 */
+export type TreeIdStrategy =
+  /** 全局顺序编号 '1', '2', ... */
+  | 'sequential'
+  /** 层级+原id 组合：`${depth}-${node[idField]}` */
+  | 'levelId'
+  /** 自定义生成器 */
+  | ((ctx: { node: any; depth: number; index: number; parent?: any; originalId: string | number | undefined }) => string)
+
+/**
+ * 归一化后的节点
+ */
+export interface NormalizedTreeNode<T> {
+  [key: string]: any
+  /** 原始节点引用，keepRaw=false 时不存在 */
+  raw?: T
+}
+
+/** useTreeNormalize 选项 */
+export interface UseTreeNormalizeOptions {
+  /**
+   * 每层配置数组 或 动态函数
+   *
+   * 数组模式下的匹配规则由 matchMode 决定：
+   * - 'depth' ：levels中下标对应层级
+   * - 'auto'  ：levels不对应层级，存在就有用
+   *
+   * 函数形式：(node, depth) => LevelConfig | null（返回 null 视为叶子，不再下探）
+   */
+  levels: TreeLevelConfig[] | ((node: any, depth: number) => TreeLevelConfig | null | undefined)
+  matchMode?: 'depth' | 'auto'
+  /** treeId 生成策略，默认 'levelId' */
+  treeIdStrategy?: TreeIdStrategy
+  /** 是否保留 raw 原始节点引用，默认 true */
+  keepRaw?: boolean
+  /** 输出中 id 字段名，默认 'treeId' */
+  outputIdField?: string
+  /** 输出中 name 字段名，默认 'treeName' */
+  outputNameField?: string
+  /** 输出中子节点数组的字段名，默认 'children' */
+  outputChildrenField?: string
+}
+
+export const useTreeNormalize = <T extends Record<string, any>>(
+  input: T[] | undefined | null,
+  options: UseTreeNormalizeOptions
+): NormalizedTreeNode<T>[] => {
+  if (!Array.isArray(input) || !input.length) return []
+
+  const {
+    levels,
+    matchMode = 'auto',
+    treeIdStrategy = 'levelId',
+    keepRaw = true,
+    outputIdField = 'treeId',
+    outputNameField = 'treeName',
+    outputChildrenField = 'children'
+  } = options
+
+  let sequentialCounter = 0
+
+  const resolveLevel = (node: any, depth: number): TreeLevelConfig | null | undefined => {
+    if (typeof levels === 'function') return levels(node, depth)
+    if (matchMode === 'auto') {
+      return levels.find(cfg => [cfg.idField, cfg.nameField, cfg.childrenField].some(field => !!field && Reflect.has(node, field)))
+    }
+    return levels[depth] ?? levels[levels.length - 1]
+  }
+
+  const genTreeId = (node: any, depth: number, index: number, parent: any | undefined, originalId: string | number | undefined): string => {
+    if (treeIdStrategy === 'sequential') return String(++sequentialCounter)
+    if (treeIdStrategy === 'levelId') return `${depth}-${String(originalId ?? index)}`
+    return treeIdStrategy({ node, depth, index, parent, originalId })
+  }
+
+  const walk = (nodes: T[], depth: number, parent: any | undefined): NormalizedTreeNode<T>[] =>
+    nodes.map((node, index) => {
+      const level = resolveLevel(node, depth)
+      const childrenField = level?.childrenField ?? 'children'
+
+      const originalId = level?.idField ? (Reflect.get(node, level.idField) as string | number | undefined) : undefined
+      const treeId = genTreeId(node, depth, index, parent, originalId)
+
+      const treeName = level?.nameField ? String(Reflect.get(node, level.nameField) ?? '') : ''
+
+      // 是否下探：节点上存在 childrenField 字段 且 值为非空数组 → 否则视为叶子
+      let children: NormalizedTreeNode<T>[] | undefined
+      if (Reflect.has(node, childrenField)) {
+        const rawChildren = Reflect.get(node, childrenField)
+        if (Array.isArray(rawChildren) && rawChildren.length) {
+          children = walk(rawChildren as T[], depth + 1, node)
+        }
+      }
+
+      const out = {
+        [outputIdField]: treeId,
+        [outputNameField]: treeName,
+        ...(keepRaw ? { raw: node as T } : null),
+        ...(children?.length ? { [outputChildrenField]: children } : null)
+      } as NormalizedTreeNode<T>
+      return out
+    })
+
+  return walk(input, 0, undefined)
+}
+```
+
+
+
+### 获取对应 id 的数据项及其父级信息
+
+```ts
+// #region 获取对应 id 的数据项及其父级信息
+export interface FindNodeWithParentResult<T> {
+  /** 命中的节点 */
+  node: T
+  /** 命中节点的父级，根级命中时为 undefined */
+  parent: T | undefined
+  /** 命中节点在其所在层级数组中的索引 */
+  index: number
+  /** 从根到命中节点的索引链 */
+  path: number[]
+}
+
+/**
+ * 获取对应 id 的数据项及其父级信息
+ *
+ * @param data
+ * @param matcher 匹配依据）
+ * @param idKey   id 字段名，支持点号路径（如 'raw.accountingPeriodId'），matcher 为函数时忽略
+ * @param childrenKey     子节点数组字段名，默认 'children'
+ * @returns 命中返回 { node, parent, index, path }；未命中返回 null
+ */
+export function useFindNodeWithParent<T extends object>(
+  data: T[],
+  matcher: string | number | ((node: T) => boolean),
+  idKey = 'id',
+  childrenKey = 'children'
+): FindNodeWithParentResult<T> | null {
+  /** 按点号路径逐层取值 */
+  const resolveId = (node: any): any => idKey.split('.').reduce<any>((acc, k) => (acc == null ? acc : Reflect.get(acc, k)), node)
+
+  const match = typeof matcher === 'function' ? matcher : (node: T) => resolveId(node) === matcher
+
+  const find = (nodes: T[], parent: T | undefined, parentPath: number[]): FindNodeWithParentResult<T> | null => {
+    for (let index = 0; index < nodes.length; index++) {
+      const node = nodes[index]
+      if (match(node)) return { node, parent, index, path: [...parentPath, index] }
+
+      const children = Reflect.get(node, childrenKey)
+      if (Array.isArray(children)) {
+        const result = find(children as T[], node, [...parentPath, index])
+        if (result) return result
+      }
+    }
+    return null
+  }
+
+  return find(data, undefined, [])
+}
+// #endregion
+
+```
+
+> `const resolveId = (node: any): any => idKey.split('.').reduce<any>((acc, k) => (acc == null ? acc : Reflect.get(acc, k)), node)`**把 `idKey` 当成一条属性路径，从 `node` 上顺着走下去取到最终的值**。它等价于一个手写的 `node?.raw?.accountingPeriodId`。
+>
+> 1. **`idKey.split('.')`** 把字符串按点号切成路径数组：`['raw', 'accountingPeriodId']`
+>
+> 2. **`reduce<any>(回调, node)`** `reduce` 的第二个参数 `node` 是**初始累加值**（所以 `acc` 第一次进来就是 `node` 本身，不是 `node.raw`）。
+>
+> 3. **回调 `(acc, k) => (acc == null ? acc : Reflect.get(acc, k))`** 对路径上每一段 `k` 做一次取值，逐层推进：
+>
+>    | 轮次 | `k`                    | 进入时 `acc` | 返回                          |
+>    | ---- | ---------------------- | ------------ | ----------------------------- |
+>    | 1    | `'raw'`                | `node`       | `node.raw`                    |
+>    | 2    | `'accountingPeriodId'` | `node.raw`   | `node.raw.accountingPeriodId` |
+>
+> 4. **`acc == null ? acc : ...` 这个短路防止中途断链报错：
+>
+>    - `== null` 是故意用非严格相等，**同时命中 `null` 和 `undefined`**（只判 `=== null` 会漏掉 `undefined`）；
+>    - 一旦某一层是 `null/undefined`，直接原样返回，后续轮次继续返回它，最后得到 `undefined` —— 相当于可选链 `?.` 的效果，而不是抛 `Cannot read properties of undefined`。

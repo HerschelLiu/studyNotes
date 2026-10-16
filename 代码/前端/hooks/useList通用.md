@@ -2,13 +2,13 @@
 
 ```ts
 import type { QueryKey } from '@tanstack/vue-query'
-import type { TableDataInfo } from '@/types/api/common'
+import type { AjaxResult } from '@/types/api/common'
 import type { MaybeRef, MaybeRefOrGetter } from 'vue'
 
 import { computed, reactive, toValue, unref, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 import { useQuery } from '@tanstack/vue-query'
-import { useValue } from '@/hooks/useObject'
+import { useAssign, useValue } from '@/hooks/useObject'
 
 // #region 列表 props/emits 定义（供 CompTable 等组件使用）
 /**
@@ -123,6 +123,10 @@ export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
   onError?: (err: unknown) => void
 }
 
+type ApiResult<R> = Omit<AjaxResult<R>, 'data' | 'rows'> & {
+  data?: R[]
+  rows?: R[]
+}
 /**
  * 列表查询 hook（基于 @tanstack/vue-query）
  *
@@ -133,7 +137,7 @@ export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
  * @param queryFn    请求函数
  * @param options    其他配置（enablePage / enabled / onError）
  */
-export const useListQuery = <Q = Record<string, any>, R = object, TData = TableDataInfo<R>>(
+export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiResult<R>>(
   otherQuery: Partial<Q> = {},
   queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
   queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
@@ -141,12 +145,16 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
 ) => {
   const { enablePage = true, enabled = true, onError = err => console.error('useListQuery error:', err) } = options
 
+  /** 初始查询条件（分页参数 + otherQuery），供 resetList 还原 */
+  const getInitialQuery = (): Q & ListBaseQuery =>
+    ({
+      ...getPage(unref(enablePage)),
+      ...otherQuery
+    } as unknown as Q & ListBaseQuery)
+
   const list = reactive(
     createListState<Q, R>({
-      query: {
-        ...getPage(unref(enablePage)),
-        ...otherQuery
-      } as unknown as Q & ListBaseQuery,
+      query: getInitialQuery(),
       request: async () => {
         await refetch()
       }
@@ -161,8 +169,8 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
     queryFn: async () => {
       try {
         const res = await queryFn(queryParams.value)
-        const body = res as unknown as TableDataInfo<R>
-        list.items = (body.rows ?? (Array.isArray(res) ? res : [])) as any
+        const body = res as unknown as ApiResult<R>
+        list.items = (body.rows ?? body?.data ?? (Array.isArray(res) ? res : [])) as any
         list.total = typeof body.total === 'number' ? body.total : Array.isArray(res) ? res.length : 0
         return res
       } catch (err) {
@@ -177,9 +185,17 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
 
   watch(isLoading, loading => (list.loading = loading), { immediate: true })
 
+  /** 整体重置：清空 items/total，query 还原为初始条件（原地赋值，保留响应式引用） */
+  const resetList = () => {
+    list.items = []
+    list.total = 0
+    useAssign(list.query, getInitialQuery())
+  }
+
   return {
     list,
     getList: refetch,
+    resetList,
     queryResult,
     ...queryResult
   }
@@ -191,8 +207,11 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = TableD
  * @param items   行数据（数组 / ref / getter）
  * @param loading 加载状态（boolean / ref / getter）
  */
-export const useListAdaptor = <R = Record<string, any>>(items: MaybeRefOrGetter<R[]>, loading: MaybeRefOrGetter<boolean> = false) => {
-  const list = reactive(createListState<Record<string, any>, R>())
+export const useListAdaptor = <R = Record<string, any>, Q = Record<string, any>>(
+  items: MaybeRefOrGetter<R[]>,
+  loading: MaybeRefOrGetter<boolean> = false
+) => {
+  const list = reactive(createListState<Q, R>())
 
   watch(
     () => toValue(items),

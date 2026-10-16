@@ -5,8 +5,8 @@
   <el-form-item
     v-for="entry in entries"
     :key="entry.item.prop"
-    :label="entry.merged ? '' : entry.item.label"
-    :label-width="entry.merged ? 0 : entry.item.labelWidth ?? ''">
+    :label="entry.merged || (entry.item.labelWidth ?? labelWidth) === 0 ? '' : entry.item.label"
+    :label-width="entry.merged ? 0 : entry.item.labelWidth ?? labelWidth ?? ''">
     <div :class="['search-control', { 'merge-group': entry.merged }]">
       <div
         v-if="entry.merged"
@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup generic="T extends Record<string, any>">
-  import type { CommonSearchItemOptions, CommonSearchItemOptionsType, SelectOptionProps } from './types'
+  import type { CommonSearchItemOptions, CommonSearchItemOptionsType, CommonSearchItemProps, SelectOptionProps } from './types'
   import type { Component } from 'vue'
 
   import { toValue, useSlots } from 'vue'
@@ -65,22 +65,7 @@
 
   import { definitionOf } from './controls'
 
-  interface Props {
-    options: CommonSearchItemOptions<T>[]
-    /** 展示方式：split 拆分为多个输入框；merge 合并为一个输入框 + 字段下拉 */
-    type?: 'split' | 'merge'
-    /** prepend宽度， type = merge 时生效 */
-    prependWidth?: number
-    /** 输入框宽度 */
-    inputWidth?: number
-    /** 默认输入框占位提示 */
-    defaultPlaceholder?: string | 'custom'
-    /** 是否可筛选， type = merge 时生效 */
-    selectFilterable?: boolean
-    /** 默认查询字段， type = merge 时生效 */
-    defaultQueryProp?: CommonSearchItemOptions<T>['prop']
-  }
-  const props = withDefaults(defineProps<Props>(), {
+  const props = withDefaults(defineProps<CommonSearchItemProps<T>>(), {
     type: 'split',
     prependWidth: 100,
     inputWidth: 200,
@@ -366,6 +351,24 @@ export type CommonSearchItemOptions<T = string> =
   | SelectSearchItemOptions<T>
   | DatePickerSearchItemOptions<T>
   | TreeSelectSearchItemOptions<T>
+
+export interface CommonSearchItemProps<T> {
+  options: CommonSearchItemOptions<T>[]
+  /** 展示方式：split 拆分为多个输入框；merge 合并为一个输入框 + 字段下拉 */
+  type?: 'split' | 'merge'
+  /** prepend宽度， type = merge 时生效 */
+  prependWidth?: number
+  /** 输入框宽度 */
+  inputWidth?: number
+  /** 全局 label 宽度（单项 options.labelWidth 优先） */
+  labelWidth?: string | number
+  /** 默认输入框占位提示 */
+  defaultPlaceholder?: string | 'custom'
+  /** 是否可筛选， type = merge 时生效 */
+  selectFilterable?: boolean
+  /** 默认查询字段， type = merge 时生效 */
+  defaultQueryProp?: CommonSearchItemOptions<T>['prop']
+}
 
 ```
 

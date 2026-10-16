@@ -68,3 +68,21 @@ export type CommonSearchItemOptions<T = string> =
   | SelectSearchItemOptions<T>
   | DatePickerSearchItemOptions<T>
   | TreeSelectSearchItemOptions<T>
+
+export interface CommonSearchItemProps<T> {
+  options: CommonSearchItemOptions<T>[]
+  /** 展示方式：split 拆分为多个输入框；merge 合并为一个输入框 + 字段下拉 */
+  type?: 'split' | 'merge'
+  /** prepend宽度， type = merge 时生效 */
+  prependWidth?: number
+  /** 输入框宽度 */
+  inputWidth?: number
+  /** 全局 label 宽度（单项 options.labelWidth 优先） */
+  labelWidth?: string | number
+  /** 默认输入框占位提示 */
+  defaultPlaceholder?: string | 'custom'
+  /** 是否可筛选， type = merge 时生效 */
+  selectFilterable?: boolean
+  /** 默认查询字段， type = merge 时生效 */
+  defaultQueryProp?: CommonSearchItemOptions<T>['prop']
+}

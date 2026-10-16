@@ -5,7 +5,7 @@ import type { LoadingInstance } from 'element-plus/es/components/loading/src/loa
 import type { ComponentOptions, Ref } from 'vue'
 import type { MutationOptions, QueryKey } from '@tanstack/vue-query'
 
-import { reactive } from 'vue'
+import { nextTick, reactive } from 'vue'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { useConfirm, useError, useLoading } from '@/hooks/useTip'
 
@@ -74,6 +74,8 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
     },
     onSuccess: async (data, variables, onMutateResult, context) => {
       if (invalidateKeys?.length) {
+        // 等 解决useQuery有enabled时不处于active状态，导致刷新失败的问题
+        await nextTick()
         await Promise.all(invalidateKeys.map(key => queryClient.invalidateQueries({ queryKey: [key[0]] })))
       }
       await onSuccess?.(data, variables, onMutateResult, context)

@@ -2,6 +2,8 @@
 
 在实际场景中，某个编辑抽屉使用的是其主列表的数据但是格式不同（如主列表为表格，编辑中下拉选项用的是树），此时主列表数据有变更，详情中的树数据无法更新。**因为**，他们是不同接口，queryKey不同，vue-query 看到的是**两条独立缓存记录**，不知道 list 和 tree 业务上是"同一份数据的不同形态"，所以 invalidate list 时 tree 不动，这层"业务关联"必须由代码去关联；
 
+**注意：** 都在hook`useTansQuery`中，此文件仅作说明
+
 ### 代码
 
 修改方案：
@@ -10,84 +12,152 @@
 2. tree接口的queryKey设置成list接口的queryKey（x）:同 key + 不同 queryFn = 缓存冲突:1.**数据格式不同**;2.**同 key 缓存只有一份**
 3. 在如下拉数据的同一的地方，对二者进行关联
 
+`setupCacheLinks.ts`
+
 ```ts
-import type { xxx } from '@/api/masterBudget/budgetInfo'
+import type { QueryClient, QueryKey } from '@tanstack/vue-query'
 
-import { xxx } from '@/api/masterBudget/budgetInfo'
-import { EnableStatus, YesOrNo } from '@/enum'
-import { isHaveValue } from '@/hooks/useValidate'
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
-import { computed } from 'vue'
 import { queryKeys } from '@/constants/queryKeys'
-import { useValue } from '@/hooks/useObject'
-
-export interface SelectDefaultItems {
-  _label: string
-  _value: string | number
-  _code?: string
-}
 
 /**
- * list ↔ tree 配对关系：list 失效时自动失效 tree，避免每个页面单独配置 invalidateKeys。
- * 只匹配 queryKey 第 0 项（如 'BUDGET_LIST_PROJ_TYPE'），兼容 list(isRoll) 这类带参 key。
+ * list ↔ tree 缓存配对关系
+ * list 查询被 invalidate 后，联动失效对应的 tree 查询（按 queryKey 第一段前缀匹配）
  */
-const LIST_TREE_PAIRS: Array<[readonly unknown[], readonly unknown[]]> = [
+const LIST_TREE_PAIRS: ReadonlyArray<readonly [QueryKey, QueryKey]> = [
+  // 专项管理-项目类型
   [queryKeys.projMgmt.projType.list(), queryKeys.projMgmt.projType.tree()],
+  // 预算单位
+  [queryKeys.budgetUnit.list(), queryKeys.budgetUnit.tree()],
+  // 预算科室
+  [queryKeys.budgetDept.list(), queryKeys.budgetDept.tree()],
+  // 预算类别
+  [queryKeys.budgetType.list(), queryKeys.budgetType.tree()],
+  // 收支项目
+  [queryKeys.budgetExpense.list(), queryKeys.budgetExpense.tree()],
+  // 支出功能分类
+  [queryKeys.basicPlatform.functionalClass.list(), queryKeys.basicPlatform.functionalClass.tree()],
+  // 支出经济分类
+  [queryKeys.basicPlatform.economicClass.list(), queryKeys.basicPlatform.economicClass.tree()],
+  // 资金类型
+  [queryKeys.basicPlatform.fundType.list(), queryKeys.basicPlatform.fundType.tree()],
+  // 执行科室
+  [queryKeys.basicPlatform.execDept.list(), queryKeys.basicPlatform.execDept.tree()],
+  // 资产配置方式
+  [queryKeys.basicPlatform.assetMode.list(), queryKeys.basicPlatform.assetMode.tree()],
+  // 资产配置用途
+  [queryKeys.basicPlatform.assetPurpose.list(), queryKeys.basicPlatform.assetPurpose.tree()],
+  // 项目论证
+  [queryKeys.justify.list(), queryKeys.justify.tree()],
+  // 项目库管理
+  [queryKeys.projLibMgmt.list(), queryKeys.projLibMgmt.tree()],
+  // 岗位信息
+  [queryKeys.hr.jobInfo.list(), queryKeys.hr.jobInfo.tree()]
 ]
 
-const matchKeyFirst = (target: readonly unknown[], prefix: readonly unknown[]): boolean => target[0] === prefix[0]
-
-/** 获取基础数据无分页列表或树 */
-export const useBudgetStore = defineStore('budget', () => {
-  const queryClient = useQueryClient()
-
-  /** 订阅 queryCache：list 被 invalidate 时自动级联失效对应 tree */
+export const setupQueryCacheLinks = (queryClient: QueryClient) => {
   queryClient.getQueryCache().subscribe(event => {
     if (event.type !== 'updated') return
     if (event.action?.type !== 'invalidate') return
+
     const invalidatedKey = event.query.queryKey
     for (const [listKey, treeKey] of LIST_TREE_PAIRS) {
-      if (matchKeyFirst(invalidatedKey, listKey)) {
+      if (invalidatedKey[0] === listKey[0]) {
         queryClient.invalidateQueries({ queryKey: treeKey })
         break
       }
     }
   })
-
-  /** 专项管理-项目类型 */
-  const useGetListProjType = () => {
-    return useQuery<(ResponseListProjType & SelectDefaultItems)[], Error>({
-      queryKey: queryKeys.projMgmt.projType.list(),
-      queryFn: async () => {
-        const { rows } = await listProjType({})
-        return rows.map(item => ({
-          _label: item.name,
-          _value: item.id,
-          _code: item.code,
-          ...item
-        }))
-      }
-    })
-  }
-
-  /** 专项管理-项目类型树 */
-  const useGetTreeProjType = () => {
-    return useQuery<ResponseListProjTypeTree[], Error>({
-      queryKey: queryKeys.projMgmt.projType.tree(),
-      queryFn: async () => {
-        const { data } = await getParentProjTypeTree()
-        return data as ResponseListProjTypeTree[]
-      }
-    })
-  }
-
-  return {
-    useGetListProjType,
-    useGetTreeProjType,
-  }
-})
+}
 
 ```
+
+`main.ts`
+
+```ts
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
+import { setupQueryCacheLinks } from '@/query/setupCacheLinks'
+
+/** vue-query 全局 client：集中配置并注册 list↔tree 缓存联动 */
+const queryClient = new QueryClient()
+setupQueryCacheLinks(queryClient)
+app.use(VueQueryPlugin, { queryClient })
+
+app.mount('#app')
+```
+
+
+
+> app.use还能传入queryClient，传入的作用是什么？还能否单独使用const queryClient = new QueryClient()？
+>
+> 这是 vue-query 的插件注入机制问题，不需要改代码，直接解释。
+>
+>  **app.use(VueQueryPlugin, { queryClient }) 的作用**
+>
+> `VueQueryPlugin` 安装时的核心逻辑（简化）：
+>
+> ```ts
+> VueQueryPlugin.install = (app, options) => {
+>   // 传了就用你的，没传就内部 new 一个默认 QueryClient
+>   const client = options.queryClient ?? new QueryClient(options.queryClientConfig)
+>   app.provide(VUE_QUERY_CLIENT, client) // provide 给整个组件树
+> }
+> ```
+>
+> 而组件里的`useQuery()` 、`useQueryClient()` 都是通过`inject(VUE_QUERY_CLIENT)` 取这个实例的。
+>
+> 所以传入的作用是： 把你自己创建并配置好的 client 作为全局唯一实例注入 。本项目的必要性在于——`setupQueryCacheLinks(queryClient)` 订阅的是你创建的这个 client 的 QueryCache，必须让组件里的`useQuery` 也用同一个 client，list↔tree 联动才能命中真实缓存。
+>
+> 如果不传（原来的`app.use(VueQueryPlugin)` ）：插件内部会自己`new QueryClient()` ，你在 main.ts 里另外 new 的那个与组件树毫无关系，订阅它等于订阅了一个空缓存，联动不会生效。
+>
+> **能否单独 const queryClient = new QueryClient()？**
+>
+> 可以创建，但组件不会用它 ，除非它被 provide。三种合法用法：
+>
+> ```ts
+> // ① 推荐：通过插件注入（当前写法）
+> const queryClient = new QueryClient()
+> app.use(VueQueryPlugin, { queryClient })
+> 
+> // ② 等价写法：自己 provide，不用插件传参
+> import { VUE_QUERY_CLIENT } from '@tanstack/vue-query'
+> const queryClient = new QueryClient()
+> app.provide(VUE_QUERY_CLIENT, queryClient)
+> 
+> // ③ 纯模块场景：脱离组件树直接用（如路由守卫、pinia store 外部工具）
+> //    可以直接调 queryClient.invalidateQueries(...)，
+> //    但前提仍是它就是被 provide 的那个实例，否则缓存不共享
+> ```
+>
+> **如果app.use(VueQueryPlugin, { queryClient })这种方式，其他地方使用时候如何拿到这个queryClient，还是自己new一个**
+>
+> 不要自己 new ——再`new QueryClient()` 会得到一个与组件树隔离的空缓存实例，`invalidateQueries` 、`getQueryData` 都打不到真实数据上。获取方式分两种场景：
+>
+> 1. 组件 / composable / pinia store 内（有 Vue 注入上下文）
+>
+> 直接用`useQueryClient()` ，它内部就是`inject` 拿到 main.ts 传入的那个实例。：
+>
+> ```ts
+> import { useQueryClient } from '@tanstack/vue-query'
+> 
+> // 组件 setup、defineStore 的 setup 写法中都可以
+> const queryClient = useQueryClient()
+> queryClient.invalidateQueries({ queryKey: [...] })
+> ```
+>
+> 2. 非组件上下文（路由守卫、普通工具函数、模块顶层）
+>
+> 这里没有 inject 上下文，`useQueryClient()` 会报错。此时应 直接引用 main.ts 传入的那个实例 。当前它写在 main.ts 局部变量里，外部拿不到，最佳做法是把它抽到独立模块导出（单例模式）：
+>
+> ```ts
+> // src/query/client.ts
+> import { QueryClient } from '@tanstack/vue-query'
+> 
+> export const queryClient = new QueryClient()
+> ```
+>
+> 
+
+
 
 > **`subscribe(event => { ... })`**
 >

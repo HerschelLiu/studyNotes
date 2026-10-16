@@ -48,6 +48,7 @@ export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottom
 
 
 ### `useTableHeight无vueUse`
+
 ```ts
 import type { Ref } from 'vue'
 
@@ -108,52 +109,6 @@ export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottom
 
   return { tableHeight, refresh }
 }
-
-/**
- * 表格内嵌表单校验
- */
-export const useTableForm = <T extends Record<string, any>>(cellRules: T) => {
-  /** 获取指定字段的校验规则 */
-  const getCellRules = (fieldName: keyof T) => {
-    return cellRules[fieldName] ?? ''
-  }
-
-  /**
-   * 渲染表头：根据该字段 rules 中是否存在 required: true 自动显示红色星号
-   * @param label 列标题
-   * @param fieldName 对应 cellRules 中的 key
-   * @returns el-table-column 的 render-header 函数
-   */
-  const renderRequiredHeader = (label: string, fieldName: keyof T) => {
-    return () => {
-      const fieldRules = (cellRules[fieldName] as any[]) || []
-      const isRequired = fieldRules.some((r: any) => r.required)
-      return isRequired
-        ? h('span', [
-            h(
-              'span',
-              {
-                style: {
-                  color: 'var(--el-color-danger)',
-                  marginRight: '4px'
-                }
-              },
-              '*'
-            ),
-            label
-          ])
-        : h('span', label)
-    }
-  }
-
-  return {
-    /** 获取指定字段的校验规则 */
-    getCellRules,
-    /** 渲染带必填星号的表头 */
-    renderRequiredHeader
-  }
-}
-
 ```
 
 > `flush` 是 Vue `watch` / `watchEffect` 的回调**触发时机**选项，控制回调相对于组件 DOM 更新（重新渲染）在微任务队列中的执行顺序。它有三个值：
@@ -169,3 +124,144 @@ export const useTableForm = <T extends Record<string, any>>(cellRules: T) => {
 > 这也是 Vue 官方文档推荐的写法——**watch 模板 ref 等待子组件/元素挂载时，用 `{ flush: 'post' }`**（ref 赋值发生在渲染期间，只有 post 能确保拿到挂载后的状态）。
 >
 > 补充：普通页面里表格随页面一起挂载，走的是 `onMounted(() => nextTick(calcHeight))` 这条路径；`watch + post` 专门覆盖抽屉/弹窗 `destroy-on-close` 懒渲染、表格晚于宿主组件挂载的场景，两者互补。
+
+### 表格内嵌表单校验
+
+```ts
+/**
+ * 必填星号表头组件
+ */
+export const RequiredHeader = defineComponent({
+  name: 'RequiredHeader',
+  props: {
+    label: { type: String, required: true },
+    required: { type: Boolean, default: false }
+  },
+  setup(props) {
+    return () => h('span', [props.required ? h('span', { style: { color: 'var(--el-color-danger)', marginRight: '4px' } }, '*') : null, props.label])
+  }
+})
+
+/**
+ * 表格内嵌表单校验
+ */
+export const useTableForm = <T extends Record<string, any>>(cellRules: T) => {
+  const getCellRules = (fieldName: keyof T) => {
+    return cellRules[fieldName]
+  }
+
+  /**
+   * 渲染表头：根据该字段 rules 中是否存在 required: true 自动显示红色星号
+   * 内部复用 RequiredHeader 组件，与模板用法样式保持一致
+   * @param label 列标题
+   * @param fieldName 对应 cellRules 中的 key
+   * @returns el-table-column 的 render-header 函数
+   */
+  const renderRequiredHeader = (label: string, fieldName: keyof T) => {
+    return () => {
+      const fieldRules = (cellRules[fieldName] as any[]) || []
+      const isRequired = fieldRules.some((r: any) => r.required)
+      return h(RequiredHeader, { label, required: isRequired })
+    }
+  }
+
+  return {
+    /** 必填星号表头组件，可在模板中直接使用 */
+    RequiredHeader,
+    /** 获取指定字段的校验规则 */
+    getCellRules,
+    /** 渲染带必填星号的表头（用于 columns 的 renderHeader 配置） */
+    renderRequiredHeader
+  }
+}
+```
+
+> ```vue
+> <template>
+>   <RequiredHeader
+>     :label="col.label"
+>     :required="isEdit" />
+> </template>
+> 
+> <script lang="ts" setup>
+> const { RequiredHeader } = useTableForm(cellRules)
+> </script>
+> ```
+>
+> 
+
+
+
+### 表格合计
+
+```ts
+/** 合计单元格自定义输出上下文 */
+export interface TableSummaryFormatContext<T extends Record<string, any>> {
+  /** 当前列配置 */
+  column: TableColumnCtx<T>
+  /** 列索引 */
+  index: number
+  /** 当前合计字段（列的 prop） */
+  key: keyof T
+}
+
+/** useTableSummary 配置项 */
+export interface UseTableSummaryOptions<T extends Record<string, any>> {
+  /** 需要合计的字段列表（必须与 el-table-column 的 prop 对应） */
+  sumKeys: readonly (keyof T)[]
+  /** 首列合计行文本，默认"合计" */
+  totalLabel?: string
+  /** 合计标签所在列的索引，默认 0*/
+  labelIndex?: number
+  /** 自定义合计单元格输出，如 total => h(CompPrice, { price: total })； */
+  format?: (total: number, ctx: TableSummaryFormatContext<T>) => string | VNode
+  /** 自定义单元格取值，默认 Number(row[key]) || 0 */
+  getValue?: (row: T, key: keyof T) => number
+}
+
+/**
+ * 表格合计
+ */
+export const useTableSummary = <T extends Record<string, any>>(options: UseTableSummaryOptions<T>) => {
+  const { sumKeys, totalLabel = '合计', labelIndex = 0, format, getValue = (row, key) => Number(row[key]) || 0 } = options
+
+  const sumKeySet = new Set<keyof T>(sumKeys)
+
+  return ({ columns, data }: { columns: TableColumnCtx<T>[]; data: T[] }): (string | VNode)[] => {
+    const totals = {} as Record<keyof T, number>
+    for (const key of sumKeys) totals[key] = 0
+    for (const row of data) {
+      for (const key of sumKeys) {
+        totals[key] = useAdd(totals[key], getValue(row, key))
+      }
+    }
+
+    return columns.map((column, index) => {
+      if (index === labelIndex) return totalLabel
+      const key = column.property as keyof T
+      if (!sumKeySet.has(key)) return ''
+      return format ? format(totals[key], { column, index, key }) : String(totals[key])
+    })
+  }
+}
+```
+
+> ```ts
+> /** 合计行汇总：金额列通过 CompPrice 渲染 */
+> const getSummaries = useTableSummary<BudgBudgetTransferDetailVo>({
+>   sumKeys: [
+>     'outBeforeAmount',
+>     'outBeforeBalance',
+>     'inBeforeAmount',
+>     'inBeforeBalance',
+>     'changeAmount',
+>     'outAfterAmount',
+>     'outAfterBalance',
+>     'inAfterAmount',
+>     'inAfterBalance',
+>   ],
+>   format: total => h(CompPrice, { price: total }),
+> })
+> ```
+>
+> 

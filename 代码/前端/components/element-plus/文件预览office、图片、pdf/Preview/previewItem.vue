@@ -18,9 +18,15 @@
     ref="officeRef"
     v-loading="isOfficeLoading"
     class="office-preview">
+    <el-empty
+      v-if="officeErrorMsg"
+      :image-size="80"
+      :description="officeErrorMsg" />
     <vue-office-docx
-      v-if="resolvedOfficeSrc && officeHeight"
+      v-else-if="resolvedOfficeSrc && officeHeight"
       :src="resolvedOfficeSrc"
+      @rendered="handleOfficeRendered"
+      @error="handleOfficeError"
       :style="officeStyle" />
   </div>
 
@@ -30,10 +36,16 @@
     ref="officeRef"
     v-loading="isOfficeLoading"
     class="office-preview">
+    <el-empty
+      v-if="officeErrorMsg"
+      :image-size="80"
+      :description="officeErrorMsg" />
     <vue-office-excel
-      v-if="resolvedOfficeSrc && officeHeight"
+      v-else-if="resolvedOfficeSrc && officeHeight"
       :src="resolvedOfficeSrc"
       :options="excelOptions"
+      @rendered="handleOfficeRendered"
+      @error="handleOfficeError"
       :style="officeStyle" />
   </div>
 
@@ -89,7 +101,10 @@
     isIframeLoading,
     resolvedOfficeSrc,
     isOfficeLoading,
+    officeErrorMsg,
     excelOptions,
+    handleOfficeRendered,
+    handleOfficeError,
   } = usePreview(props)
 
   /** 预览容器 ref：doc/xls/unsupported/iframe 四分支互斥，同一 ref 名 */
