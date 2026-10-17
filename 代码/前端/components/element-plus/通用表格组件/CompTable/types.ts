@@ -3,9 +3,45 @@ import type { DefineCheckAllProps } from '@/hooks/useCheckAll'
 import type { DefineListProps } from '@/hooks/useList'
 import type { ToolbarButton } from '@/components/TableToolbar/types'
 import type { RuleValue } from '@/hooks/useRules'
+import type { TableColumnCtx } from 'element-plus'
 
 import { FormatFmt, FormatValueType } from '@/hooks/useFormatValue'
 import { Props as CompPriceProps } from '@/components/Price/index.vue'
+
+/** 单元格插槽作用域（Element Plus default 插槽） */
+export interface CellScope<R extends Record<string, any>> {
+  row: R
+  column: TableColumnCtx<R>
+  $index: number
+}
+
+/** 表头插槽作用域（Element Plus header 插槽） */
+export interface HeaderScope<R extends Record<string, any>> {
+  column: TableColumnCtx<R>
+  $index: number
+}
+
+/** col-{prop} 插槽收到的完整参数（通过 header 区分表头/单元格） */
+export interface ColumnSlotProps<R extends Record<string, any>> {
+  /** 是否为表头插槽 */
+  header: boolean
+  /** 表头模式下为空对象，不应在 header 分支中读取 */
+  row: R
+  /** 表头模式为列索引，单元格模式为行索引 */
+  $index: number
+  /** Element Plus 当前列作用域 */
+  column: TableColumnCtx<R>
+  /** 当前列的封装配置 */
+  col: TableColumn<R>
+  /** Element Plus 完整插槽作用域 */
+  scope: CellScope<R> | HeaderScope<R>
+}
+
+/** CompTable 插槽定义 */
+export interface CompTableSlots<R extends Record<string, any>> {
+  toolbar: () => any
+  [name: `col-${string}`]: (props: ColumnSlotProps<R>) => any
+}
 
 /** 列格式化配置（驱动 useFormatValue） */
 export type TableColumnFormat = { type: FormatValueType; formatStr?: FormatFmt }
@@ -46,13 +82,13 @@ export interface TableColumn<T> {
   renderHeader?: ((scope: any) => VNode) | true
   /** useFormatValue 格式化配置；与 slot/price 互斥 */
   format?: TableColumnFormat
-  /** 默认是否显示，默认 true */
+  /** 默认是否显示，用于列显隐工具栏中 */
   visible?: boolean
   /** true → 价格列，自动用 CompPrice 格式化金额；与 slot/format 互斥 */
   price?: boolean
   /** CompPrice 配置项，仅当 price=true 时生效 */
   priceConfig?: PriceConfig
-  /** true → 禁用列，不显示在表格中 */
+  /** true → 彻底不渲染该列，且不出现在列显隐工具栏中（功能关闭/预留列），用户无法开启 */
   disabled?: boolean
 }
 
@@ -79,6 +115,10 @@ export interface CompTableProp<T, R> extends Omit<DefineListProps<T, R>, 'list'>
   selectionWidth?: number | string
   /** 列最小宽度，默认 100 */
   minWidth?: number | string
+  /** 单元格水平对齐（全局默认，列 col.align 优先） */
+  align?: 'left' | 'center' | 'right'
+  /** 表头水平对齐（全局默认，列 col.headerAlign 优先；未传则跟随 align） */
+  headerAlign?: 'left' | 'center' | 'right'
   /** 是否显示合计行，默认 false */
   showSummary?: boolean
   /** 合计行计算方法 */
