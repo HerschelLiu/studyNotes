@@ -117,7 +117,9 @@ export const useListRef = <Q = null, R = object>(props, context) => {
 export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
   /** 是否启用分页，默认 true */
   enablePage?: MaybeRef<boolean>
-  /** 是否在挂载时自动请求，默认 true；可传函数拿到 list 上下文做条件判断 */
+  /**
+   * 是否启用自动请求（默认 true）
+   */
   enabled?: MaybeRef<boolean> | ((list: List<Q, R>) => boolean)
   /** 错误处理，默认 console.error */
   onError?: (err: unknown) => void
@@ -132,40 +134,52 @@ type ApiResult<R> = Omit<AjaxResult<R>, 'data' | 'rows'> & {
  *
  * 适用于带分页/搜索/请求的搜索列表页。
  *
- * @param otherQuery 初始查询条件（不含分页字段，分页字段由内部按 enablePage 自动注入）
- * @param queryKey   唯一标识前缀，或动态 key 工厂
- * @param queryFn    请求函数
- * @param options    其他配置（enablePage / enabled / onError）
+ * @param otherQuery 初始查询条件（不含分页字段，分页字段由内部按 enablePage 自动注入）。
+ * @param queryKey   唯一标识前缀
+ * @param queryFn    请求函数（接收完整 query）
+ * @param options    其他配置
  */
 export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiResult<R>>(
-  otherQuery: Partial<Q> = {},
+  otherQuery: MaybeRefOrGetter<Partial<Q>> = {},
   queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
   queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
   options: UseListQueryOptions<Q, R> = {}
 ) => {
   const { enablePage = true, enabled = true, onError = err => console.error('useListQuery error:', err) } = options
 
-  /** 初始查询条件（分页参数 + otherQuery），供 resetList 还原 */
-  const getInitialQuery = (): Q & ListBaseQuery =>
-    ({
-      ...getPage(unref(enablePage)),
-      ...otherQuery
-    } as unknown as Q & ListBaseQuery)
+  /** 分页参数设置 */
+  const pageFields = getPage(unref(enablePage))
+  /** 完整请求参数 */
+  const mergeQuery = (seed: Partial<Q>): Q & ListBaseQuery => ({ ...pageFields, ...seed } as unknown as Q & ListBaseQuery)
 
   const list = reactive(
     createListState<Q, R>({
-      query: getInitialQuery(),
+      query: mergeQuery(toValue(otherQuery)),
+      /** 兼容旧的，对于useListQuery来说是冗余字段 */
       request: async () => {
         await refetch()
       }
     })
   ) as List<Q, R>
 
-  // 查询参数：剔除空值；只有真正变化时才会触发 queryKey / queryFn 重算
+  /** otherQuery 响应式变化 → 更新 list.query 的非分页字段 */
+  watch(
+    () => toValue(otherQuery),
+    newSeed => {
+      const snapshot = mergeQuery(newSeed)
+      Object.keys(snapshot).forEach(key => {
+        if (!(key in pageFields)) (list.query as any)[key] = snapshot[key]
+      })
+    },
+    { deep: true }
+  )
+
   const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
 
+  const finalQueryKey = computed<QueryKey>(() => (typeof queryKey === 'function' ? queryKey(queryParams.value) : [...queryKey, queryParams.value]))
+
   const queryResult = useQuery<TData, Error>({
-    queryKey: computed<QueryKey>(() => (typeof queryKey === 'function' ? queryKey(queryParams.value) : [...queryKey])),
+    queryKey: finalQueryKey,
     queryFn: async () => {
       try {
         const res = await queryFn(queryParams.value)
@@ -185,16 +199,19 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiRes
 
   watch(isLoading, loading => (list.loading = loading), { immediate: true })
 
-  /** 整体重置：清空 items/total，query 还原为初始条件（原地赋值，保留响应式引用） */
+  /** 整体重置：清空 items/total，query 还原为当前 otherQuery + 分页字段 */
   const resetList = () => {
     list.items = []
     list.total = 0
-    useAssign(list.query, getInitialQuery())
+    useAssign(list.query, mergeQuery(toValue(otherQuery)))
   }
+
+  /** 手动请求（自动/手动模式都可用） */
+  const getList = async () => refetch()
 
   return {
     list,
-    getList: refetch,
+    getList,
     resetList,
     queryResult,
     ...queryResult

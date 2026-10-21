@@ -1,9 +1,10 @@
 <template>
-  <div class="comp-table">
+  <div
+    v-loading="list.loading"
+    class="comp-table">
     <!-- 顶部工具栏（列筛选 + 自定义按钮） -->
     <TableToolbar
       v-if="showTableToolBar"
-      v-loading="list.loading"
       :buttons="buttons"
       :columns="columnVisibility"
       :storage-key="storageKey"
@@ -17,7 +18,6 @@
     <!-- 表格 -->
     <el-table
       ref="ELTable"
-      v-loading="list.loading"
       :data="list.items"
       element-loading-text="正在加载..."
       style="width: 100%"

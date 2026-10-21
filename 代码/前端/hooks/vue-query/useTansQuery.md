@@ -10,7 +10,20 @@ import { queryKeys } from '@/constants/queryKeys'
 /**
  * 全局 vue-query client 单例
  */
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      /**
+       * 禁止窗口/标签页重新获得焦点时自动 refetch。
+       */
+      refetchOnWindowFocus: false
+    },
+    mutations: {
+      retry: false
+    }
+  }
+})
 
 /**
  * list ↔ tree 缓存配对关系
@@ -44,7 +57,9 @@ const LIST_TREE_PAIRS: ReadonlyArray<readonly [QueryKey, QueryKey]> = [
   // 项目库管理
   [queryKeys.projLibMgmt.list(), queryKeys.projLibMgmt.tree()],
   // 岗位信息
-  [queryKeys.hr.jobInfo.list(), queryKeys.hr.jobInfo.tree()]
+  [queryKeys.hr.jobInfo.list(), queryKeys.hr.jobInfo.tree()],
+  // 预算科目
+  [queryKeys.budgSubject.list(), queryKeys.budgSubject.tree()]
 ]
 
 /**

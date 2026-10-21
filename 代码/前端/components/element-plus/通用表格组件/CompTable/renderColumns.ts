@@ -23,8 +23,8 @@ interface CreateDynamicColumnsOptions<R extends Record<string, any>> {
   getHeaderAlign: () => CompTableProp<Record<string, any>, R>['headerAlign']
 }
 
-/** 渲染 vnode 用的兄弟级唯一 key */
-const resolveColKey = <R>(col: TableColumn<R>, idx: number): string => col.key ?? String(col.prop) ?? String(idx)
+/** 列标识（key 优先，否则取 prop） */
+const resolveColKey = <R>(col: TableColumn<R>): string => col.key ?? String(col.prop)
 
 /**
  * 创建动态数据列函数式组件：
@@ -107,7 +107,7 @@ export const createDynamicColumns = <R extends Record<string, any>>(options: Cre
     return h(
       ElTableColumn,
       {
-        key: `${depth}-${resolveColKey(col, idx)}`,
+        key: `${depth}-${idx}-${resolveColKey(col)}`,
         prop: hasChildren ? undefined : String(col.prop),
         label: col.label,
         width: col.width,

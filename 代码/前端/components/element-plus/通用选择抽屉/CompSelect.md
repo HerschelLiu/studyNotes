@@ -42,6 +42,7 @@
               <el-button
                 size="default"
                 type="danger"
+                :loading="list.loading"
                 @click="handleRemove">
                 清除所有
               </el-button>
@@ -49,12 +50,14 @@
                 v-if="isChecked"
                 size="default"
                 type="danger"
+                :loading="list.loading"
                 @click="handleRemovePage">
                 清除本页
               </el-button>
               <el-button
                 v-else
                 size="default"
+                :loading="list.loading"
                 @click="handleSelectedPage">
                 全选本页
               </el-button>
@@ -71,6 +74,7 @@
         :show-table-tool-bar="false"
         :selectable="false"
         v-bind="localColumns.table.attr"
+        :loading="list.loading"
         :min-width="120">
         <template
           v-for="(_, forward) in $slots"
@@ -129,7 +133,9 @@
   import { compSelectProps } from '.'
 
   const props = withDefaults(defineProps<CompSelectProps<T, R>>(), compSelectProps<T>())
-  const emit = defineEmits(['change'])
+  const emit = defineEmits<{
+    change: [selected: R[]]
+  }>()
   const show = defineModel<boolean>({
     default: false,
   })
@@ -148,11 +154,17 @@
     }
   })
 
+  /** 当前生效的主键字段（支持父组件动态切换，如 id -> dept_id） */
+  const checkedKeys = computed(() => props.keys)
+
   /** 跨页选择 */
-  const checkAll = useCheckAll<T, Partial<R>>(props.keys)
+  const checkAll = useCheckAll<T, Partial<R>>(checkedKeys.value)
+  watch(checkedKeys, value => {
+    checkAll.keys.value = value
+  }, { immediate: true })
 
   const { list, getList, resetList } = useListQuery<T, R, ListResult>(
-    {},
+    computed(() => ({ ...props.query })),
     props.queryKey,
     async query => {
       const data = await props.apiFn(query)
@@ -174,7 +186,7 @@
     handleRemovePage,
     handleSave,
     includesRow,
-  } = useSelect<T, Partial<R>>(props, { emit }, checkAll, list, props.keys)
+  } = useSelect<T, Partial<R>>(props, { emit }, checkAll, list, checkedKeys)
 
   /** 初始化 */
   watch(
@@ -312,39 +324,48 @@ export const compSelectProps = <T extends Record<string, any>>(omit: string[] = 
 </template>
 
 <script lang="ts" setup>
-const compSelectColumns: CompSelectColumn<CheckedAccountBookQueryParams, any> = {
-  search: {
-    attr: {
-      labelWidth: 0,
-    },
-    options: [
-      {
-        prop: 'accountingBooksNature',
-        label: '核算账簿性质',
-        type: 'select',
-        props: {
-          data: check_accountbook_nature,
+  const initialQuery: RequestList = {
+    userName: '',
+    nickName: '',
+  }
+  const checkedQueryKey = (query?: RequestList & ListBaseQuery) =>
+    queryKeys.basicPlatform.user.list(query)
+  
+  const apiFn = (query?: RequestList & ListBaseQuery) => listCheckedAccountBook(query ?? {})
+  
+  const compSelectColumns: CompSelectColumn<CheckedAccountBookQueryParams, any> = {
+    search: {
+      attr: {
+        labelWidth: 0,
+      },
+      options: [
+        {
+          prop: 'accountingBooksNature',
+          label: '核算账簿性质',
+          type: 'select',
+          props: {
+            data: check_accountbook_nature,
+          },
         },
-      },
-      { prop: 'accountingBooksCode', label: '账簿编码' },
-      { prop: 'accountingBooksName', label: '账簿名称' },
-    ],
-  },
-  table: {
-    attr: {
-      index: true,
+        { prop: 'accountingBooksCode', label: '账簿编码' },
+        { prop: 'accountingBooksName', label: '账簿名称' },
+      ],
     },
-    options: [
-      {
-        prop: 'accountingBooksNature',
-        label: '核算账簿性质',
-        format: { type: 'dict', formatStr: check_accountbook_nature },
+    table: {
+      attr: {
+        index: true,
       },
-      { prop: 'accountingBooksCode', label: '账簿编码' },
-      { prop: 'accountingBooksName', label: '账簿名称' },
-    ],
-  },
-}
+      options: [
+        {
+          prop: 'accountingBooksNature',
+          label: '核算账簿性质',
+          format: { type: 'dict', formatStr: check_accountbook_nature },
+        },
+        { prop: 'accountingBooksCode', label: '账簿编码' },
+        { prop: 'accountingBooksName', label: '账簿名称' },
+      ],
+    },
+  }
 </script>
 ```
 

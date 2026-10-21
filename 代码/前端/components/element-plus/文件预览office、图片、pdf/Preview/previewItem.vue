@@ -119,6 +119,43 @@
   })
 
   const officeStyle = computed(() => (officeHeight.value ? { height: `${officeHeight.value}px` } : {}))
+
+  /**
+   * 打印已渲染的预览内容：
+   * office 二进制源没有可供浏览器加载的地址，直接把渲染结果搬进新窗口打印。
+   * vue-office-excel 基于 canvas 绘制，DOM 克隆拿不到像素，需先换成图片。
+   */
+  const printRendered = () => {
+    const container = officeRef.value
+    if (!container) return
+    const win = window.open('', '_blank', 'width=900,height=650')
+    if (!win) return
+
+    const canvases = Array.from(container.querySelectorAll('canvas'))
+    const clone = container.cloneNode(true) as HTMLElement
+    clone.querySelectorAll('canvas').forEach((node, index) => {
+      const source = canvases[index]
+      if (!source) return
+      const img = document.createElement('img')
+      img.src = source.toDataURL()
+      img.setAttribute('style', source.getAttribute('style') ?? '')
+      node.replaceWith(img)
+    })
+
+    /** 预览样式来自 document 内的 style/link，需一并复制到新窗口 */
+    const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+      .map(node => node.outerHTML)
+      .join('')
+
+    const doc = win.document
+    doc.title = '打印预览'
+    doc.head.insertAdjacentHTML('afterbegin', styles)
+    doc.body.innerHTML = clone.innerHTML
+    win.focus()
+    win.setTimeout(() => win.print(), 300)
+  }
+
+  defineExpose({ printRendered })
 </script>
 
 <style lang="scss" scoped>
