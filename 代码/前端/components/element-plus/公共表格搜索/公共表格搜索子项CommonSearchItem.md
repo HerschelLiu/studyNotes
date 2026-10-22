@@ -142,7 +142,6 @@
     options: Record<string, any>[]
     optionKey: string
     optionLabel: string
-    changeFn?: (val: any) => void
   }
 
   interface DisplayEntry {
@@ -162,7 +161,7 @@
   /** ElementPlus 等已注册控件的透传自有属性 */
   const controlPropsOf = (item: CommonSearchItemOptions<T>) => {
     const meta = metaOf(item) as Record<string, any>
-    const { changeFn: _changeFn, ...rest } = meta
+    const { ...rest } = meta
 
     // select 类控件的选项字段（data/label/key）由 options/optionKey/optionLabel 消费，不透传
     // tree-select 的 data 是树形数据，应直接透传给 el-tree-select；data 可能是 Ref/getter，这里解包
@@ -204,8 +203,7 @@
         controlProps: controlPropsOf(item),
         options: toValue(meta.data ?? []) as Record<string, any>[],
         optionKey: String(meta.key ?? 'key'),
-        optionLabel: String(meta.label ?? 'label'),
-        changeFn: meta.changeFn,
+        optionLabel: String(meta.label ?? 'label')
       },
       style: useStyle({ width: useUnit(item.inputSize?.width ?? props.inputWidth) }),
     }
@@ -293,14 +291,12 @@ export interface SelectOptionProps<R = any> {
   data?: MaybeRefOrGetter<R[] | undefined>
   label?: string
   key?: string
-  changeFn?: (val: any) => void
 }
 
 export type SelectControlProps<R = any> = SelectPropsPublic & SelectOptionProps<R>
 
 export type TreeSelectControlProps<R = any> = Omit<InstanceType<typeof ElTreeSelect>['$props'], 'data'> & {
   data?: MaybeRefOrGetter<R[] | undefined>
-  changeFn?: (val: any) => void
 }
 
 interface CommonSearchItemBaseOptions<T> {
@@ -310,7 +306,7 @@ interface CommonSearchItemBaseOptions<T> {
   labelWidth?: string | number
   placeholder?: string
   /** 控件区宽度 */
-  inputSize?: { width?: number | string }
+  inputSize?: { width?: ID }
   /** 当type = merge 时生效，是否单独出来 */
   split?: boolean
   /** 控件区是否由 control-<prop> 插槽接管 */
@@ -458,8 +454,7 @@ export const definitionOf = (type?: CommonSearchItemOptionsType) => controlRegis
 <template>
   <el-select
     v-bind="controlProps"
-    v-model="model"
-    @change="changeFn">
+    v-model="model">
     <el-option
       v-for="option in options"
       :key="option[optionKey]"

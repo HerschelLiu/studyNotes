@@ -1,12 +1,15 @@
 ```vue
 <template>
-  <el-card class="search-wrapper">
+  <div
+    v-bind="cardProps"
+    shadow="never"
+    class="search-wrapper">
     <el-form
       ref="ELForm"
       :model="model"
       :rules="rules"
       :validate-on-rule-change="false"
-      size="default"
+      :size="size"
       label-position="left"
       inline
       class="custom-search"
@@ -17,18 +20,20 @@
         class="left">
         <slot name="left" />
 
-        <el-form-item>
+        <el-form-item v-if="showSearchBtn">
           <el-button
             :loading="loading"
             type="primary"
             icon="Search"
-            size="small"
+            :size="size"
             native-type="submit">
             查询
           </el-button>
           <el-button
+            v-if="showResetBtn"
             icon="Refresh"
-            size="small"
+            :size="size"
+            :loading="loading"
             @click="handleReset">
             重置
           </el-button>
@@ -49,7 +54,7 @@
         <slot name="right" />
       </div>
     </el-form>
-  </el-card>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -65,6 +70,10 @@
     /** 是否纵向布局 */
     direction?: boolean
     loading: boolean
+    showSearchBtn?: boolean
+    cardProps?: object
+    size?: '' | 'large' | 'default' | 'small'
+    showResetBtn?: boolean
   }
   const props = withDefaults(defineProps<Props>(), {
     model: () => ({}),
@@ -72,6 +81,9 @@
     rules: () => ({}),
     direction: false,
     loading: false,
+    showSearchBtn: true,
+    size: 'small',
+    showResetBtn: true,
   })
 
   const emit = defineEmits(['search', 'reset'])
@@ -161,8 +173,7 @@
       flex-grow: 1;
       flex-shrink: 0;
       justify-content: flex-end;
-      margin-bottom: 16px;
-      margin-left: 50px;
+      /* margin-bottom: 16px; */
 
       .el-button + .el-button {
         margin-left: 16px;

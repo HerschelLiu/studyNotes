@@ -1,8 +1,7 @@
 <template>
   <el-select
     v-bind="controlProps"
-    v-model="model"
-    @change="changeFn">
+    v-model="model">
     <el-option
       v-for="option in options"
       :key="option[optionKey]"

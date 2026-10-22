@@ -10,14 +10,12 @@ export interface SelectOptionProps<R = any> {
   data?: MaybeRefOrGetter<R[] | undefined>
   label?: string
   key?: string
-  changeFn?: (val: any) => void
 }
 
 export type SelectControlProps<R = any> = SelectPropsPublic & SelectOptionProps<R>
 
 export type TreeSelectControlProps<R = any> = Omit<InstanceType<typeof ElTreeSelect>['$props'], 'data'> & {
   data?: MaybeRefOrGetter<R[] | undefined>
-  changeFn?: (val: any) => void
 }
 
 interface CommonSearchItemBaseOptions<T> {
@@ -27,7 +25,7 @@ interface CommonSearchItemBaseOptions<T> {
   labelWidth?: string | number
   placeholder?: string
   /** 控件区宽度 */
-  inputSize?: { width?: number | string }
+  inputSize?: { width?: ID }
   /** 当type = merge 时生效，是否单独出来 */
   split?: boolean
   /** 控件区是否由 control-<prop> 插槽接管 */

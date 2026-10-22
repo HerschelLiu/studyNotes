@@ -139,7 +139,6 @@
     options: Record<string, any>[]
     optionKey: string
     optionLabel: string
-    changeFn?: (val: any) => void
   }
 
   interface DisplayEntry {
@@ -159,7 +158,7 @@
   /** ElementPlus 等已注册控件的透传自有属性 */
   const controlPropsOf = (item: CommonSearchItemOptions<T>) => {
     const meta = metaOf(item) as Record<string, any>
-    const { changeFn: _changeFn, ...rest } = meta
+    const { ...rest } = meta
 
     // select 类控件的选项字段（data/label/key）由 options/optionKey/optionLabel 消费，不透传
     // tree-select 的 data 是树形数据，应直接透传给 el-tree-select；data 可能是 Ref/getter，这里解包
@@ -201,8 +200,7 @@
         controlProps: controlPropsOf(item),
         options: toValue(meta.data ?? []) as Record<string, any>[],
         optionKey: String(meta.key ?? 'key'),
-        optionLabel: String(meta.label ?? 'label'),
-        changeFn: meta.changeFn,
+        optionLabel: String(meta.label ?? 'label')
       },
       style: useStyle({ width: useUnit(item.inputSize?.width ?? props.inputWidth) }),
     }
