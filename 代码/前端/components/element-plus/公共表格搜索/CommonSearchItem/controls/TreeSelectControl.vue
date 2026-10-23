@@ -1,8 +1,7 @@
 <template>
   <el-tree-select
     v-bind="controlProps"
-    v-model="model"
-    @change="changeFn">
+    v-model="model">
     <!-- 把父级透传过来的插槽（如 #default / #label）原样转发给 el-tree-select -->
     <template
       v-for="(_, name) in $slots"

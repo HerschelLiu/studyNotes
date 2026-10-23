@@ -1,9 +1,15 @@
-import type { DatePickerPropsPublic, InputPropsPublic, SelectPropsPublic, ElTreeSelect } from 'element-plus'
+import type { ElDatePicker, ElInput, ElSelect, ElTreeSelect } from 'element-plus'
 import type { MaybeRefOrGetter } from 'vue'
 
 export type CommonSearchItemOptionsType = 'input' | 'select' | 'date' | 'treeSelect'
 
 export type FieldKeys<T> = T extends string ? T : Extract<keyof T, string>
+
+/**
+ * 组件实例的 $props，包含组件自身 props 与 emits 对应的 onXxx 事件属性
+ * 即 v-bind 可绑定的完整属性集合
+ */
+type BindableProps<C extends abstract new (...args: any[]) => any> = InstanceType<C>['$props']
 
 /** select 选项数据及取值配置 */
 export interface SelectOptionProps<R = any> {
@@ -12,9 +18,17 @@ export interface SelectOptionProps<R = any> {
   key?: string
 }
 
-export type SelectControlProps<R = any> = SelectPropsPublic & SelectOptionProps<R>
+/** input 控件属性（props + emits） */
+export type InputControlProps = BindableProps<typeof ElInput>
 
-export type TreeSelectControlProps<R = any> = Omit<InstanceType<typeof ElTreeSelect>['$props'], 'data'> & {
+/** date 控件属性（props + emits） */
+export type DatePickerControlProps = BindableProps<typeof ElDatePicker>
+
+/** select 控件属性（props + emits） */
+export type SelectControlProps<R = any> = BindableProps<typeof ElSelect> & SelectOptionProps<R>
+
+/** treeSelect 控件属性（props + emits），data 交由 options 统一解包 */
+export type TreeSelectControlProps<R = any> = Omit<BindableProps<typeof ElTreeSelect>, 'data'> & {
   data?: MaybeRefOrGetter<R[] | undefined>
 }
 
@@ -38,8 +52,8 @@ interface CommonSearchItemBaseOptions<T> {
 
 export interface InputSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
   type?: 'input'
-  /** ElInput 的属性，通过 v-bind 透传 */
-  props?: InputPropsPublic
+  /** ElInput 的属性（props + emits），通过 v-bind 透传 */
+  props?: InputControlProps
 }
 
 export interface SelectSearchItemOptions<T, R = any> extends CommonSearchItemBaseOptions<T> {
@@ -49,7 +63,8 @@ export interface SelectSearchItemOptions<T, R = any> extends CommonSearchItemBas
 
 export interface DatePickerSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
   type: 'date'
-  props?: DatePickerPropsPublic
+  /** ElDatePicker 的属性（props + emits），通过 v-bind 透传 */
+  props?: DatePickerControlProps
 }
 
 export interface TreeSelectSearchItemOptions<T, R = any> extends CommonSearchItemBaseOptions<T> {

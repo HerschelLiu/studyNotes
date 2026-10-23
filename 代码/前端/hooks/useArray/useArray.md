@@ -718,3 +718,172 @@ export function useFindNodeWithParent<T extends object>(
 >
 >    - `== null` 是故意用非严格相等，**同时命中 `null` 和 `undefined`**（只判 `=== null` 会漏掉 `undefined`）；
 >    - 一旦某一层是 `null/undefined`，直接原样返回，后续轮次继续返回它，最后得到 `undefined` —— 相当于可选链 `?.` 的效果，而不是抛 `Cannot read properties of undefined`。
+
+
+
+### 笛卡尔积
+
+```ts
+// #region 笛卡尔积
+/** 具名维度：name 为输出字段名，data 为该字段的候选值 */
+export interface CartesianField<V = any> {
+  name: string
+  data: V[]
+}
+
+export type CartesianRow = Record<string, any>
+
+/** 行工厂：形参按维度顺序对应各维度当前项，返回值即输出数组的每一项（返回数组时展开） */
+export type CartesianRowFactory<Row = CartesianRow> = (...items: any[]) => Row | Row[]
+
+/** 维度取值器：接收上一维度当前项，返回本维度数组（用于数组嵌套场景） */
+export type CartesianResolver = (prevItem: any) => any[] | undefined
+
+/** 单个维度：值数组 / 具名维度 / 取值器 */
+export type CartesianDimension = any[] | CartesianField | CartesianResolver
+
+const isCartesianField = (dim: CartesianDimension): dim is CartesianField =>
+  !!dim && !Array.isArray(dim) && typeof dim === 'object' && typeof dim.name === 'string' && Array.isArray(dim.data)
+
+/**
+ * 通用笛卡尔积
+ * @param dimensions 纬度列表: [['红色', '黑色'], ['16G', '32G'], ['移动版', '联通版']]/[arr1, (item) => []]
+ * 
+ */
+export const useCartesianArray = <Row = CartesianRow>(
+  dimensions: CartesianDimension[],
+  newRow?: CartesianRowFactory<Row>,
+  base?: CartesianRow
+): Row[] => {
+  if (!dimensions?.length) return []
+
+  const combos = dimensions.reduce<{ items: any[]; prev?: any }[]>(
+    (rows, dim) =>
+      rows.flatMap(({ items, prev }) => {
+        const data = typeof dim === 'function' ? dim(prev) : isCartesianField(dim) ? dim.data : dim
+        
+        return (data ?? []).map(value => ({ items: [...items, value], prev: value }))
+      }),
+    [{ items: [] }]
+  )
+
+  const hasBase = !!base && Object.keys(base).length > 0
+  const isTuple = !newRow && !hasBase && !dimensions.some(isCartesianField)
+
+  return combos.flatMap(({ items }): any => {
+    if (newRow) {
+      const result = newRow(...items)
+      return (Array.isArray(result) ? result : [result]).map(row =>
+        hasBase && row && typeof row === 'object' && !Array.isArray(row) ? { ...base, ...(row as CartesianRow) } : row
+      )
+    }
+
+    if (isTuple) return [items]
+
+    const row: CartesianRow = { ...base }
+    dimensions.forEach((dim, index) => {
+      const value = items[index]
+      if (isCartesianField(dim)) row[dim.name] = value
+      else if (value && typeof value === 'object') Object.assign(row, value)
+    })
+    return [row]
+  }) as Row[]
+}
+// #endregion
+```
+
+
+
+```ts
+/**
+ *
+ // ① 模板模式：基本类型也能用（值作为参数传给 newRow）
+useCartesianArray([['红', '黑']], color => ({ 颜色: color, mainId: 1 }))
+// => [{ 颜色:'红', mainId:1 }, { 颜色:'黑', mainId:1 }]
+
+// ② 合并模式：对象数组，字段自动合并
+useCartesianArray([[{ a: 1 }, { a: 2 }], [{ b: 'x' }]])
+// => [{ a:1, b:'x' }, { a:2, b:'x' }]
+
+// ③ 合并模式：具名维度，值写到指定字段
+useCartesianArray([{ name: '颜色', data: ['红', '黑'] }])
+// => [{ 颜色:'红' }, { 颜色:'黑' }]
+*/
+```
+
+> * `is` 的作用：运行时判断 + 编译时收窄：**编译时**：当这个函数返回 `true` 时，TypeScript 会把参数 `dim` 的类型从 `CartesianDimension` **收窄**为 `CartesianField`。（只是**声明**“返回 true 时类型是什么）
+>
+> * `as` 的作用：纯编译时的类型断言
+>
+> `is` 是“**我检查了，返回 true 就说明是**”，`as` 是“**我保证它是，别检查了**”
+
+>  combos = dimensions.reduce说明
+>
+> ```ts
+> const dimensions = [
+>   ['红', '黑'],                                    // 维度 0：值数组
+>   color => (color === '红' ? ['S', 'L'] : ['M']),  // 维度 1：取值器
+> ]
+> ```
+>
+> 初始累积器：`partials = [[]]`（只有一条空组合）。
+>
+> 第 1 轮：`dim = ['红','黑']`
+>
+> | #    | `values`（输入组合） | `values.at(-1)` | `resolveDimension(dim, prev)` 返回值  | `.map(value => [...values, value])` |
+> | ---- | -------------------- | --------------- | ------------------------------------- | ----------------------------------- |
+> | 1    | `[]`                 | `undefined`     | `['红','黑']`（数组维度直接返回自身） | `[['红'], ['黑']]`                  |
+>
+> `flatMap` 把每条的 `.map` 结果拼起来 → `partials = [['红'], ['黑']]`
+>
+> 第 2 轮：`dim = color => ...`（取值器）
+>
+> | #    | `values`（输入组合） | `values.at(-1)` | `resolveDimension(dim, prev)` 返回值           | `.map(value => [...values, value])` |
+> | ---- | -------------------- | --------------- | ---------------------------------------------- | ----------------------------------- |
+> | 1    | `['红']`             | `'红'`          | `['S','L']`（`dim('红')`，`'红'==='红'` 成立） | `[['红','S'], ['红','L']]`          |
+> | 2    | `['黑']`             | `'黑'`          | `['M']`（`dim('黑')`，走 else 分支）           | `[['黑','M']]`                      |
+>
+> `flatMap` 拼接两行结果 → `partials = [['红','S'], ['红','L'], ['黑','M']]`
+>
+> 最终结果
+>
+> ```ts
+> tuples = [['红','S'], ['红','L'], ['黑','M']]
+> ```
+
+
+
+### 数组去重
+
+
+
+```ts
+// #region 数组去重
+// 通用代码
+export function uniqueByKey<T extends object, K extends keyof T, R = T>(rows: readonly T[], key: K, template?: (item: T) => R): R[] {
+  const seen = new Set<unknown>()
+  const result: R[] = []
+  const toItem = template ?? ((item: T) => item as unknown as R)
+
+  for (const row of rows) {
+    const id = row[key]
+    if (seen.has(id)) continue // 该字段值已出现过
+    seen.add(id)
+    result.push(toItem(row)) // 保留第一条
+  }
+
+  return result
+}
+
+// vue3使用
+export function useUniqueByKey<T extends object, K extends keyof T, R = T>(
+  rows: MaybeRefOrGetter<readonly T[]>,
+  key: MaybeRefOrGetter<K>,
+  template?: (item: T) => R
+) {
+  return uniqueByKey(toValue(rows), toValue(key), template)
+}
+// #endregion
+```
+
+

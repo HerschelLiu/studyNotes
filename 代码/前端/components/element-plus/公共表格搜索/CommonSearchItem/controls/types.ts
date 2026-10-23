@@ -8,7 +8,6 @@ export interface ControlProps {
   options?: Record<string, any>[]
   optionKey?: string
   optionLabel?: string
-  changeFn?: (val: any) => void
 }
 
 /** 控件注册表条目 */
