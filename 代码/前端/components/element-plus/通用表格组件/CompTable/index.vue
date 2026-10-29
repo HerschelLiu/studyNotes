@@ -5,7 +5,6 @@
     <!-- 顶部工具栏（列筛选 + 自定义按钮） -->
     <TableToolbar
       v-if="showTableToolBar"
-      :buttons="buttons"
       :columns="columnVisibility"
       :storage-key="storageKey"
       :show-tool-bar-search="showToolBarSearch"
@@ -19,12 +18,15 @@
     <el-table
       ref="ELTable"
       :data="list.items"
-      element-loading-text="正在加载..."
       style="width: 100%"
       :max-height="resolvedMaxHeight"
       :height="resolvedHeight"
       :show-summary="showSummary"
       :summary-method="summaryMethod"
+      :row-key="resolvedRowKey"
+      :tree-props="treeProps"
+      :default-expand-all="defaultExpandAll"
+      :size="size"
       border>
       <!-- 选择列 -->
       <el-table-column
@@ -40,6 +42,7 @@
         <template #default="{ row }">
           <el-checkbox
             v-model="row.checked"
+            :disabled="row.disabled"
             @change="handleChecked(row)" />
         </template>
       </el-table-column>
@@ -54,31 +57,50 @@
         :fixed="indexColumnConfig?.fixed ?? 'left'"
         :align="indexColumnConfig?.align ?? 'center'" />
 
-      <!-- 动态数据列（支持 children 多级表头，递归渲染；过滤掉 prop='index' 和 disabled） -->
+      <!-- 展开列：存在 #expand 插槽时自动显示；columns 中 prop='expand' 的项用于覆盖默认样式 -->
+      <el-table-column
+        v-if="$slots.expand"
+        type="expand"
+        :width="expandColumnConfig?.width"
+        :min-width="expandColumnConfig?.minWidth">
+        <template #default="{ row, $index }">
+          <slot
+            name="expand"
+            :row="row"
+            :$index="$index" />
+        </template>
+      </el-table-column>
+
+      <!-- 动态数据列（支持 children 多级表头，递归渲染；过滤掉 prop='index'/'expand' 和 disabled） -->
       <component :is="DynamicColumns" />
     </el-table>
   </div>
 </template>
 
+<script lang="ts">
+  export { useCompTable } from './useCompTable'
+</script>
+
 <script lang="ts" setup generic="T extends Record<string, any>, R extends Record<string, any>">
   import type { DefineCheckAllEmits } from '@/hooks/useCheckAll'
   import type { DefineListEmits } from '@/hooks/useList'
-  import type { CompTableProp, CompTableSlots } from './types'
+  import type { CompTableProps, CompTableSlots, TableColumn } from './types'
 
   import { useCheckAll } from '@/hooks/useCheckAll'
   import { useListAdaptor } from '@/hooks/useList'
   import { useTableHeight } from '@/hooks/useTable'
   import { useTempRefs } from '@/hooks/useTempRefs'
+  import { compTableColumnsKey } from './CompTableColumn'
   import { createDynamicColumns } from './renderColumns'
   import { useColumnVisibility } from './useColumnVisibility'
 
   import TableToolbar from '@/components/TableToolbar/index.vue'
 
-  const props = withDefaults(defineProps<CompTableProp<T, R>>(), {
+  const props = withDefaults(defineProps<CompTableProps<T, R>>(), {
     selected: () => [],
     keys: '',
-    buttons: () => [],
     storageKey: '',
+    tableKey: 'default',
     showTableToolBar: true,
     showSearch: true,
     selectable: true,
@@ -87,11 +109,10 @@
     showSummary: false,
     summaryMethod: undefined,
     showRightToolbar: true,
-    maxHeight: '',
-    height: '',
-    isAutoHeight: false,
-    isFixedHeight: true,
+    heightMode: 'fixed',
     index: false,
+    defaultExpandAll: false,
+    treeProps: () => ({ hasChildren: 'hasChildren', children: 'children', checkStrictly: false }),
     showToolBarSearch: true,
     required: false,
     bottomOffset: 20 + 20 + 32,
@@ -124,32 +145,32 @@
   )
 
   /**
-   * 高度解析（优先级：isAutoHeight > height > isFixedHeight > maxHeight）
-   * - isAutoHeight：忽略 height/maxHeight，表格自然撑开
-   * - height：显式固定高度（不参与视口计算，避免滚动时高度递增）
-   * - isFixedHeight：height=tableHeight（按视口剩余空间自动计算）
-   * - maxHeight：兜底最大高度
+   * 高度解析：
+   * - 显式 height 优先，直接使用（不参与视口计算）
+   * - fixed（默认）：height = 视口剩余高度
+   * - max：max-height = maxHeight ?? 视口剩余高度
+   * - auto：不限制高度
    */
-  const resolvedHeight = computed<number | string | undefined>(() => {
-    if (props.isAutoHeight) return undefined
-    if (props.height !== '') return props.height
-    if (props.isFixedHeight) return tableHeight.value
-    return undefined
+  const resolvedHeight = computed<ID | undefined>(() => {
+    if (props.height != null) return props.height
+    return props.heightMode === 'fixed' ? tableHeight.value : undefined
   })
-  const resolvedMaxHeight = computed<number | string | undefined>(() => {
-    if (props.isAutoHeight) return undefined
-    if (props.height !== '') return undefined
-    if (props.isFixedHeight) return undefined
-    return props.maxHeight || tableHeight.value
+  const resolvedMaxHeight = computed<ID | undefined>(() => {
+    if (props.height != null || props.heightMode !== 'max') return undefined
+    return props.maxHeight ?? tableHeight.value
   })
 
-  /** 搜索区显隐切换后表格 top 变化，需重新计算高度 */
+  /** 搜索区显隐 / 高度策略变化后表格尺寸变化，需重新计算高度 */
   watch(
-    () => props.showSearch,
+    () => [props.showSearch, props.heightMode],
     () => requestAnimationFrame(refreshTableHeight)
   )
 
+  /** el-table row-key：优先 rowKey prop，回退 keys */
+  const resolvedRowKey = computed(() => props.rowKey ?? (props.keys || undefined))
+
   // ---------- 列表数据 ----------
+  /** 数组模式经 useListAdaptor 适配为 List；List 模式直接透传（两种模式都原地操作，不回写数组） */
   const adaptorList = useListAdaptor<R>(() => (Array.isArray(props.list) ? props.list : []))
 
   const list = computed<List<T, R>>({
@@ -158,32 +179,32 @@
     set: val => emit('update:list', val),
   })
 
-  watch(
-    () => adaptorList.items,
-    items => {
-      if (Array.isArray(props.list) && toRaw(props.list) !== toRaw(items)) {
-        emit('update:list', items as R[])
-      }
-    },
-    { deep: true }
-  )
-
   /** 跨页选择 v-model:selected + 全选 + 单行勾选 */
   const { isCheckAll, handleChecked } = useCheckAll(props.keys, list, props, { emit })
 
   // ---------- 列显隐（多级表头父子级联 / 持久化 / 渲染过滤） ----------
-  const { columnVisibility, dataColumns, indexColumnConfig } = useColumnVisibility<R>({
-    getColumns: () => props.columns,
+  /** 列来源：读取最近一次 useCompTable 注入的响应式 columns（按 tableKey 选择） */
+  const columnsMap = inject(compTableColumnsKey, null)
+  /** 已告警过的 tableKey，避免 computed 反复求值时刷屏 */
+  const warnedTableKeys = new Set<string>()
+  const sourceColumns = computed<TableColumn<R>[]>(() => {
+    const resolved = columnsMap?.get(props.tableKey)
+    if (import.meta.env.DEV && columnsMap && !resolved && !warnedTableKeys.has(props.tableKey)) {
+      warnedTableKeys.add(props.tableKey)
+      console.warn(`[CompTable] table-key "${props.tableKey}" 未在 useCompTable 中注册，已注册：${[...columnsMap.keys()].join(', ') || '(无)'}`)
+    }
+    return (resolved?.value ?? []) as TableColumn<R>[]
+  })
+
+  const { columnVisibility, dataColumns, indexColumnConfig, expandColumnConfig } = useColumnVisibility<R>({
+    getColumns: () => sourceColumns.value,
     getStorageKey: () => props.storageKey,
   })
 
-  // ---------- 动态数据列（递归渲染，详见 ./renderColumns） ----------
+  // ---------- 动态数据列（递归渲染） ----------
   const DynamicColumns = createDynamicColumns<R>({
     dataColumns,
-    getMinWidth: () => props.minWidth,
-    getRequired: () => props.required,
-    getAlign: () => props.align,
-    getHeaderAlign: () => props.headerAlign,
+    getTableProps: () => props,
   })
 </script>
 

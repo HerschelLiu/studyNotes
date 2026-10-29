@@ -25,6 +25,20 @@ export const queryClient = new QueryClient({
   }
 })
 
+// #region TanStack Query Devtools
+// TanStack Query Devtools 挂载点类型声明
+declare global {
+  interface Window {
+    __TANSTACK_QUERY_CLIENT__: import('@tanstack/vue-query').QueryClient
+  }
+}
+
+// 仅开发环境暴露给 Devtools，生产环境不挂载
+if (import.meta.env.DEV) {
+  window.__TANSTACK_QUERY_CLIENT__ = queryClient
+}
+// #endregion
+
 /**
  * list ↔ tree 缓存配对关系
  * list 查询被 invalidate 后，联动失效对应的 tree 查询（按 queryKey 第一段前缀匹配）

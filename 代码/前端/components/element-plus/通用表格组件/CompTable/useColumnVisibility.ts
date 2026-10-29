@@ -1,6 +1,6 @@
 import type { TableColumn } from './types'
 
-import cache from '@/plugins/cache'
+import { useLocalStorage } from '@vueuse/core'
 
 /** 全角空格用于显隐面板子列缩进（RightToolbar 不支持层级结构） */
 const LEVEL_INDENT = '　'
@@ -47,7 +47,7 @@ const findLeaf = <R>(cols: TableColumn<R>[], fn: (c: TableColumn<R>) => boolean)
 }
 
 interface Options<R extends Record<string, any>> {
-  /** 列配置（getter，保持对 props.columns 替换 / 动态列结构的响应） */
+  /** 列配置（getter，保持对 useCompTable 注入列 / 动态列结构的响应） */
   getColumns: () => TableColumn<R>[]
   /** 显隐持久化 localStorage key，空串不持久化 */
   getStorageKey: () => string
@@ -58,8 +58,31 @@ interface Options<R extends Record<string, any>> {
  * 结构变化时重建条目并按 key 保留各列已有显隐状态
  */
 export const useColumnVisibility = <R extends Record<string, any>>({ getColumns, getStorageKey }: Options<R>) => {
+  /**
+   * 显隐持久化状态（useLocalStorage，JSON 序列化与旧格式兼容）：
+   * - 按列路径 key 存储（key 以 '/' 开头，永不纯数字）
+   * - 旧格式为纯数字下标 key，读取时按下标兜底，persist 时迁移为新格式
+   * - writeDefaults: false：无已存数据时不写入默认值
+   */
+  const savedState = useLocalStorage<Record<string, boolean>>(computed(() => getStorageKey()), {}, { writeDefaults: false })
+
+  /** 把存储的显隐状态应用到条目列表 */
+  const applySaved = (list: VisItem[]) => {
+    if (!getStorageKey()) return
+    const saved = savedState.value
+    const keys = Object.keys(saved)
+    if (!keys.length) return
+    const legacy = keys.every(k => /^\d+$/.test(k))
+    list.forEach((item, idx) => {
+      const value = legacy ? saved[idx] : saved[item.key]
+      if (typeof value === 'boolean') item.visible = value
+    })
+  }
+
   /** 显隐条目列表（结构变化时原地 splice 重建，保留各列显隐状态） */
   const items = reactive(flatten(getColumns()))
+  // 初始化即恢复显隐（异步列场景下此时为空转，列到达后由 rebuild 恢复）
+  applySaved(items)
 
   /** key -> 自身可见状态（渲染过滤用） */
   const visMap = computed(() => new Map(items.map(i => [i.key, i.visible])))
@@ -83,32 +106,41 @@ export const useColumnVisibility = <R extends Record<string, any>>({ getColumns,
   /** 某分组下全部叶子后代 */
   const leafDescendants = (key: string): VisItem[] => descendants(key).filter(d => !childrenMap.value.get(d.key)?.length)
 
-  /** 持久化到 localStorage（按数组下标，与 RightToolbar 的恢复方式一致） */
+  /** 持久化（空列不写，避免覆盖异步列到达前的已存状态） */
   const persist = () => {
-    if (!getStorageKey()) return
-    const state: Record<number, boolean> = {}
-    items.forEach((i, idx) => (state[idx] = i.visible))
-    cache.local.setJSON(getStorageKey(), state)
+    if (!getStorageKey() || !items.length) return
+    const state: Record<string, boolean> = {}
+    items.forEach(i => (state[i.key] = i.visible))
+    savedState.value = state
   }
 
-  // ---------- 三种"非用户主动"变更的标记，watcher 据此跳过级联处理 ----------
-  // ready=false        ：挂载时 RightToolbar 从 localStorage 恢复显隐
-  // isRebuilding=true  ：列结构变化（切换预算任务等）重建条目
-  // cascading=true     ：本次级联正在写子孙 / 祖先的 visible
+  // ---------- 程序化写入守卫 ----------
+  // ready=false：挂载时 RightToolbar 从 localStorage 恢复显隐，尚未开始接收用户操作
+  // syncing    ：正在写子孙 / 祖先 visible 或重建条目，watcher 据此跳过级联
   let ready = false
-  let isRebuilding = false
-  let cascading = false
+  let syncing = false
+
+  /** 执行程序化写入；watcher 为 flush: 'sync'，写入瞬间即被 syncing 拦下 */
+  const silentWrite = (write: () => void) => {
+    syncing = true
+    try {
+      write()
+    } finally {
+      syncing = false
+    }
+  }
 
   /** 对用户切换的列执行父子级联 */
   const cascade = (changed: VisItem[]) => {
-    cascading = true
-    changed.forEach(item => {
-      if (childrenMap.value.get(item.key)?.length) {
-        // 分组：整组子孙跟随
-        descendants(item.key).forEach(d => {
-          d.visible = item.visible
-        })
-      } else {
+    silentWrite(() => {
+      changed.forEach(item => {
+        if (childrenMap.value.get(item.key)?.length) {
+          // 分组：整组子孙跟随
+          descendants(item.key).forEach(d => {
+            d.visible = item.visible
+          })
+          return
+        }
         // 叶子：自底向上，分组 visible = 子树是否存在可见叶子
         let pKey = item.parentKey
         while (pKey) {
@@ -116,12 +148,9 @@ export const useColumnVisibility = <R extends Record<string, any>>({ getColumns,
           if (parent) parent.visible = leafDescendants(parent.key).some(l => l.visible)
           pKey = parent?.parentKey
         }
-      }
+      })
     })
     persist()
-    nextTick(() => {
-      cascading = false
-    })
   }
 
   /**
@@ -130,15 +159,14 @@ export const useColumnVisibility = <R extends Record<string, any>>({ getColumns,
    */
   const rebuild = () => {
     const prevVisible = new Map(items.map(i => [i.key, i.visible]))
-    const next = flatten(getColumns()).map(i => ({
-      ...i,
-      visible: prevVisible.get(i.key) ?? i.visible
-    }))
-    isRebuilding = true
-    items.splice(0, items.length, ...next)
-    nextTick(() => {
-      isRebuilding = false
+    const next = flatten(getColumns())
+    // 内存中无记录的新列（如异步列首次到达），从存储中按 key 恢复
+    applySaved(next.filter(i => !prevVisible.has(i.key)))
+    silentWrite(() => {
+      items.splice(0, items.length, ...next.map(i => ({ ...i, visible: prevVisible.get(i.key) ?? i.visible })))
     })
+    // 结构变化后回写存储，避免已删除列 / 旧下标格式残留
+    persist()
   }
   // 深度监听列配置：结构相同则不触发，结构变化才重建（Vue 内部做深度比较）
   watch(getColumns, rebuild, { deep: true })
@@ -149,10 +177,10 @@ export const useColumnVisibility = <R extends Record<string, any>>({ getColumns,
    */
   onMounted(() =>
     nextTick(() => {
-      items.forEach(i => {
-        if (childrenMap.value.get(i.key)?.length) {
-          i.visible = leafDescendants(i.key).some(l => l.visible)
-        }
+      silentWrite(() => {
+        items.forEach(i => {
+          if (childrenMap.value.get(i.key)?.length) i.visible = leafDescendants(i.key).some(l => l.visible)
+        })
       })
       persist()
       ready = true
@@ -160,18 +188,18 @@ export const useColumnVisibility = <R extends Record<string, any>>({ getColumns,
   )
 
   /**
-   * 监听各列 visible 变化：仅处理用户主动切换，级联 / 恢复 / 重建都跳过。
-   * 通过 getter 返回新数组，拿到 prevVal 做 diff，找出本次变化的列
+   * 监听各列 visible 变化：仅处理用户主动切换（级联 / 恢复 / 重建均已同步置位 syncing）。
+   * flush: 'sync' 让 silentWrite 能拦截本次写入引发的回调，无需跨 tick 复位标记
    */
   watch(
     () => items.map(i => [i.key, i.visible] as const),
     (_curr, prev) => {
-      if (!ready || isRebuilding || cascading) return
+      if (!ready || syncing) return
       const prevVisible = new Map(prev)
       const changed = items.filter(i => prevVisible.get(i.key) !== i.visible)
-      if (!changed.length) return
-      cascade(changed)
-    }
+      if (changed.length) cascade(changed)
+    },
+    { flush: 'sync' }
   )
 
   // ---------- 渲染过滤 ----------
@@ -191,12 +219,13 @@ export const useColumnVisibility = <R extends Record<string, any>>({ getColumns,
         const ch = filterTree(col.children, key, eff)
         return ch.length ? [{ ...col, children: ch }] : []
       }
-      if (col.prop === 'index') return []
+      if (col.prop === 'index' || col.prop === 'expand') return []
       return eff ? [col] : []
     })
 
   const dataColumns = computed(() => filterTree(getColumns()))
   const indexColumnConfig = computed(() => findLeaf(getColumns(), c => c.prop === 'index'))
+  const expandColumnConfig = computed(() => findLeaf(getColumns(), c => c.prop === 'expand'))
 
-  return { columnVisibility: items, dataColumns, indexColumnConfig }
+  return { columnVisibility: items, dataColumns, indexColumnConfig, expandColumnConfig }
 }

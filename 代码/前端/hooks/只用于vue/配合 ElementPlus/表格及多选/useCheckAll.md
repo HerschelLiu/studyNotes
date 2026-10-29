@@ -1,6 +1,6 @@
 ```ts
-import type { PropType, Ref, WritableComputedRef } from 'vue'
-import { computed, ref } from 'vue'
+// import type { PropType, Ref, WritableComputedRef } from 'vue'
+// import { computed, ref } from 'vue'
 
 import { useClone } from '@/hooks/useObject'
 
@@ -10,7 +10,7 @@ export function isChecked<T extends object>(arr: T[], keys: string, item: T) {
 }
 
 /** 跨页选择-获取指定字段值的数据 */
-export function getArrayBySelectedList<T extends object>(arr: T[], keys: string, value: (string | number | boolean)[], getKey: string): string[] {
+export function getArrayBySelectedList<T extends object>(arr: T[], keys: string, value: (ID | boolean)[], getKey: string): string[] {
   const array: string[] = []
   arr.forEach(item => {
     if (keys.split('-').every(key => value.includes(Reflect.get(item, key) as any))) array.push(Reflect.get(item, getKey) as any)
@@ -101,10 +101,11 @@ export function useCheckAll<Q, R extends object & { checked?: boolean; disabled?
     return items.map((item: R) => Object.assign(item, { checked: isChecked(selected.value, keys.value, item) }))
   }
 
-  /** 是否全选 */
+  /** 是否全选（仅基于可勾选行判断，全部禁用或无数据时不算全选） */
   const isCheckAll = computed({
     get() {
-      return (list && list.value.items && list.value.items.length > 0 && list.value.items.every(item => item.disabled || item.checked)) || false
+      const checkable = (list?.value.items ?? []).filter(item => !item.disabled)
+      return checkable.length > 0 && checkable.every(item => item.checked)
     },
     set(value: boolean) {
       handleCheckAll(value)
