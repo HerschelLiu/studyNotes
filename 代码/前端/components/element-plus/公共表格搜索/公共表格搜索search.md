@@ -58,6 +58,8 @@
 </template>
 
 <script lang="ts" setup>
+  import type { FormRules } from 'element-plus'
+
   import { ref, useSlots } from 'vue'
   import { useStyle } from '@/hooks/useStyle'
   import { useTempRefs } from '@/hooks/useTempRefs'
@@ -66,7 +68,8 @@
   interface Props {
     model: object
     showBackButton?: boolean
-    rules?: object
+    /** 表单校验规则：按 el-form-item 的 prop（即查询字段名）匹配 */
+    rules?: FormRules
     /** 是否纵向布局 */
     direction?: boolean
     loading: boolean
@@ -102,6 +105,7 @@
   }
 
   const handleReset = () => {
+    ELForm.value?.clearValidate()
     emit('reset')
   }
 

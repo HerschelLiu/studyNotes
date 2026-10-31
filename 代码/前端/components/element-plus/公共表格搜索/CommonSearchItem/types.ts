@@ -1,37 +1,13 @@
-import type { ElDatePicker, ElInput, ElSelect, ElTreeSelect } from 'element-plus'
+import type { CommonSearchItemOptionsType, ControlPropsOf } from './controls'
+import type { FormItemRule } from 'element-plus'
 import type { MaybeRefOrGetter } from 'vue'
 
-export type CommonSearchItemOptionsType = 'input' | 'select' | 'date' | 'treeSelect'
+export type { CommonSearchItemOptionsType, ControlPropsMap, ControlPropsOf, ControlType } from './controls'
+export type { BindableProps, DateRangeProps, SelectOptionProps } from './controls/types'
 
 export type FieldKeys<T> = T extends string ? T : Extract<keyof T, string>
 
-/**
- * 组件实例的 $props，包含组件自身 props 与 emits 对应的 onXxx 事件属性
- * 即 v-bind 可绑定的完整属性集合
- */
-type BindableProps<C extends abstract new (...args: any[]) => any> = InstanceType<C>['$props']
-
-/** select 选项数据及取值配置 */
-export interface SelectOptionProps<R = any> {
-  data?: MaybeRefOrGetter<R[] | undefined>
-  label?: string
-  key?: string
-}
-
-/** input 控件属性（props + emits） */
-export type InputControlProps = BindableProps<typeof ElInput>
-
-/** date 控件属性（props + emits） */
-export type DatePickerControlProps = BindableProps<typeof ElDatePicker>
-
-/** select 控件属性（props + emits） */
-export type SelectControlProps<R = any> = BindableProps<typeof ElSelect> & SelectOptionProps<R>
-
-/** treeSelect 控件属性（props + emits），data 交由 options 统一解包 */
-export type TreeSelectControlProps<R = any> = Omit<BindableProps<typeof ElTreeSelect>, 'data'> & {
-  data?: MaybeRefOrGetter<R[] | undefined>
-}
-
+/** 基础搜索项配置，所有控件共享 */
 interface CommonSearchItemBaseOptions<T> {
   /** 字段名（表单 key，需为查询对象上已存在的键） */
   prop: FieldKeys<T>
@@ -40,7 +16,7 @@ interface CommonSearchItemBaseOptions<T> {
   placeholder?: string
   /** 控件区宽度 */
   inputSize?: { width?: ID }
-  /** 当type = merge 时生效，是否单独出来 */
+  /** 当 type = merge 时生效，是否单独出来 */
   split?: boolean
   /** 控件区是否由 control-<prop> 插槽接管 */
   slot?: boolean
@@ -48,39 +24,21 @@ interface CommonSearchItemBaseOptions<T> {
   disabled?: MaybeRefOrGetter<boolean>
   /** 是否为合并组的默认字段（仅允许一项配置，优先于 defaultQueryProp） */
   isDefault?: MaybeRefOrGetter<boolean>
+  /** 该项的校验规则；未配置时可回落到 TableSearch 上按 prop 配置的 rules */
+  rules?: FormItemRule | FormItemRule[]
 }
 
-export interface InputSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
-  type?: 'input'
-  /** ElInput 的属性（props + emits），通过 v-bind 透传 */
-  props?: InputControlProps
-}
-
-export interface SelectSearchItemOptions<T, R = any> extends CommonSearchItemBaseOptions<T> {
-  type: 'select'
-  props?: SelectControlProps<R>
-}
-
-export interface DatePickerSearchItemOptions<T> extends CommonSearchItemBaseOptions<T> {
-  type: 'date'
-  /** ElDatePicker 的属性（props + emits），通过 v-bind 透传 */
-  props?: DatePickerControlProps
-}
-
-export interface TreeSelectSearchItemOptions<T, R = any> extends CommonSearchItemBaseOptions<T> {
-  type: 'treeSelect'
-  props?: TreeSelectControlProps<R>
-}
+/** 单个搜索项配置：type 与 props 由控件表推导 */
+type SearchItemOptionsOf<K extends CommonSearchItemOptionsType, T> = CommonSearchItemBaseOptions<T> &
+  (K extends 'input' ? { type?: 'input'; props?: ControlPropsOf<K> } : { type: K; props?: ControlPropsOf<K> })
 
 /**
- * 搜索项配置
+ * 搜索项配置（联合类型自动覆盖控件表中的全部控件）
  * @typeParam T 查询对象类型
  */
-export type CommonSearchItemOptions<T = string> =
-  | InputSearchItemOptions<T>
-  | SelectSearchItemOptions<T>
-  | DatePickerSearchItemOptions<T>
-  | TreeSelectSearchItemOptions<T>
+export type CommonSearchItemOptions<T = string> = {
+  [K in CommonSearchItemOptionsType]: SearchItemOptionsOf<K, T>
+}[CommonSearchItemOptionsType]
 
 export interface CommonSearchItemProps<T> {
   options: CommonSearchItemOptions<T>[]

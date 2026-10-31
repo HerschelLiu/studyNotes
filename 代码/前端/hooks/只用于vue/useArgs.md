@@ -1,13 +1,3 @@
-**TODO位置需要根据实际代码修改**
-
-`router.currentRoute.value` 拿的是 router 实例的当前路由快照，但 vue-router 4 在路由切换过程中：
-
-1. 新组件的 `setup` 先执行（此时 `currentRoute` 可能还指向旧路由）
-2. 然后才 commit 新的 `currentRoute`
-3. 最后 `onMounted` 触发 —— 但偶发情况下步骤 2 还没完成
-
-所以在 `onMounted` 里 `await useValidateArgs('type')` 偶现拿不到 `type`，特别是在某些标签页缓存场景、路由中间态、或 keep-alive 复用组件的情况下。
-
 ## VUE
 
 `vue3.x`
@@ -17,18 +7,25 @@ import { computed, ref, watch } from 'vue'
 
 import { useError } from './useTip'
 
+/** 数组参数在 URL 中的分隔符 */
+const SEPARATOR = ','
+
+/** 布尔参数视为 false 的字符串集合 */
 const FALSY = new Set(['', '0', 'false', 'null', 'undefined', 'void 0'])
 
+/** 数字参数：空值/非法数字返回 undefined */
 function toNumber(value: string) {
+  if (!value.trim()) return undefined
   const number = Number(value)
-  return value && Number.isFinite(number) ? number : undefined
+  return Number.isFinite(number) ? number : undefined
 }
 
+/** 布尔参数：'0' / 'false' / 空串等视为 false */
 const toBoolean = (value: string) => !FALSY.has(value)
 
+/** JSON 参数：解析失败返回 undefined（不抛错） */
 function toJson<T>(value: string): T | undefined {
   if (!value) return undefined
-
   try {
     return JSON.parse(value) as T
   } catch {
@@ -36,17 +33,30 @@ function toJson<T>(value: string): T | undefined {
   }
 }
 
-/** 获取路由参数并转换：number、boolean、array、json，数组方法逐项处理。 */
-export function useValidateArgs<T extends string = string>(args: string, required = true) {
+/** 路由参数原始值 → 本地字符串（重复参数按分隔符拼接） */
+const normalizeRaw = (raw: unknown) => (Array.isArray(raw) ? raw.join(SEPARATOR) : typeof raw === 'string' ? raw : '')
+
+/**
+ * 获取路由参数并转换：number、boolean、array、json，数组方法逐项处理。
+ *
+ * - 必须在组件 setup 内调用（内部使用 useRoute + watch）
+ * - required 只校验参数是否存在，空字符串不报错
+ * - 参数缺失或为空串时取 defaultValue；给了默认值即视为可选，不再提示缺少参数
+ * - 返回可写 Ref，写值只更新本地参数，不回写 URL
+ */
+export function useValidateArgs<T extends string = string>(args: string, required = true, defaultValue?: T) {
   const route = useRoute()
   const value = ref('' as T)
+  /** 必传参数只提示一次，避免路由再次变化时重复报错 */
   let validated = false
 
   watch(
     () => route.query[args] ?? route.params[args],
     raw => {
-      value.value = (Array.isArray(raw) ? raw.join(',') : raw ?? '') as T
-      if (raw == null && required && !validated) {
+      // 取不到参数（缺失/空串）时回落到默认值
+      value.value = (normalizeRaw(raw) || defaultValue || '') as T
+      // 有默认值时参数视为可选，不再提示缺少参数
+      if (raw == null && required && defaultValue === undefined && !validated) {
         useError(`缺少关键参数${args}`)
         validated = true
       }
@@ -54,11 +64,21 @@ export function useValidateArgs<T extends string = string>(args: string, require
     { immediate: true }
   )
 
-  const getList = () => (value.value ? value.value.split(',').filter(Boolean) : [])
+  /** 单值可写 computed：get 解析、set 序列化（空值写空串） */
+  const scalar = <R>(parse: (raw: string) => R, stringify: (next: R) => string | undefined) =>
+    computed<R>({
+      get: () => parse(value.value),
+      set: next => {
+        value.value = (next == null ? '' : stringify(next) ?? '') as T
+      },
+    })
+
+  const getList = () => (value.value ? value.value.split(SEPARATOR).filter(Boolean) : [])
   const setList = (items: string[]) => {
-    value.value = (items.join(',') || '') as T
+    value.value = (items.join(SEPARATOR) || '') as T
   }
 
+  /** 数组元素映射：逐项解析/序列化（逗号拼接，元素本身不能含分隔符） */
   const mapList = <R>(parse: (item: string) => R | undefined, stringify: (item: R) => string) =>
     computed<R[]>({
       get: () =>
@@ -66,42 +86,36 @@ export function useValidateArgs<T extends string = string>(args: string, require
           const parsed = parse(item)
           return parsed === undefined ? [] : [parsed]
         }),
-      set: items => setList(items.map(stringify))
+      set: items => setList(items.map(stringify)),
     })
 
+  /** 数组参数（逗号分隔），可继续指定元素类型 */
   const array = () =>
     Object.assign(computed<string[]>({ get: getList, set: setList }), {
       number: () => mapList(toNumber, String),
       boolean: () => mapList(toBoolean, String),
-      json: <R = unknown>() => mapList(toJson<R>, item => JSON.stringify(item) ?? '')
+      /** JSON 数组整体存一个参数：逐项逗号拼接会被 JSON 内部的逗号破坏 */
+      json: <R = unknown>() => scalar<R[]>(raw => toJson<R[]>(raw) ?? [], items => JSON.stringify(items)),
     })
 
   return Object.assign(value, {
+    /** 单值 → 数字 */
     number: <R extends number = number>() =>
-      computed({
-        get: () => toNumber(value.value) as R | undefined,
-        set: newValue => {
-          value.value = (newValue == null ? '' : String(newValue)) as T
-        }
-      }),
+      scalar<R | undefined>(raw => toNumber(raw) as R | undefined, next => String(next)),
 
+    /** 单值 → 布尔（写回 'true' / 'false'） */
     boolean: () =>
-      computed({
+      computed<boolean>({
         get: () => toBoolean(value.value),
-        set: newValue => {
-          value.value = (newValue ? 'true' : 'false') as T
-        }
+        set: next => {
+          value.value = (next ? 'true' : 'false') as T
+        },
       }),
 
-    json: <R = unknown>() =>
-      computed({
-        get: () => toJson<R>(value.value),
-        set: newValue => {
-          value.value = (newValue == null ? '' : JSON.stringify(newValue)) as T
-        }
-      }),
+    /** 单值 → JSON */
+    json: <R = unknown>() => scalar<R | undefined>(raw => toJson<R>(raw), next => JSON.stringify(next)),
 
-    array
+    array,
   })
 }
 

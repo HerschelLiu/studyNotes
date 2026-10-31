@@ -4,7 +4,6 @@
 import type { QueryKey } from '@tanstack/vue-query'
 
 import { QueryClient } from '@tanstack/vue-query'
-
 import { queryKeys } from '@/constants/queryKeys'
 
 /**
@@ -76,22 +75,32 @@ const LIST_TREE_PAIRS: ReadonlyArray<readonly [QueryKey, QueryKey]> = [
   [queryKeys.budgSubject.list(), queryKeys.budgSubject.tree()]
 ]
 
+/** list 前缀 → tree 查询：把每次事件的线性遍历换成 O(1) 查表 */
+const TREE_BY_LIST_PREFIX = new Map(
+  LIST_TREE_PAIRS.map(([listKey, treeKey]) => [String(listKey[0]), treeKey] as const)
+)
+
+/** 已注册联动的 client，避免重复调用产生多个订阅 */
+const linkedClients = new WeakSet<QueryClient>()
+
 /**
  * 注册全局 list↔tree 缓存联动
  * @param client 可选，默认使用模块级单例 queryClient
+ * @returns 取消订阅函数（重复注册时为空函数）
  */
 export const setupQueryCacheLinks = (client: QueryClient = queryClient) => {
-  client.getQueryCache().subscribe(event => {
-    if (event.type !== 'updated') return
-    if (event.action?.type !== 'invalidate') return
+  if (linkedClients.has(client)) return () => {}
+  linkedClients.add(client)
 
-    const invalidatedKey = event.query.queryKey
-    for (const [listKey, treeKey] of LIST_TREE_PAIRS) {
-      if (invalidatedKey[0] === listKey[0]) {
-        client.invalidateQueries({ queryKey: treeKey })
-        break
-      }
-    }
+  return client.getQueryCache().subscribe(event => {
+    if (event.type !== 'updated' || event.action?.type !== 'invalidate') return
+
+    const invalidatedPrefix = String(event.query.queryKey[0])
+    const treeKey = TREE_BY_LIST_PREFIX.get(invalidatedPrefix)
+    // 未命中的 key，或 tree 自身被失效（避免反向递归触发）都直接跳过
+    if (!treeKey || String(treeKey[0]) === invalidatedPrefix) return
+
+    void client.invalidateQueries({ queryKey: treeKey })
   })
 }
 
@@ -104,7 +113,7 @@ export const setupQueryCacheLinks = (client: QueryClient = queryClient) => {
 ```ts
 import { VueQueryPlugin } from '@tanstack/vue-query'
 
-import { queryClient, setupQueryCacheLinks } from '@/hooks/useTansQuery'
+import { queryClient, setupQueryCacheLinks } from '@/hooks/useTanStackQuery'
 
 /** vue-query 全局 client：注册 list↔tree 缓存联动并通过插件注入组件树 */
 setupQueryCacheLinks()

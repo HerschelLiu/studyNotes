@@ -1,6 +1,36 @@
 ## JS
 
 ```ts
+/** 字符串下载源类型：file=文本内容（转 Blob 下载），link=直链地址 */
+export type DownloadSourceType = 'file' | 'link'
+
+/** object URL 延迟释放时间：给浏览器留出开始读取的时间，避免大文件被过早释放 */
+const OBJECT_URL_RELEASE_DELAY = 40_000
+
+/**
+ * 触发浏览器下载：挂载到 body 再点击。
+ * @param href 下载地址
+ * @param name 文件名（不传则不覆盖服务端文件名）
+ * @param openInNewTab 是否新标签打开
+ */
+const clickAnchor = (href: string, name?: string, openInNewTab = false) => {
+  const tag = document.createElement('a')
+  tag.href = href
+  if (name) tag.download = name
+  if (openInNewTab) {
+    tag.target = '_blank'
+    tag.rel = 'noopener'
+  }
+  document.body.appendChild(tag)
+  tag.click()
+  document.body.removeChild(tag)
+}
+
+/** 延迟释放 object URL，避免整份文件一直被 URL 强引用（大文件会持续占用内存） */
+const releaseObjectURL = (url: string) => {
+  window.setTimeout(() => window.URL.revokeObjectURL(url), OBJECT_URL_RELEASE_DELAY)
+}
+
 /**
  * 下载图片
  * @param src 图片src
@@ -11,47 +41,37 @@ export const useDownloadImage = (src: string, crossOrigin = false): Promise<HTML
   return new Promise((resolve, reject) => {
     const image = new Image()
     if (crossOrigin) image.crossOrigin = 'Anonymous'
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(Error('图片下载失败'))
     image.src = src
-    if (image.complete) resolve(image)
-    else {
-      image.onload = function () {
-        resolve(image)
-      }
-      image.onerror = function () {
-        reject(Error('图片下载失败'))
-      }
-    }
   })
 }
 
 /**
  * 下载文件
- * @param src 文件src
+ * @param src 文件内容（Blob）或字符串（type='file' 文本内容 / type='link' 直链地址）
  * @param name 下载文件名称
+ * @param type 字符串源类型：file=文本内容，link=直链地址，默认 file
  */
-export const useDownloadFile = (src: string | Blob, name: string, type = 'file'): void => {
+export const useDownloadFile = (src: string | Blob, name: string, type: DownloadSourceType = 'file'): void => {
   if (typeof src === 'string') {
-    if (type === 'file') {
-      const blob = new Blob([src])
-      src = window.URL.createObjectURL(blob)
+    if (type === 'link') {
+      clickAnchor(src, name, true)
+      return
     }
-  } else {
-    src = window.URL.createObjectURL(src)
+    const url = window.URL.createObjectURL(new Blob([src]))
+    clickAnchor(url, name)
+    releaseObjectURL(url)
+    return
   }
-  const tag = document.createElement('a')
-  tag.target = '_blank'
-  const event = new MouseEvent('click')
-  tag.download = name || '下载文件名称'
-  tag.href = src
-  tag.dispatchEvent(event)
+  const url = window.URL.createObjectURL(src)
+  clickAnchor(url, name)
+  releaseObjectURL(url)
 }
 
-/** 下载文件 */
+/** 直接打开 / 下载直链（不指定文件名，由服务端 Content-Disposition 决定） */
 export function downloadFile(src: string): void {
-  const tag = document.createElement('a')
-  const event = new MouseEvent('click')
-  tag.href = src
-  tag.dispatchEvent(event)
+  clickAnchor(src)
 }
 
 /** blob转base64 */
@@ -75,19 +95,21 @@ export const stringToJsonBlob = (str: string): Blob => {
 
 /** 字符串转text */
 export const stringToTextBlob = (str: string): Blob => {
-  return new Blob([str], { type: 'text/plain' })
+  return new Blob([str], { type: 'text/plain;charset=utf-8' })
 }
 
-/** 图片base64转blob */
+/** 图片base64转blob（沿用 data URL 里的 MIME，缺省 jpeg；也兼容裸 base64） */
 export const imageBase64ToBlob = (base64: string): Blob => {
-  const arr = base64.split(',')
-  const bstr = atob(arr[1])
-  let n = bstr.length
-  const u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
+  const commaIndex = base64.indexOf(',')
+  const meta = commaIndex > -1 ? base64.slice(0, commaIndex) : ''
+  const data = commaIndex > -1 ? base64.slice(commaIndex + 1) : base64
+  const mime = /^data:([^;]+)/.exec(meta)?.[1] ?? 'image/jpeg'
+  const binary = atob(data)
+  const bytes = new Uint8Array(binary.length)
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i)
   }
-  return new Blob([u8arr], { type: 'image/jpeg' })
+  return new Blob([bytes], { type: mime })
 }
 
 ```

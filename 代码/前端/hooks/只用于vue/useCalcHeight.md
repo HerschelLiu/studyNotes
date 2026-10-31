@@ -5,11 +5,11 @@
 ### **vueUse**
 
 ```ts
-import type { MaybeRefOrGetter, Ref } from 'vue'
+import type { MaybeRefOrGetter } from 'vue'
 import { useRafFn, useResizeObserver, useWindowSize } from '@vueuse/core'
 
 /** CSS 长度值类型：数字（按 px）或字符串（'200px' / '30vh' / '50%' / '2rem'） */
-export type CSSLength = number | string
+export type CSSLength = string | number
 
 export interface ViewportHeightOptions {
   /** 底部兜底间隙：DOM 测不到下方兄弟时使用，或作为额外预留 */
@@ -26,6 +26,16 @@ export interface ViewportHeightOptions {
   observeGap?: boolean
   /** 父级选择器 */
   containerSelector?: string
+}
+
+/**
+ * 解析 ref / getter / 组件实例对应的真实 DOM。
+ * 只接受 Element：组件多根节点时 `$el` 可能是注释/文本节点，直接调用 getBoundingClientRect 会报错。
+ */
+export const resolveElement = (target: unknown): HTMLElement | undefined => {
+  if (target instanceof HTMLElement) return target
+  const el = (target as { $el?: unknown } | null | undefined)?.$el
+  return el instanceof HTMLElement ? el : undefined
 }
 
 /** 将 CSS 长度值转为像素数（calc 时调用，vh/% 随视口变化；em 不支持，因无父元素上下文） */
@@ -49,11 +59,14 @@ const toPx = (value: CSSLength | undefined): number => {
 
 /**
  * 从 targetRef 元素顶部到视口底部的剩余高度
- * @param targetRef 目标元素 ref（组件实例或 HTMLElement）
+ * @param targetRef 目标元素 ref / getter / 组件实例（组件取 `$el`）
  * @param options 配置项
  * @returns height 绑定到元素 max-height；refresh 手动重算
  */
-export const useCalcHeight = <T extends HTMLElement | object | null | undefined>(targetRef: Ref<T>, options: ViewportHeightOptions = {}) => {
+export const useCalcHeight = <T extends HTMLElement | object | null | undefined>(
+  targetRef: MaybeRefOrGetter<T>,
+  options: ViewportHeightOptions = {}
+) => {
   const {
     bottomOffset = 0,
     minHeight = 0,
@@ -66,11 +79,8 @@ export const useCalcHeight = <T extends HTMLElement | object | null | undefined>
 
   const height = ref<number>()
 
-  /** 解析 ref 对应的真实 DOM（组件实例取 $el） */
-  const getEl = (): HTMLElement | undefined => {
-    const instance = unref(targetRef)
-    return (instance as any)?.$el ?? (instance as HTMLElement | undefined)
-  }
+  /** 解析目标 DOM（组件实例取 `$el`；每次实时解析，兼容 `$el` 晚于 ref 赋值的情况） */
+  const getEl = (): HTMLElement | undefined => resolveElement(toValue(targetRef))
 
   /** 累加容器下方兄弟元素高度 + 父容器 paddingBottom */
   const calcFlowGap = (el: HTMLElement) => {
@@ -115,7 +125,8 @@ export const useCalcHeight = <T extends HTMLElement | object | null | undefined>
     const el = getEl()
     if (!el) return false
     const rect = el.getBoundingClientRect()
-    if (rect.top === 0 && rect.height === 0) return false
+    // 宽高都为 0 才是未布局/隐藏（如 display:none）；仅高度为 0 的空容器仍可计算
+    if (rect.width === 0 && rect.height === 0) return false
     height.value = Math.max(winHeight.value - rect.top - getFixedFooterHeight(el) - calcFlowGap(el), toPx(minHeight))
     return true
   }
@@ -135,31 +146,31 @@ export const useCalcHeight = <T extends HTMLElement | object | null | undefined>
     },
     { immediate: false }
   )
-  /** 延迟到下一帧执行高度计算 */
-  const scheduleCalc = raf.resume
 
-  /** ref 绑定/解绑（v-if 重挂）：post  flush 确保 DOM 已更新 */
-  watch(targetRef, scheduleCalc, { flush: 'post', immediate: true })
+  /** 调度重算：停用期间直接跳过，避免隐藏中的抽屉/预览分支空转 */
+  const scheduleCalc = () => {
+    if (!toValue(enabled)) return
+    raf.resume()
+  }
+
+  /** target 绑定/解绑（v-if 重挂）或 getter 依赖变化时重算；post flush 确保 DOM 已更新 */
+  watch(() => toValue(targetRef), scheduleCalc, { flush: 'post', immediate: true })
 
   /** enabled 切换为 true 时重算（抽屉打开/页面激活） */
-  watch(
-    () => toValue(enabled),
-    v => {
-      if (v) scheduleCalc()
-    }
-  )
+  watch(() => toValue(enabled), scheduleCalc)
 
   /** 视口高度变化（useWindowSize 已含 resize 监听） */
   watch(winHeight, scheduleCalc)
 
   /**
    * 监听元素自身及父容器尺寸：
-   * 搜索区展开/收起、分页器显隐、字体/图片加载等引起的 top 变化自动重算
+   * 搜索区展开/收起、分页器显隐、字体/图片加载等引起的 top 变化自动重算。
+   * 停用期间不观察，避免被无关的 resize 唤醒
    */
-  const elRef = computed(() => getEl() ?? null)
-  useResizeObserver(elRef, scheduleCalc)
+  const observedEl = computed(() => (toValue(enabled) ? getEl() ?? null : null))
+  useResizeObserver(observedEl, scheduleCalc)
   useResizeObserver(
-    computed(() => elRef.value?.parentElement ?? null),
+    computed(() => observedEl.value?.parentElement ?? null),
     scheduleCalc
   )
 

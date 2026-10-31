@@ -1,45 +1,45 @@
 ```ts
-export interface EnumArray<T> {
+export type EnumSource = Record<string, string | number>
+
+/** 枚举选项：key 为枚举值，value 为枚举名 */
+export interface EnumArray<T = string | number> {
   key: T
   value: string
 }
 
-/** 获取枚举的不重复数组 */
-export function useEnumArray<T = number | string>(object: object): EnumArray<T>[]
-export function useEnumArray<T = number | string, K extends string = string, V extends string = string>(
-  object: object,
+/**
+ * 枚举原始成员：[成员名, 成员值]
+ */
+const enumEntries = (object: EnumSource) => Object.entries(object).filter(([name]) => !/^-?\d+$/.test(name)) as [string, string | number][]
+
+/**
+ * 获取枚举选项数组
+ * @param object 枚举对象
+ * @param fieldNames 自定义选项字段名，默认 `{ key: 'key', value: 'value' }`
+ * @example
+ * useEnumArray(EnableStatus) // [{ key: 1, value: '启用' }]
+ * useEnumArray(EnableStatus, { key: 'key', value: 'label' })
+ */
+export function useEnumArray<T = string | number>(object: EnumSource): EnumArray<T>[]
+export function useEnumArray<T = string | number, K extends string = string, V extends string = string>(
+  object: EnumSource,
   fieldNames: { key: K; value: V }
 ): (Record<K, T> & Record<V, string>)[]
-export function useEnumArray<T = number | string>(
-  object: object,
-  fieldNames: { key?: string; value?: string } = {}
-): EnumArray<T>[] | Record<string, T | string>[] {
+export function useEnumArray<T = string | number>(object: EnumSource, fieldNames: { key?: string; value?: string } = {}): any[] {
   const { key: keyName = 'key', value: valueName = 'value' } = fieldNames
-  return Object.entries(object)
-    .filter(item => /^[A-Za-z0-9-_]+$/.test(item[1]) || item[1] === '')
-    .map(item => {
-      const raw = item[1]
-      const shouldConvert = typeof raw === 'string' && raw !== '' && !isNaN(Number(raw)) && String(Number(raw)) === raw
-      return {
-        [keyName]: shouldConvert ? Number(raw) : raw,
-        [valueName]: item[0]
-      }
-    }) as any
+  return enumEntries(object).map(([value, key]) => ({ [keyName]: key, [valueName]: value }))
 }
 
-/** 直接从枚举改造对象中取值 */
-export function useEnumValue<T = number | string>(key: T, obj: EnumArray<T>[]): string {
-  const lookupKey = String(key)
-  for (const forkey in obj) {
-    if (lookupKey === String(obj[forkey].key)) return obj[forkey].value
-  }
-  return ''
+/** 从 useEnumArray 的结果中按枚举值取枚举名 */
+export function useEnumValue<T = string | number>(key: T, options: EnumArray<T>[]): string {
+  return options.find(option => String(option.key) === String(key))?.value ?? ''
 }
 
-/** 从枚举对象中取值 */
-export function getEnumValue<T>(value: T, enu: object): string {
-  return useEnumValue<T>(value, useEnumArray(enu))
+/** 直接从枚举对象中按枚举值取枚举名 */
+export function getEnumValue<T = string | number>(value: T, object: EnumSource): string {
+  return useEnumValue(value, useEnumArray(object))
 }
+
 ```
 
 通用

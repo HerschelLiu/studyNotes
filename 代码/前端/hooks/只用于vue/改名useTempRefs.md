@@ -127,20 +127,34 @@ export function useTempRefs<T = ComponentOptions, K extends RefKeys = never>(
 ## vue3.5兼容vueUse(ELList使用TemplateRefsList)
 
 ```ts
-import type { ComponentOptions, Ref } from 'vue'
+import type { ComponentOptions, Ref, TemplateRef } from 'vue'
 import type { TemplateRefsList } from '@vueuse/core'
 
-import { useTemplateRef, ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 import { useTemplateRefsList } from '@vueuse/core'
 
-type RefKeys = 'ELSearch' | 'ELHeader' | 'ELTable' | 'ELForm' | 'ELInput' | 'ELScrollbar' | 'ELElement' | 'ELList' | 'ELTempList'
-
+/** 按 key 推导出的 ref 类型 */
 type TempRefsResult<T, K extends string> = {
   [P in K]: P extends 'ELList'
     ? Ref<(T | null)[]>
     : P extends 'ELTempList'
-    ? Readonly<Ref<Readonly<TemplateRefsList<T>>>>
-    : Readonly<Ref<T | undefined>>
+      ? Readonly<Ref<Readonly<TemplateRefsList<T>>>>
+      : TemplateRef<T>
+}
+
+/** 把字符串 / 数组 / 对象三种入参归一为 name → template ref 名（同名 key 去重，后写覆盖） */
+const toRefKeyMap = <K extends string>(keys: K | K[] | Partial<Record<K, string>>): Map<string, string> => {
+  const map = new Map<string, string>()
+  if (typeof keys === 'string') {
+    map.set(keys, keys)
+  } else if (Array.isArray(keys)) {
+    keys.forEach(key => map.set(key, key))
+  } else {
+    Object.entries(keys as Partial<Record<string, string>>).forEach(([name, refKey]) => {
+      if (refKey) map.set(name, refKey)
+    })
+  }
+  return map
 }
 
 /**
@@ -158,43 +172,27 @@ type TempRefsResult<T, K extends string> = {
  *   // 自定义 key + 自定义 template ref 名
  *   const { treeRef } = useTempRefs({ treeRef: 'categoryTreeRef' })
  */
-// 重载：ELList 专用，只需传 T 即可获得类型安全的 ref 数组
+export function useTempRefs(): {}
+// 显式传 T 时 TS 不会继续推断 K，内置数组 key 需要单独重载
 export function useTempRefs<T = ComponentOptions>(keys: 'ELList'): TempRefsResult<T, 'ELList'>
-// 重载：通用（兼容内置 key 与任意自定义 key，K 从参数推断）
-export function useTempRefs<T = ComponentOptions, K extends string = string>(keys: K | K[] | Partial<Record<K, string>>): TempRefsResult<T, K>
+export function useTempRefs<T = ComponentOptions>(keys: 'ELTempList'): TempRefsResult<T, 'ELTempList'>
+export function useTempRefs<T = ComponentOptions, K extends string = string>(keys: K): TempRefsResult<T, K>
+export function useTempRefs<T = ComponentOptions, K extends string = string>(keys: K[]): TempRefsResult<T, K>
+export function useTempRefs<T = ComponentOptions, K extends string = string>(keys: Partial<Record<K, string>>): TempRefsResult<T, K>
 export function useTempRefs<T = ComponentOptions, K extends string = string>(
   keys: K | K[] | Partial<Record<K, string>> = {} as Partial<Record<K, string>>
 ): TempRefsResult<T, K> {
-  /** 收集 name → templateKey 映射 */
-  const keyMap: Record<string, string> = {}
+  const result: Record<string, unknown> = {}
 
-  if (typeof keys === 'string') {
-    keyMap[keys] = keys
-  } else if (Array.isArray(keys)) {
-    keys.forEach(k => {
-      keyMap[k] = k
-    })
-  } else {
-    Object.entries(keys).forEach(([k, v]) => {
-      if (v) keyMap[k] = v as string
-    })
-  }
-
-  const result = {} as TempRefsResult<T, K>
-
-  Object.entries(keyMap).forEach(([name, refKey]) => {
+  toRefKeyMap(keys).forEach((refKey, name) => {
     // ELList 是数组容器，用于 :ref 回调收集元素，使用 ref 而非 useTemplateRef
-    if (name === 'ELList') {
-      ;(result as any)[name] = ref<(T | null)[]>([])
-    } else if (name === 'ELTempList') {
-      // ELTempList 使用 VueUse 的 useTemplateRefsList，通过 :ref="ELTempList.set" 收集
-      ;(result as any)[name] = useTemplateRefsList<T>()
-    } else {
-      ;(result as any)[name] = useTemplateRef<T>(refKey)
-    }
+    if (name === 'ELList') result[name] = ref<(T | null)[]>([])
+    // ELTempList 使用 VueUse 的 useTemplateRefsList，通过 :ref="ELTempList.set" 收集
+    else if (name === 'ELTempList') result[name] = useTemplateRefsList<T>()
+    else result[name] = useTemplateRef<T>(refKey)
   })
 
-  return result
+  return result as unknown as TempRefsResult<T, K>
 }
 
 ```

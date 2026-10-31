@@ -1,43 +1,52 @@
 ```ts
-// import type { PropType, Ref, WritableComputedRef } from 'vue'
-// import { computed, ref } from 'vue'
+/** 跨页选择行需要的最小字段 */
+type SelectableRow = { checked?: boolean; disabled?: boolean }
 
-import { useClone } from '@/hooks/useObject'
+/** 拆分复合主键：'id' / 'id-type' → ['id', 'type'] */
+export const splitKeys = (keys: string) => keys.split('-').filter(Boolean)
+
+/**
+ * 行主键：按主键字段顺序序列化，保留类型（1 与 '1' 不相等）。
+ * 用 JSON 而不是字符串拼接，字段值里含分隔符时也不会产生歧义。
+ */
+export const rowKeyOf = (row: object, fields: string[]) => JSON.stringify(fields.map(field => Reflect.get(row, field)))
 
 /** 跨页选择-初始数据是否选中 */
 export function isChecked<T extends object>(arr: T[], keys: string, item: T) {
-  return Boolean(arr.find(thItem => keys.split('-').every(key => Reflect.get(thItem, key) === Reflect.get(item, key))))
+  const fields = splitKeys(keys)
+  const itemKey = rowKeyOf(item, fields)
+  return arr.some(row => rowKeyOf(row, fields) === itemKey)
 }
 
 /** 跨页选择-获取指定字段值的数据 */
 export function getArrayBySelectedList<T extends object>(arr: T[], keys: string, value: (ID | boolean)[], getKey: string): string[] {
+  const fields = splitKeys(keys)
   const array: string[] = []
   arr.forEach(item => {
-    if (keys.split('-').every(key => value.includes(Reflect.get(item, key) as any))) array.push(Reflect.get(item, getKey) as any)
+    if (fields.every(field => value.includes(Reflect.get(item, field) as any))) array.push(Reflect.get(item, getKey) as any)
   })
   return array
 }
 
-/** 跨页选择-插入数据-整个列表数据 */
+/** 跨页选择-插入数据（按主键去重，返回新数组，不修改入参） */
 export function putSelectedList<T extends object>(arr: T[], putArr: T[], keys: string): T[] {
-  putArr.forEach(newId => {
-    const item = arr.find(haveId => {
-      return keys.split('-').every(key => Reflect.get(haveId, key) === Reflect.get(newId, key))
-    })
-    if (!item) arr.push(newId)
+  const fields = splitKeys(keys)
+  const merged = arr.slice()
+  const existing = new Set(merged.map(row => rowKeyOf(row, fields)))
+  putArr.forEach(row => {
+    const key = rowKeyOf(row, fields)
+    if (existing.has(key)) return
+    existing.add(key)
+    merged.push(row)
   })
-  return arr
+  return merged
 }
 
-/** 跨页选择-删除数据-整个列表数据 */
-export function deleteSelectedList<T extends object>(arr: T[], delArr: T[], keys: string) {
-  delArr.forEach(newId => {
-    const index = arr.findIndex(haveId => {
-      return keys.split('-').every(key => Reflect.get(haveId, key) === Reflect.get(newId, key))
-    })
-    if (index > -1) arr.splice(index, 1)
-  })
-  return arr
+/** 跨页选择-删除数据（按主键过滤，返回新数组，不修改入参） */
+export function deleteSelectedList<T extends object>(arr: T[], delArr: T[], keys: string): T[] {
+  const fields = splitKeys(keys)
+  const removed = new Set(delArr.map(row => rowKeyOf(row, fields)))
+  return arr.filter(row => !removed.has(rowKeyOf(row, fields)))
 }
 
 /** 定义跨页选择参数 */
@@ -73,32 +82,41 @@ export interface DefineCheckAllEmits<R = object> {
 
 /**
  * 跨页选择
- * @param id 数据列表的唯一主健
- * @param list 数据列表，非必填，有全选功能是必填，Ref数据
- * @param props 组件props，非必填
- * @param context 组件context，非必填
- * @param update 是否需要将数组更新至父组件，默认是
+ * @param id 唯一主键，复合主键用 '-' 连接（如 'id'、'id-type'）
+ * @param list 数据列表（全选 / 取消全选需要）
+ * @param props 组件 props（组件内使用时传入，选择结果通过 update:selected 交给父组件）
+ * @param context 组件上下文（提供 emit）
  */
-export function useCheckAll<Q, R extends object & { checked?: boolean; disabled?: boolean }>(
+export function useCheckAll<Q, R extends object & SelectableRow>(
   id: string,
   list?: WritableComputedRef<List<Q, R>>,
-  props?: any,
-  context?: { emit: (event: any, ...args: any[]) => void },
-  update = true
+  props?: DefineCheckAllProps<R>,
+  context?: { emit: (event: any, ...args: any[]) => void }
 ) {
-  /** 跨页选择主Key */
+  /** 跨页选择主Key（支持运行时切换，如动态主键） */
   const keys = ref(id)
 
-  /** 跨页选择数据 */
-  const selected: Ref<R[]> = props
-    ? computed(() => {
-        return props.selected
-      })
-    : ref([])
+  /** 跨页选择数据：组件内为本地 ref；组件外由父组件 v-model:selected 提供 */
+  const localSelected: Ref<R[]> = ref([])
+  const selected: Ref<R[]> = props ? computed(() => props.selected ?? []) : localSelected
 
-  /** 初始化是否选中 */
+  /** 写入选择结果：组件内直接赋值，组件外通过 v-model 同步给父组件 */
+  const commit = (rows: R[]) => {
+    if (context) {
+      context.emit('update:selected', rows)
+      return
+    }
+    localSelected.value = rows
+  }
+
+  /** 初始化是否选中（选中集合按主键建 Set，避免逐行扫描已选列表） */
   const isCheckedItem = (items: R[]): R[] => {
-    return items.map((item: R) => Object.assign(item, { checked: isChecked(selected.value, keys.value, item) }))
+    const fields = splitKeys(keys.value)
+    const selectedKeys = new Set(selected.value.map(row => rowKeyOf(row, fields)))
+    items.forEach(item => {
+      item.checked = selectedKeys.has(rowKeyOf(item, fields))
+    })
+    return items
   }
 
   /** 是否全选（仅基于可勾选行判断，全部禁用或无数据时不算全选） */
@@ -112,42 +130,32 @@ export function useCheckAll<Q, R extends object & { checked?: boolean; disabled?
     }
   })
 
-  /** 全选或取消全选 */
+  /** 全选或取消全选（仅作用于当前页可勾选行） */
   const handleCheckAll = (value: boolean) => {
     if (!list) return
-    list.value.items.forEach(item => !item.disabled && (item.checked = value))
-    const putArr = useClone(list.value.items.filter(item => !item.disabled))
-    if (context && update) {
-      if (value) context.emit('update:selected', putSelectedList(props.selected, putArr, keys.value))
-      else context.emit('update:selected', deleteSelectedList(props.selected, putArr, keys.value))
-    } else {
-      if (value) selected.value = putSelectedList(selected.value, putArr, keys.value)
-      else selected.value = deleteSelectedList(selected.value, putArr, keys.value)
-    }
+    const rows = list.value.items.filter(item => !item.disabled)
+    rows.forEach(item => {
+      item.checked = value
+    })
+    commit(value ? putSelectedList(selected.value, rows, keys.value) : deleteSelectedList(selected.value, rows, keys.value))
   }
 
-  /** 选择 */
+  /** 行选择变化（row.checked 已由表格上的 v-model 先行更新） */
   const handleChecked = (row: R) => {
-    if (context && update) {
-      if (row.checked) context.emit('update:selected', putSelectedList(props.selected, [row], keys.value))
-      else context.emit('update:selected', deleteSelectedList(props.selected, [row], keys.value))
-    } else {
-      if (row.checked) selected.value = putSelectedList(selected.value, [row], keys.value)
-      else selected.value = deleteSelectedList(selected.value, [row], keys.value)
-    }
+    commit(row.checked ? putSelectedList(selected.value, [row], keys.value) : deleteSelectedList(selected.value, [row], keys.value))
   }
 
-  /** 取消所有 */
+  /** 取消所有：清空当前页勾选状态，并清空跨页选择 */
   const cannelSelected = () => {
-    isCheckAll.value && (isCheckAll.value = false)
-    if (context && update) context.emit('update:selected', [])
-    else selected.value = []
+    list?.value.items.forEach(item => {
+      if (!item.disabled) item.checked = false
+    })
+    commit([])
   }
 
-  /** 获取列表 */
+  /** 获取列表（保留给外部触发列表刷新） */
   const getPageList = () => {
-    if (!context) return
-    if (update) context.emit('getPageList')
+    if (context) context.emit('getPageList')
   }
 
   return {

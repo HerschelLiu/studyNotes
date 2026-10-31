@@ -13,7 +13,7 @@ import { useConfirm, useError, useLoading } from '@/hooks/useTip'
 export interface UseSubmitOptions<TData, TError, TVariables extends any[], TContext>
   extends Omit<MutationOptions<TData, TError, TVariables, TContext>, 'mutationFn'> {
   /** 用于校验的表单 ref */
-  ELForm?: Ref<ComponentOptions | undefined>
+  ELForm?: Readonly<Ref<ComponentOptions | null | undefined>>
   /** 是否显示二次确认，默认 false */
   showConfirm?: boolean
   /** 二次确认的标题内容（接收与 apiFn 相同的多参数） */
@@ -104,6 +104,10 @@ export const useSubmit = <TData = unknown, TError = Error, TVariables extends an
       }
 
       return await mutateAsync(variables)
+    } catch (error) {
+      // 校验失败 / 接口错误：mutationFn 内部已处理 UI 提示（useError 或 ElMessage）
+      // 此处仅兜底吞掉，避免 Vue 事件处理器抛 "Unhandled error"
+      return
     } finally {
       state.busy = false
     }

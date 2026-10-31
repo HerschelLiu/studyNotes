@@ -2,6 +2,8 @@
   <el-form-item
     v-for="entry in entries"
     :key="entry.item.prop"
+    :prop="entry.item.prop"
+    :rules="entry.item.rules"
     :label="entry.merged || (entry.item.labelWidth ?? labelWidth) === 0 ? '' : entry.item.label"
     :label-width="entry.merged ? 0 : entry.item.labelWidth ?? labelWidth ?? ''">
     <div :class="['search-control', { 'merge-group': entry.merged }]">
@@ -29,7 +31,7 @@
       <component
         v-else
         :is="entry.control"
-        v-model.trim="query[entry.item.prop]"
+        v-model="query[entry.item.prop]"
         v-bind="entry.controlAttrs"
         :class="{ 'merge-group__control': entry.merged }"
         :style="entry.style">
@@ -60,7 +62,8 @@
   import { toValue, useSlots } from 'vue'
   import { useStyle, useUnit } from '@/hooks/useStyle'
 
-  import { definitionOf } from './controls'
+  import { controlOf } from './controls'
+  import { SEARCH_QUERY } from './controls/context'
 
   const props = withDefaults(defineProps<CommonSearchItemProps<T>>(), {
     type: 'split',
@@ -73,6 +76,9 @@
   const query = defineModel<T>({
     default: () => ({})
   })
+
+  /** 需要读写查询对象的控件（如 daterange 拆两字段）自行 inject，父组件不逐个透传 */
+  provide(SEARCH_QUERY, query)
 
   defineSlots<{
     /** options 中标记 slot 的项的控件区，按 prop 命名，如 #control-status */
@@ -138,7 +144,7 @@
     /** 选项数据，select 类控件使用 */
     options: Record<string, any>[]
     optionKey: string
-    optionLabel: string
+    optionLabel: string | ((option: Record<string, any>) => string)
   }
 
   interface DisplayEntry {
@@ -189,18 +195,17 @@
 
   /** 组装单个渲染项 */
   const toEntry = (item: CommonSearchItemOptions<T>, merged: boolean): DisplayEntry => {
-    const definition = definitionOf(item.type)
     const meta = metaOf(item)
 
     return {
       item,
       merged,
-      control: definition.component,
+      control: controlOf(item.type),
       controlAttrs: {
         controlProps: controlPropsOf(item),
         options: toValue(meta.data ?? []) as Record<string, any>[],
-        optionKey: String(meta.key ?? 'key'),
-        optionLabel: String(meta.label ?? 'label')
+        optionKey: meta.key ?? 'key',
+        optionLabel: meta.label ?? 'label'
       },
       style: useStyle({ width: useUnit(item.inputSize?.width ?? props.inputWidth) }),
     }
