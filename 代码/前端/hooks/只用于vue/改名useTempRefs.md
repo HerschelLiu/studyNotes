@@ -1,3 +1,7 @@
+# 改名useTempRefs
+
+> 常用组件 ref 集合（`ELTable`/`ELForm`…）
+
 ## 普通写法
 
 ```ts
@@ -56,7 +60,7 @@ export function useRefs<T = ComponentOptions>() {
 > </el-tab-pane>
 > ```
 >
-> 
+>
 
 ## vue3.5写法
 
@@ -122,7 +126,7 @@ export function useTempRefs<T = ComponentOptions, K extends RefKeys = never>(
 > | useTempRefs({ ELForm: 'myForm', ELTable: 'myTable' }) | { ELForm: Ref<T>, ELTable: Ref<T> } |
 > |                     useTempRefs()                     |                 {}                  |
 >
-> 
+>
 
 ## vue3.5兼容vueUse(ELList使用TemplateRefsList)
 
@@ -202,4 +206,4 @@ export function useTempRefs<T = ComponentOptions, K extends string = string>(
 > const { ELList } = useTempRefs<InstanceType<typeof TheList>>('ELList')
 > ```
 >
->  
+>

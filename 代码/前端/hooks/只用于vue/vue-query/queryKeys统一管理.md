@@ -1,3 +1,7 @@
+# queryKeys统一管理
+
+> queryKeys 的组织方式
+
 `src/constants/queryKeys.ts`
 
 ```ts
@@ -52,8 +56,6 @@ export const queryKeys = {
 
 ```
 
-
-
 使用
 
 ```ts
@@ -71,4 +73,3 @@ const useGetListCompileFlow = () => {
   })
 }
 ```
-

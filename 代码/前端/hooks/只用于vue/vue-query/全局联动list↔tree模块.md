@@ -1,10 +1,12 @@
-### 场景
+# 全局联动 list ↔ tree 模块
+
+## 场景
 
 在实际场景中，某个编辑抽屉使用的是其主列表的数据但是格式不同（如主列表为表格，编辑中下拉选项用的是树），此时主列表数据有变更，详情中的树数据无法更新。**因为**，他们是不同接口，queryKey不同，vue-query 看到的是**两条独立缓存记录**，不知道 list 和 tree 业务上是"同一份数据的不同形态"，所以 invalidate list 时 tree 不动，这层"业务关联"必须由代码去关联；
 
 **注意：** 都在hook`useTansQuery`中，此文件仅作说明
 
-### 代码
+## 代码
 
 修改方案：
 
@@ -85,8 +87,6 @@ app.use(VueQueryPlugin, { queryClient })
 app.mount('#app')
 ```
 
-
-
 > app.use还能传入queryClient，传入的作用是什么？还能否单独使用const queryClient = new QueryClient()？
 >
 > 这是 vue-query 的插件注入机制问题，不需要改代码，直接解释。
@@ -117,12 +117,12 @@ app.mount('#app')
 > // ① 推荐：通过插件注入（当前写法）
 > const queryClient = new QueryClient()
 > app.use(VueQueryPlugin, { queryClient })
-> 
+>
 > // ② 等价写法：自己 provide，不用插件传参
 > import { VUE_QUERY_CLIENT } from '@tanstack/vue-query'
 > const queryClient = new QueryClient()
 > app.provide(VUE_QUERY_CLIENT, queryClient)
-> 
+>
 > // ③ 纯模块场景：脱离组件树直接用（如路由守卫、pinia store 外部工具）
 > //    可以直接调 queryClient.invalidateQueries(...)，
 > //    但前提仍是它就是被 provide 的那个实例，否则缓存不共享
@@ -138,7 +138,7 @@ app.mount('#app')
 >
 > ```ts
 > import { useQueryClient } from '@tanstack/vue-query'
-> 
+>
 > // 组件 setup、defineStore 的 setup 写法中都可以
 > const queryClient = useQueryClient()
 > queryClient.invalidateQueries({ queryKey: [...] })
@@ -151,13 +151,11 @@ app.mount('#app')
 > ```ts
 > // src/query/client.ts
 > import { QueryClient } from '@tanstack/vue-query'
-> 
+>
 > export const queryClient = new QueryClient()
 > ```
 >
-> 
-
-
+>
 
 > **`subscribe(event => { ... })`**
 >
@@ -194,9 +192,9 @@ app.mount('#app')
 >   - `'active'`（默认）：只 refetch 当前有 active observer 的 query（组件还挂着 `useQuery`）
 >   - 'all'： 不管有没有 observer，都强制 refetch 所有匹配的 query（包括 inactive 的缓存记录）
 
-### `queryCache.subscribe(event: QueryCacheNotifyEvent) => void)`event字段说明
+## `queryCache.subscribe(event: QueryCacheNotifyEvent) => void)`event字段说明
 
-##### `event.typ`
+### `event.typ`
 
 `event.type` 是 **QueryCache 缓存层面的事件类型**，只有三种：
 
@@ -223,7 +221,9 @@ app.mount('#app')
 | `'revert'`     | 查询状态被回退/恢复                                          |
 | `undefined`    | 某些通知没有携带 action，比如 `'added'` / `'removed'` 或者某些手动更新 |
 
-# gcTime 和 staleTime
+## gcTime 和 staleTime
+
+> list ↔ tree 联动模块
 
 | 配置        | 控制什么   | 默认值                  | 一句话解释                                                   |
 | ----------- | ---------- | ----------------------- | ------------------------------------------------------------ |

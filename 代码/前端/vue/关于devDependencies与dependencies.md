@@ -1,3 +1,5 @@
+# 关于devDependencies与dependencies
+
 一直在纠结一个npm安装的包依赖管理的问题。是这样的：
 
 我们在使用npm install 安装模块或插件的时候，有两种命令把他们写入到 package.json 文件里面去，他们是：--save-dev或--save
@@ -7,8 +9,6 @@
 develop（开发）的简写。
 
 所以它们的区别在 package.json 文件里面体现出来的就是，使用 --save-dev 安装的 插件，被写入到 devDependencies 域里面去，而使用 --save 安装的插件，则是被写入到 dependencies 区块里面去。
-
-
 
 **那 package.json 文件里面的 devDependencies  和 dependencies 对象有什么区别呢？**
 

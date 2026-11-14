@@ -1,8 +1,12 @@
+# useStorage
+
+> localStorage 响应式封装（ref/watch + base64）+ `## 微信小程序` 段
+
 ## JS
 
 `npm i js-base64`
 
-[https://github.com/dankogai/js-base64#readme](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html)
+<https://github.com/dankogai/js-base64#readme>
 
 ```ts
 import { decode, encode } from 'js-base64'
@@ -41,7 +45,7 @@ export function useStorage<T = any>(key: string, target = 'null'): Ref<T> {
 
 ```
 
-##  微信小程序
+## 微信小程序
 
 ```ts
 import { decode, encode } from '../module/base64.js'
@@ -78,4 +82,3 @@ export const useStorage = new Proxy(storage, {
 })
 
 ```
-

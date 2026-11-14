@@ -1,3 +1,7 @@
+# useState
+
+> 页面状态：busy/loading/request/handleCancel，依赖 EP Loading
+
 ## VUE
 
 需要elementPlus
@@ -89,4 +93,3 @@ export function useState<T = object>(object?: T): BaseState & T {
 }
 
 ```
-

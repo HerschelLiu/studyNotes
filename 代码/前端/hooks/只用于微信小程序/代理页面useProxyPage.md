@@ -1,3 +1,7 @@
+# 代理页面useProxyPage
+
+> 页面代理：把原生 `Page` 包装成支持 computed、全局数据、URL 参数的写法。
+
 ```ts
 /* eslint-disable prefer-rest-params */
 
@@ -151,4 +155,3 @@ useProxyPage()
 
 App({...})
 ```
-

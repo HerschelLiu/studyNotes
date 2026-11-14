@@ -1,3 +1,5 @@
+# 使用nodejs写个接口
+
 1. 使用`npm init`生成配置文件
 
 2. 下载模块：mysql(主要)、express(主要)、body-parser( `body-parser`是非常常用的一个`express`中间件，作用是对post请求的请求体进行解析 )、cookie-parser、cors（ 解决跨域问题 ）、multer
@@ -7,17 +9,17 @@
    ```js
    const express = require('express')
    const app = express();
-   
+
    // 解决跨域
    const cors = require('cors');
    app.use(cors())
-   
+
    const server = app.listen(88, () => {
        console.log('----------服务启动----------\n');
        console.log(`----------请访问http://${server.address().address}:${server.address().port}----------\n`);
    });
-   
-   app.all('*', (req, res, next) => { 
+
+   app.all('*', (req, res, next) => {
        if (req.body.login) {
            next(); // 如果没有它，就不会运行下面的接口
        } else {
@@ -47,14 +49,14 @@
            });
        });
    });
-   
+
    /*
     * res.json这个方法是以json对象的形式返回去
     * res.send以页面的方式返回去
     * res.download以文件的方式返回去，前端请求会下载此文件
    */
    ```
-   
+
    package.json的scripts字段是 自己定义脚本命令 ，可以增加`"start":"node index.js"`,可以使用hotnode模块，可以让node程序热更新`npm install -g hotnode`,必须是全局安装，之后改成`"start":"hotnode index.js"`,然后就可以使用`npm start`就可以
 
 ```js
@@ -63,9 +65,9 @@ app.use(bodyParser.json()); // json请求
 app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
 ```
 
- post请求要借助body-parser模块。使用后，将可以用req.body得到参数 
+ post请求要借助body-parser模块。使用后，将可以用req.body得到参数
 
-4.  定义静态资源路径文件夹(在index.js同级目录下创建一个static的放置静态资源的目录) 
+4.  定义静态资源路径文件夹(在index.js同级目录下创建一个static的放置静态资源的目录)
 
    ```js
    //定义静态资源路径文件夹
@@ -97,7 +99,7 @@ app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
    ```js
    let pool
    repool();
-   
+
    function repool() { // 断线重连机制
        pool = mysql.createPool({
            ...options,
@@ -110,12 +112,12 @@ app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
            err.code === 'PROTOCOL_CONNECTION_LOST' && setTimeout(repool, 2000)
        });
    }
-   
+
    app.get('/login', (req, res) => {
        pool.query('SELECT * FROM students', (err, result) => {
            res.json()
        }) // 直接使用
-       
+
        pool.getConnection((err, conn) => { // 从连接池中拿一个连接
            conn.query('SELECT * FROM students', (err, result) => {
                res.json()
@@ -123,8 +125,6 @@ app.use(bodyParser.urlencoded({ extended: false })); // 表单请求
            conn.release(); // 释放连接池
        })
    });
-   
+
    // 用完就要释放给别的请求使用，也可以直接使用连接池，具体区别还不知道，猜应该是直接使用连接池就是这个线程专门为这个请求服务，不用别的也不释放，可以用于常用接口，可以减少取连接池的操作。
    ```
-
-   

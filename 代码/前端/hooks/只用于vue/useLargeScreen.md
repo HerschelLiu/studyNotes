@@ -1,3 +1,7 @@
+# useLargeScreen
+
+> 大屏等比缩放
+
 ```ts
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 

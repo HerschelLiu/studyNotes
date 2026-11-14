@@ -1,4 +1,8 @@
-### VUE
+# useModal
+
+> 多弹窗显隐状态管理
+
+## VUE
 
 ```ts
 import { computed, reactive } from 'vue'
@@ -45,4 +49,3 @@ const { handleShowModal, handleCloseModal, modalList } = useModal({
   showCms: false
 })
 ```
-

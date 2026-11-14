@@ -1,3 +1,7 @@
+# useTanStackQuery
+
+> queryClient 配置、缓存联动
+
 `useTansQuery`
 
 ```ts
@@ -106,8 +110,6 @@ export const setupQueryCacheLinks = (client: QueryClient = queryClient) => {
 
 ```
 
-
-
 `main.ts`
 
 ```ts
@@ -119,4 +121,3 @@ import { queryClient, setupQueryCacheLinks } from '@/hooks/useTanStackQuery'
 setupQueryCacheLinks()
 app.use(VueQueryPlugin, { queryClient })
 ```
-

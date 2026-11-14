@@ -1,3 +1,5 @@
+# react-native布局
+
 ## 宽度单位和像素密度
 
 react的宽度不支持百分比，设置宽度时不需要带单位 `{width: 10}`
@@ -39,4 +41,3 @@ react 宽度基于`pt`为单位, 可以通过`Dimensions` 来获取宽高，`Pix
 
 1. 定位相对于父元素，父元素不用设置position：relative|absolute也行
 2. padding 设置在Text元素上的时候会存在bug。所有padding变成了marginBottom
-

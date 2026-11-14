@@ -1,3 +1,7 @@
+# settings
+
+> uni-app 全局配置（主题、单位、导航栏等），配合 `useStyle` / `useUnit` 使用。
+
 ## uniapp
 
 ```ts
@@ -124,8 +128,6 @@ export default settings
 
 ```
 
-
-
 ## 微信小程序
 
 ```ts
@@ -236,4 +238,3 @@ const settings = reactive({
 export default settings
 
 ```
-

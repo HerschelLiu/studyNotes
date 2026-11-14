@@ -1,8 +1,12 @@
+# useCalcHeight
+
+> 自适应高度（rAF + ResizeObserver），含 vueUse 版/原生版
+
 **rAF** 是 **`requestAnimationFrame`** 的缩写，它是浏览器提供的一个原生 API，用于在**下一次浏览器重绘之前**执行你指定的回调函数。
 
 简单说，rAF 就是告诉浏览器：“我要执行一段动画逻辑，请你在**下一帧渲染前**调用我这个函数。”
 
-### **vueUse**
+## **vueUse**
 
 ```ts
 import type { MaybeRefOrGetter } from 'vue'
@@ -207,9 +211,7 @@ export const useCalcHeight = <T extends HTMLElement | object | null | undefined>
 >
 > 组件卸载时 VueUse 自动 cancelAnimationFrame，不用手写 onBeforeUnmount。
 
-
-
-### **无vueUse**
+## **无vueUse**
 
 ```ts
 import type { MaybeRefOrGetter, Ref } from 'vue'
@@ -381,4 +383,3 @@ export const useCalcHeight = <T extends HTMLElement | object | null | undefined>
 }
 
 ```
-

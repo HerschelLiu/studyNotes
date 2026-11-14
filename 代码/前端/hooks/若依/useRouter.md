@@ -1,4 +1,6 @@
+# useRouter
 
+> 若依框架路由封装：返回上一页并关闭当前页签等。
 
 ```ts
 import router from '@/router'
@@ -32,4 +34,3 @@ export const usePageBack = async () => {
 }
 
 ```
-

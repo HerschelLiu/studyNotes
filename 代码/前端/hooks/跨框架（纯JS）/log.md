@@ -1,3 +1,7 @@
+# log
+
+> 带样式的 console 美化（Vite `import.meta.env` 判断）
+
 ```ts
 // 美化打印实现方法
 const prettyLog = () => {
@@ -100,4 +104,3 @@ const prettyLog = () => {
 // 创建打印对象
 const log = prettyLog();
 ```
-

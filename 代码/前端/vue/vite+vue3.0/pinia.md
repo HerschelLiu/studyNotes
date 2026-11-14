@@ -1,3 +1,5 @@
+# pinia
+
 Pinia即支持 Vue2 也支持 Vue3
 
 **Pinia 核心特性：
@@ -6,11 +8,11 @@ Pinia即支持 Vue2 也支持 Vue3
 
 - `Actions` 支持同步和异步
 
-- 没有模块的嵌套结构 
+- 没有模块的嵌套结构
 
 - - Pinia 通过设计提供扁平结构，就是说每个 store 都是互相独立的，谁也不属于谁，也就是扁平化了，更好的代码分割且没有命名空间。当然你也可以通过在一个模块中导入另一个模块来隐式嵌套 store，甚至可以拥有 store 的循环依赖关系
 
-- 更好的 `TypeScript` 支持 
+- 更好的 `TypeScript` 支持
 
 - - 不需要再创建自定义的复杂包装器来支持 TypeScript 所有内容都类型化，并且 API 的设计方式也尽可能的使用 TS 类型推断
 
@@ -18,11 +20,11 @@ Pinia即支持 Vue2 也支持 Vue3
 
 - 无需手动添加 store，它的模块默认情况下创建就自动注册的
 
-- Vue2 和 Vue3 都支持 
+- Vue2 和 Vue3 都支持
 
 - - 除了初始化安装和SSR配置之外，两者使用上的API都是相同的
 
-- 支持 `Vue DevTools` 
+- 支持 `Vue DevTools`
 
 - - 跟踪 actions, mutations 的时间线
   - 在使用了模块的组件中就可以观察到模块本身
@@ -30,7 +32,7 @@ Pinia即支持 Vue2 也支持 Vue3
   - 在 Vue2 中 Pinia 会使用 Vuex 的所有接口，所以它俩不能一起使用
   - 但是针对 Vue3 的调试工具支持还不够完美，比如还没有 time-travel 功能
 
-- 模块热更新 
+- 模块热更新
 
 - - 无需重新加载页面就可以修改模块
   - 热更新的时候会保持任何现有状态
@@ -68,7 +70,7 @@ app.mount('#app')
 import { defineStore } from 'pinia'
 export const userStore = defineStore('user', {
     state: () => {
-        return { 
+        return {
             count: 1,
             arr: []
         }
@@ -164,16 +166,16 @@ const user_store = userStore()
 const handleClick = () => {
     // 方法一
     user_store.count++
-    
+
     // 方法二，需要修改多个数据，建议用 $patch 批量更新，传入一个对象
     user_store.$patch({
         count: user_store.count1++,
         // arr: user_store.arr.push(1) // 错误
         arr: [ ...user_store.arr, 1 ] // 可以，但是还得把整个数组都拿出来解构，就没必要
     })
-    
+
     // 使用 $patch 性能更优，因为多个数据更新只会更新一次视图
-    
+
     // 方法三，还是$patch，传入函数，第一个参数就是 state
     user_store.$patch( state => {
         state.count++
@@ -218,7 +220,7 @@ const handleClick = () => {
 import { defineStore } from 'pinia'
 import { userStore } from './user'
 export const chatStore = defineStore('chat', {
-    actions: { 
+    actions: {
         someMethod(userItem){
             userItem.name = '新的名字'
             const user_store = userStore()
@@ -239,7 +241,7 @@ export const userStore = defineStore('user', {
             list: []
         }
     },
-    actions: { 
+    actions: {
         updateUserName(userItem){
             const user = this.list.find(item => item.id === userItem.id)
             if(user){

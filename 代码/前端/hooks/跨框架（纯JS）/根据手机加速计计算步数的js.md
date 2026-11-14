@@ -1,3 +1,7 @@
+# 根据手机加速计计算步数的js
+
+> H5 加速度计计步算法
+
 ```js
 /*
  * valueNum - 存放三轴数据(x,y,z)的个数
@@ -49,7 +53,7 @@ var valueNum = 5,
 function counterStep(x, y, z) {
     var _sqrt = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2)),
         _average = _sqrt * g;
-    
+
     detectorNewStep(_average);
 }
 
@@ -77,11 +81,11 @@ function detectorNewStep(_values) {
                 //增加步数
                 thisSteps++;
             }
-    
+
             if (Number(timeOfNow) - Number(timeOfLastPeak) >= 200 && (Number(peakOfWave) - Number(valleyOfWave) >= Number(initialValue))) {
                 timeOfThisPeak = timeOfNow;
                 var _diffWaveVal = Number(peakOfWave) - Number(valleyOfWave);
-    
+
                 ThreadValue = peak_Valley_Thread(_diffWaveVal);
             }
         }
@@ -106,7 +110,7 @@ function detectorNewStep(_values) {
  */
 function detectorPeak(_newValue, _oldValue){
     lastStatus = isDirectionUp;
-   
+
     if (_newValue >= _oldValue) {
         isDirectionUp = true;
         continueUpCount++;

@@ -1,3 +1,5 @@
+# nrm
+
 ## 镜像源管理工具
 
 nrm(npm registry manager )是npm的镜像源管理工具，有时候国外资源太慢，使用这个就可以快速地在 npm 源间切换
@@ -28,7 +30,7 @@ nrm(npm registry manager )是npm的镜像源管理工具，有时候国外资源
 
 你还可以通过 nrm test 测试相应源的响应时间。
 
-> nrm test npm                                                               
+> nrm test npm
 
 ------
 

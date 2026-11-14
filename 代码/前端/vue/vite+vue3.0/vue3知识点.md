@@ -1,3 +1,5 @@
+# vue3知识点
+
 ## ref、reactive、toRef、toRefs的区别
 
 * reactive用于为对象添加响应式状态`const state = reactive({.count: 0 })`
@@ -16,16 +18,14 @@
   * 获取数据值的时候需要加.value
   * toRef后的ref数据不是原始数据的拷贝，而是引用，改变结果数据的值也会同时改变原始数据
 
-  ```vue
+  ```js
   props: [title]
-  
+
   setup (props) {
   	const { myTitle } = toRef(props, 'title')
   	console.log(myTitle.value)
   }
   ```
-
-  
 
 * toRefs用于将响应式对象转换为结果对象，其中结果对象的每个属性都是指向原始对象相应属性的ref。常用于es6的解构赋值操作，因为在对一个响应式对象直接解构时解构后的数据将不再有响应式，而使用toRefs可以方便解决这一问题。**如果 `title` 是可选的 prop，则传入的 `props` 中可能没有 `title` 。在这种情况下，`toRefs` 将不会为 `title` 创建一个 ref 。你需要使用 `toRef` 替代它**
 
@@ -33,15 +33,14 @@
   * toRefs后的ref数据不是原始数据的拷贝，而是引用，改变结果数据的值也会同时改变原始数据
   * 作用其实和 toRef 类似，只不过 toRef 是一个个手动赋值，而 toRefs 是自动赋值。
 
-  ```vue
+  ```js
   props: [title]
-  
+
   setup (props) {
   	const { myTitle } = toRefs(props)
   	console.log(myTitle.value)
   }
   ```
-
 
 ## 何时使用ref、reacive、toRefs、toRef
 

@@ -1,3 +1,7 @@
+# filterByQuery
+
+> 按请求 query 过滤数组（field/fuzzy 配置），后端分页场景
+
 ```ts
 type FilterConfig = Record<string, { field?: string; fuzzy?: boolean }>
 /**
@@ -34,4 +38,3 @@ export const filterByQuery = <T extends Record<string, any>>(data: T[], query: R
   )
 
 ```
-

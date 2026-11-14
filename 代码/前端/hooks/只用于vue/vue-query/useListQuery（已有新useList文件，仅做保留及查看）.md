@@ -1,3 +1,7 @@
+# useListQuery（已有新useList文件，仅做保留及查看）
+
+> 旧版列表查询，仅保留查阅
+
 `useListQuery`
 
 ```ts

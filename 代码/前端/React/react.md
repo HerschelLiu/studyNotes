@@ -1,4 +1,23 @@
-[TOC]
+# react
+
+## 目录
+
+- [推荐的工具链](#推荐的工具链)
+- [~~Create React App~~（弃用）](#create-react-app弃用)
+- [注意](#注意)
+- [组件&Props](#组件props)
+- [state&生命周期](#state生命周期)
+- [事件处理](#事件处理)
+- [条件渲染](#条件渲染)
+- [列表&key](#列表key)
+- [使用PropTypes进行类型检查](#使用proptypes进行类型检查)
+- [组件间通信](#组件间通信)
+- [css](#css)
+- [在react中，如何实现类似vue中的插槽](#在react中如何实现类似vue中的插槽)
+- [Hook](#hook)
+- [vite+react+TS](#vitereactts)
+- [推荐库](#推荐库)
+- [其他](#其他)
 
 ## 推荐的工具链
 
@@ -19,13 +38,9 @@
 >
 > 可以直接使用 [开始 | Vite 官方中文文档 (vitejs.cn)](https://vitejs.cn/vite3-cn/guide/#trying-vite-online)来创建
 
-
-
 当准备好部署到生产环境时，执行 `npm run build` 会在 `build` 文件夹内生成你应用的优化版本。
 
 由于react默认没有router功能，所以需要安装`react-router`、`react-router-dom`。
-
-
 
 ## 注意
 
@@ -131,7 +146,7 @@ class Clock extends React.Component {
     super(props);
     this.state = {name: 'React'};
   }
-    
+
   // 生命周期: will:函数在进入状态之前调用;did:函数在进入状态之后调用;
   // 挂载
   componentWillMount() {}
@@ -140,11 +155,10 @@ class Clock extends React.Component {
   componentDidUpdate(object prevProps, object prevState) {}
   // 卸载
   componentWillUnmount() {}
-  
-    
+
   // 特殊状态的处理函数
   // 已加载组件收到新的参数时调用
-  componentWillReceiveProps(object nextProps) {} 
+  componentWillReceiveProps(object nextProps) {}
   // 组件判断是否重新渲染时调用
   shouldComponentUpdate(object nextProps, object nextState) {}
 
@@ -170,7 +184,7 @@ class Clock extends React.Component {
   Activate Lasers
 </button>
 
-// React 
+// React
 <button onClick={activateLasers}>
   Activate Lasers
 </button>
@@ -253,9 +267,9 @@ function Mailbox(props) {
   return (
     <div>
       <h1>Hello!</h1>
-      {unreadMessages.length > 0 &&      
-          <h2>You have {unreadMessages.length} unread messages.</h2>     
-      }    
+      {unreadMessages.length > 0 &&
+          <h2>You have {unreadMessages.length} unread messages.</h2>
+      }
     </div>
   );
 }
@@ -462,12 +476,12 @@ MyComponent.propTypes = {
     color: PropTypes.string,
     fontSize: PropTypes.number
   }),
-  
+
   // An object with warnings on extra properties
   optionalObjectWithStrictShape: PropTypes.exact({
     name: PropTypes.string,
     quantity: PropTypes.number
-  }),   
+  }),
 
   // 你可以在任何 PropTypes 属性后面加上 `isRequired` ，确保
   // 这个 prop 没有被提供时，会打印警告信息。
@@ -502,8 +516,6 @@ MyComponent.propTypes = {
   })
 };
 ```
-
-
 
 ## 组件间通信
 
@@ -545,7 +557,7 @@ export default ChildComponent;
 
 可以使用预编译器，同样可以加`module`.
 
-module与普通 css 文件用法不同，css 文件可以直接引用，module 引入时需要规定名称`import [name] from 'xxx.module.css'`，使用时`[name].[类名]` 
+module与普通 css 文件用法不同，css 文件可以直接引用，module 引入时需要规定名称`import [name] from 'xxx.module.css'`，使用时`[name].[类名]`
 
 ### style-component
 
@@ -593,7 +605,7 @@ import { Layout } from 'antd'
 import CustomContent from './Content'
 
 const Container: React.FC = () => {
-  
+
   return (
     <>
       <Layout>
@@ -609,8 +621,6 @@ const Container: React.FC = () => {
 export default Container
 
 ```
-
-
 
 ```tsx
 // Content.tsx
@@ -636,10 +646,6 @@ const CustomContent: React.FC<Props> = ({ children }) => {
 export default CustomContent
 
 ```
-
-
-
-
 
 ## Hook
 
@@ -759,7 +765,7 @@ function FriendStatus(props) {
 
 > `useEffect(() => {}, [])`
 >
-> 传入空的依赖数组 `[]`，意味着该 hook 只在组件挂载时运行一次，并非重新渲染时       
+> 传入空的依赖数组 `[]`，意味着该 hook 只在组件挂载时运行一次，并非重新渲染时
 
 > **useEffect执行两次**
 >
@@ -788,9 +794,9 @@ function FriendStatus(props) {
 
  ```jsx
  import React, { useReducer } from 'react';
- 
+
  const initialState = { count: 0 };
- 
+
  function reducer(state, action) {
    switch (action.type) {
      case 'increment':
@@ -801,10 +807,10 @@ function FriendStatus(props) {
        throw new Error();
    }
  }
- 
+
  function Counter() {
    const [state, dispatch] = useReducer(reducer, initialState);
- 
+
    return (
      <div>
        Count: {state.count}
@@ -813,7 +819,7 @@ function FriendStatus(props) {
      </div>
    );
  }
- 
+
  ```
 
 在上面的示例中，我们定义了一个简单的计数器组件。初始状态为`{ count: 0 }`，并定义了一个`reducer`函数来处理状态的更新。当点击加号按钮时，会派发一个`{ type: 'increment' }`的操作给`dispatch`函数，从而触发状态的更新。
@@ -826,18 +832,18 @@ function FriendStatus(props) {
 >
 > ```jsx
 > import React, { useState } from 'react';
-> 
+>
 > function Counter() {
 >   const [count, setCount] = useState(0);
-> 
+>
 >   const increment = () => {
 >     setCount(count + 1);
 >   };
-> 
+>
 >   const decrement = () => {
 >     setCount(count - 1);
 >   };
-> 
+>
 >   return (
 >     <div>
 >       Count: {count}
@@ -846,7 +852,7 @@ function FriendStatus(props) {
 >     </div>
 >   );
 > }
-> 
+>
 > ```
 >
 > 使用`useState`的方式非常简单和直观，我们只需要定义一个状态变量`count`和两个更新函数`increment`和`decrement`。但是当状态逻辑变得复杂时，我们可能需要处理更多的状态和操作，这时使用`useState`可能会导致代码变得冗长和难以维护。
@@ -877,7 +883,7 @@ Hook 就是 JavaScript 函数，但是使用它们会有两个额外的规则：
 ```react
 import React, { useState, useEffect } from 'react';
 
-function useFriendStatus(friendID) {  
+function useFriendStatus(friendID) {
   const [isOnline, setIsOnline] = useState(null);
 
   function handleStatusChange(status) {
@@ -908,7 +914,6 @@ function FriendStatus(props) {
   return isOnline ? 'Online' : 'Offline';
 }
 
-
 function FriendListItem(props) {
   const isOnline = useFriendStatus(props.friend.id);
   return (
@@ -920,8 +925,6 @@ function FriendListItem(props) {
 ```
 
 这两个组件的 state 是完全独立的。Hook 是一种复用*状态逻辑*的方式，它不复用 state 本身。事实上 Hook 的每次*调用*都有一个完全独立的 state —— 因此你可以在单个组件中多次调用同一个自定义 Hook。
-
-
 
 自定义 Hook 更像是一种约定而不是功能。如果函数的名字以 “`use`” 开头并调用其他 Hook，我们就说这是一个自定义 Hook。 `useSomething` 的命名约定可以让我们的 linter 插件在使用 Hook 的代码中找到 bug。
 
@@ -1002,8 +1005,6 @@ function MyComponent() {
 > 类似于Vue中的计算属性。在React中，useMemo接收一个函数和一个依赖数组作为参数，函数返回的值会被缓存起来，只有依赖数组中的值发生变化时，才会重新计算。这与Vue中的计算属性类似，计算属性也是根据依赖的数据进行计算，只有依赖的数据发生变化时，才会重新计算。
 >
 > 因此，可以将useMemo看作是React中的计算属性，用来优化组件的性能。
-
-
 
 #### useCallback
 
@@ -1105,8 +1106,6 @@ export const codes: DataType[] = [
 ]
 
 ```
-
-
 
 ```tsx
 // CodeContext.tsx
@@ -1300,8 +1299,6 @@ pnpm add -D @types/node
 }
 ```
 
-
-
 #### vite配置
 
 ```tsx
@@ -1313,12 +1310,12 @@ import { resolve } from 'path'
 // https://vitejs.dev/config/
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd()) // vite配置文件使用env
-  
+
   // 全局变量
   const define = {}
   if (mode !== 'development') define['process.platform'] = 'win32'
   else define['process.env'] = process.env
-  
+
   return defineConfig({
     base: env.VITE_APP_BASE_URL, // 需要.env文件
     define,
@@ -1351,14 +1348,10 @@ export default ({ mode }) => {
 
 在使用vite生成tsconfig.json,tsconfig.app.json,tsconfig.node.json这三个文件,其中tsconfig.node.json是专门用来配置vite.config.ts文件的编译规则,tsconfig.app.json则是用来定义项目中其他文件的ts编译规则,后面两个文件最终会被引入到tsconfig.json中.
 
-
-
 > import.meta.env 和 loadEnv 的使用场景不同
 > import.meta.env 是在运行时获取环境变量的值，适用于应用程序代码中需要动态获取环境变量的场合。（配置文件中获取不到，因为配置文件是在构建时被读取！！！）
 >
 > 而 loadEnv 则是在构建时加载环境变量，适用于打包时（构建时）需要引用环境变量的场合。
-
-
 
 #### normalize.css
 
@@ -1371,13 +1364,9 @@ pnpm add normalize.css
 import 'normalize.css'
 ```
 
-
-
 #### sass
 
 > Vite 对 .scss, .sass, .less, .styl 和 .stylus 文件提供了内置支持。没有必要为它们安装特定的 Vite 插件，但必须安装相应的预处理器依赖。比如npm install -D sass
-
-
 
 ## 推荐库
 
@@ -1422,15 +1411,11 @@ classNames('a', arr); // => 'a b c'
 
 **ES6中使用动态类名**
 
-```bash
+```js
 let buttonType = 'primary';`
 
 classNames({ [`btn-${buttonType}`]: true });
 ```
-
-
-
-### `assembly-css`基础样式库
 
 ### [UnoCSS](https://alfred-skyblue.github.io/unocss-docs-cn/integrations/vite)
 
@@ -1470,13 +1455,13 @@ import 'virtual:uno.css'
 > // vite.config.js
 > import UnoCSS from 'unocss/vite'
 > import React from '@vitejs/plugin-react'
-> 
+>
 > export default {
 >   plugins: [React(), UnoCSS()]
 > }
 > ```
 >
-> 
+>
 
 #### 预设
 
@@ -1524,7 +1509,7 @@ export default defineConfig({
   // 第三种：使用 =
   <footer b-1 b-pink h-55px w="100%"></footer>
   // 温馨提示: ⚠️在页面布局的时候，不要随便设置 h="100%" 会有bug
-  
+
   // 使用 children- 的写法可以给子元素设置样式
    <ul children-px-24px >
      <li>😌</li>
@@ -1574,4 +1559,3 @@ export default defineConfig({
 ```bash
 npm i prop-types
 ```
-

@@ -1,3 +1,7 @@
+# useData
+
+> 小程序数据/样式工具（配合 `useStyle` / `useUnit`，含登录态判断）。
+
 ## 微信小程序
 
 ```ts
@@ -132,4 +136,3 @@ export function useUserInfo() {
 }
 
 ```
-

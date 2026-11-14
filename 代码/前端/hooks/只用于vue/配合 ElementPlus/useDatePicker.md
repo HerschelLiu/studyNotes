@@ -1,3 +1,7 @@
+# useDatePicker
+
+> 日期、时间选择器封装
+
 ## VUE
 
 **需搭配ElementPlus的ElDatePicker组件**
@@ -5,10 +9,10 @@
  ```ts
  import type { Ref } from 'vue'
  import { computed } from 'vue'
- 
+
  import { useDate, useDateFormat, useTimeStamp } from '@/hooks/useDate'
  import { isArray } from '@/hooks/useValidate'
- 
+
  /** 按需组装日期选择器 */
  interface PickerConfig {
    text: string
@@ -28,7 +32,7 @@
      }
    })
  }
- 
+
  /**
   * 快捷选项
   * @param isFuture false表示将要选择过往的时间，true表示将要选择未来的时间
@@ -109,7 +113,7 @@
    }
    return getPickerOptions(array)
  }
- 
+
  function getPickerOption(config: PickerConfig[]): any {
    return config.map(item => {
      return {
@@ -123,7 +127,7 @@
      }
    })
  }
- 
+
  /**
   * 快捷选项
   * @param isFuture false表示将要选择过往的时间，true表示将要选择未来的时间
@@ -204,7 +208,7 @@
    }
    return getPickerOption(array)
  }
- 
+
  /** 日期区间-search */
  export default (startTime: Ref<Key>, endTime: Ref<Key>) => {
    const rangeDate = computed({
@@ -221,12 +225,12 @@
        }
      }
    })
- 
+
    return {
      rangeDate
    }
  }
- 
+
  /** 日期区间-表单页 */
  export function useDatePickerByForm(form: Record<string, any>, startKey: string, endKey: string) {
    const rangeDate = computed({
@@ -243,11 +247,10 @@
        }
      }
    })
- 
+
    return {
      rangeDate
    }
  }
- 
- ```
 
+ ```

@@ -1,8 +1,12 @@
+# useClipboard
+
+> clipboard.js 复制（提示依赖 `useTip`）
+
 ## VUE
 
 `npm i clipboard`
 
-[https://clipboardjs.com](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html)
+<https://clipboardjs.com>
 
 ```tsx
 import Clipboard from 'clipboard'
@@ -36,4 +40,3 @@ export function handleClipboard(text: string, event: MouseEvent) {
 }
 
 ```
-

@@ -1,3 +1,7 @@
+# useImage
+
+> 图片能力：获取图片信息（宽高，用于 canvas 比例计算）、下载、保存到相册。
+
 ```ts
 /** 封装小程序获取图片信息-例如图片高度信息，用于canvas绘制比例计算 */
 export function useImageInfo(src: string): Promise<UniApp.GetImageInfoSuccessData> {
@@ -74,7 +78,7 @@ export const useSaveImageToPhotosAlbum = (img: string): Promise<void> => {
           title: '保存成功',
           icon: 'none',
         });
-        
+
         resolve()
       },
       fail: async () => {
@@ -89,7 +93,7 @@ export const useSaveImageToPhotosAlbum = (img: string): Promise<void> => {
             icon: 'none',
           });
         }
-        
+
         reject()
       },
       complete: () => {
@@ -100,4 +104,3 @@ export const useSaveImageToPhotosAlbum = (img: string): Promise<void> => {
 };
 
 ```
-

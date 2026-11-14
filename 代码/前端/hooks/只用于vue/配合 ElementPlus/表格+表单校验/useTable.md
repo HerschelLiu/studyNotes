@@ -1,4 +1,15 @@
-### `useTableHeight有vueUse`
+# useTable
+
+> 表格内表单校验、表格高度、合计行等工具。
+
+## 目录
+
+- [useTableHeight有vueUse](#usetableheight有vueuse)
+- [useTableHeight无vueUse](#usetableheight无vueuse)
+- [表格内嵌表单校验](#表格内嵌表单校验)
+- [表格合计](#表格合计)
+
+## `useTableHeight有vueUse`
 
 ```ts
 import type { Ref, VNode } from 'vue'
@@ -139,9 +150,7 @@ export const useTableSummary = <T extends Record<string, any>>(options: UseTable
 
 ```
 
-
-
-### `useTableHeight无vueUse`
+## `useTableHeight无vueUse`
 
 ```ts
 import type { Ref } from 'vue'
@@ -219,7 +228,7 @@ export const useTableHeight = (targetRef: Ref<object | null | undefined>, bottom
 >
 > 补充：普通页面里表格随页面一起挂载，走的是 `onMounted(() => nextTick(calcHeight))` 这条路径；`watch + post` 专门覆盖抽屉/弹窗 `destroy-on-close` 懒渲染、表格晚于宿主组件挂载的场景，两者互补。
 
-### 表格内嵌表单校验
+## 表格内嵌表单校验
 
 ```ts
 /**
@@ -276,17 +285,15 @@ export const useTableForm = <T extends Record<string, any>>(cellRules: T) => {
 >     :label="col.label"
 >     :required="isEdit" />
 > </template>
-> 
+>
 > <script lang="ts" setup>
 > const { RequiredHeader } = useTableForm(cellRules)
 > </script>
 > ```
 >
-> 
+>
 
-
-
-### 表格合计
+## 表格合计
 
 ```ts
 /** 合计单元格自定义输出上下文 */
@@ -358,4 +365,4 @@ export const useTableSummary = <T extends Record<string, any>>(options: UseTable
 > })
 > ```
 >
-> 
+>

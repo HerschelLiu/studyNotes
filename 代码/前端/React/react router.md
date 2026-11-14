@@ -1,3 +1,5 @@
+# react router
+
 以 vite 生成项目为例
 
 ## 开始
@@ -21,7 +23,7 @@ const { Content } = Layout
 const Page404: React.FC = () => {
   const error = useRouteError()
   console.error(error)
-  
+
   return (
     <>
       <Content>
@@ -40,10 +42,6 @@ const Page404: React.FC = () => {
 export default Page404
 
 ```
-
-
-
-
 
 `src/router/index.tsx`
 
@@ -86,4 +84,3 @@ createRoot(document.querySelector('#root') as HTMLElement).render(
 )
 
 ```
-

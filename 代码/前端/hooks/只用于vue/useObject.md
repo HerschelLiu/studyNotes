@@ -1,4 +1,8 @@
-#### 通用文件`common.ts`
+# useObject
+
+> 对象工具：纯 JS 深拷贝/空值清理 + Vue 响应式合并/取值（`useAssign`/`useValue`/`useReactive`）
+
+## 通用文件`common.ts`
 
 ```ts
 /** 普通对象（排除数组、Date、Map、ref 等） */
@@ -7,9 +11,7 @@ export const isPlainObject = (value: unknown): value is Record<string, any> =>
 
 ```
 
-
-
-#### 深拷贝`useClone.ts`
+## 深拷贝`useClone.ts`
 
 ```ts
 import { isPlainObject } from './common'
@@ -29,9 +31,7 @@ export function useClone<T>(val: T): T {
 
 ```
 
-
-
-#### 对象字段合并`useAssign.ts`
+## 对象字段合并`useAssign.ts`
 
 ```ts
 import type { MaybeRefOrGetter } from 'vue'
@@ -70,9 +70,7 @@ export function useAssign<T extends object>(target: T, source?: MaybeRefOrGetter
 
 ```
 
-
-
-#### 递归删除对象中的某些属性`useCleanObject.ts`
+## 递归删除对象中的某些属性`useCleanObject.ts`
 
 ```ts
 import { isPlainObject } from './common'
@@ -99,9 +97,7 @@ export function useCleanObject<T extends object>(target: T, match: unknown[] = [
 
 ```
 
-
-
-#### 判断对象字段是否有值`useHasValue.ts`
+## 判断对象字段是否有值`useHasValue.ts`
 
 ```ts
 import type { ComputedRef, MaybeRefOrGetter } from 'vue'
@@ -136,9 +132,7 @@ export function useHasValue<T extends object>(
 
 ```
 
-
-
-#### 清理对象中空值属性（`null` / `undefined` / 自定义值）按照值删除）空的 `{}` / `[]` 会保留`useCleanObject.ts`
+## 清理对象中空值属性（`null` / `undefined` / 自定义值）按照值删除）空的 `{}` / `[]` 会保留`useCleanObject.ts`
 
 ```ts
 import { isPlainObject } from './common'
@@ -165,9 +159,7 @@ export function useCleanObject<T extends object>(target: T, match: unknown[] = [
 
 ```
 
-
-
-#### 批量清理对象中的属性（按照key删除）`useDeleteObjectKey.ts`
+## 批量清理对象中的属性（按照key删除）`useDeleteObjectKey.ts`
 
 ```ts
 import { isPlainObject } from './common'
@@ -187,9 +179,7 @@ export function useDeleteObjectKey<T>(arg: T, deleteKeys: string[]): T {
 
 ```
 
-
-
-#### 清理对象中无效值的属性（**按有效性**（`isHaveValue`），会清掉 `''`、`null`、`undefined`、空数组、空对象，保留 `0` 和 `false`）`useValue.ts`
+## 清理对象中无效值的属性（**按有效性**（`isHaveValue`），会清掉 `''`、`null`、`undefined`、空数组、空对象，保留 `0` 和 `false`）`useValue.ts`
 
 ```ts
 import { isHaveValue } from '@/hooks/useValidate'
@@ -214,9 +204,7 @@ export function useValue<T>(object: T): T {
 
 ```
 
-
-
-#### 创建响应对象和清除功能`useReactive.ts`
+## 创建响应对象和清除功能`useReactive.ts`
 
 ```ts
 import { useClone } from './useClone'
@@ -240,9 +228,7 @@ export function useReactive<T extends object>(initial: T): [T, () => void] {
 
 ```
 
-
-
-#### `index.ts`
+## `index.ts`
 
 ```ts
 /**
@@ -258,4 +244,3 @@ export * from './useDeleteObjectKey'
 export * from './useCleanObject'
 
 ```
-

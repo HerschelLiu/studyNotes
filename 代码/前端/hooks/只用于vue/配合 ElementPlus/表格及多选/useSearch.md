@@ -1,3 +1,7 @@
+# useSearch
+
+> 列表搜索态：克隆查询条件、搜索/重置、分页复位。
+
 ```ts
 import type { PropType } from 'vue'
 import { nextTick, reactive, toRefs, watch } from 'vue'
@@ -122,19 +126,19 @@ export function useSearch<T>(props: any, context: { emit: (event: any, ...args: 
 >     </template>
 >   </comp-fixed-header>
 > </template>
-> 
+>
 > <script lang="ts" setup>
 > import { defineCheckAllEmits } from '@/hooks/useCheckAll'
 > import { useIcon } from '@/hooks/useIcon'
 > import { defineSearchEmits, defineSearchProps, useSearch } from '@/hooks/useSearch'
-> 
+>
 > import type { RequestList } from '../index.vue'
-> 
+>
 > const props = defineProps({
 >   /** 定义搜索的基础参数 */
 >   ...defineSearchProps<RequestList>()
 > })
-> 
+>
 > const emit = defineEmits([
 >   /** 定义搜索的基础emits */
 >   ...defineSearchEmits(),
@@ -142,16 +146,16 @@ export function useSearch<T>(props: any, context: { emit: (event: any, ...args: 
 >   ...defineCheckAllEmits(),
 >   'create'
 > ])
-> 
+>
 > /** 搜索基础数据 */
 > const { query, handleSearch, handleReset } = useSearch<RequestList>(props, { emit })
-> 
+>
 > /** 新增 */
 > const handleCreate = () => {
 >   emit('create')
 > }
 > </script>
-> 
+>
 > ```
 >
-> 
+>

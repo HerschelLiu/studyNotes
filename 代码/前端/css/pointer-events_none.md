@@ -1,3 +1,5 @@
+# pointer-events_none
+
 [转自](https://www.cnblogs.com/zichi/p/9068481.html)
 
 `pointer-events: none` 真是个神奇的属性。

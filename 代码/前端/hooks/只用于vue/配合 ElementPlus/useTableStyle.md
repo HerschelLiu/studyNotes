@@ -1,3 +1,7 @@
+# useTableStyle
+
+> 表格样式
+
 ```ts
 import type { CSSProperties } from 'vue'
 

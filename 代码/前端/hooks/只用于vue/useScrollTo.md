@@ -1,3 +1,7 @@
+# useScrollTo
+
+> **纯 DOM**（requestAnimationFrame 平滑滚动），可移到跨框架
+
 ## JS
 
 ```ts
@@ -80,4 +84,3 @@ export const useScrollTo = (nodes: HTMLElement | null = null, to: number, durati
 }
 
 ```
-

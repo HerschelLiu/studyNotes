@@ -1,3 +1,7 @@
+# useString
+
+> 驼峰↔中划线、随机串、字节长度、随机密码
+
 ```ts
 // 驼峰转中横线的方法
 export const useLineString = (str: string) => {
@@ -87,4 +91,3 @@ export function useNum2Chinese(num: number | string | bigint): string {
   return sign + intPart + (decStr ? '点' + [...decStr].map(d => digits[+d]).join('') : '')
 }
 ```
-

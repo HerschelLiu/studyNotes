@@ -1,3 +1,7 @@
+# useWatchElement
+
+> **纯 DOM**（MutationObserver 监听元素挂载/移除），可移到跨框架
+
 ```ts
 /**
  * DOM 挂载监听
@@ -40,4 +44,3 @@ const useWatchElement = <T extends Element>(event: 'alway' | 'enter' | 'leave', 
 export default useWatchElement
 
 ```
-

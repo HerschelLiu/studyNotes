@@ -1,3 +1,5 @@
+# svg-icon
+
 ```vue
 <template>
   <svg :style="useStyle({ width, height })" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="svg-icon">
@@ -45,4 +47,3 @@ const symbolId = computed(() => `#${props.prefix}-${useLineString(props.name)}`)
 </script>
 
 ```
-

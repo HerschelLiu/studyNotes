@@ -1,8 +1,10 @@
+# useMitt
+
+> mitt 全局事件总线（单例）
+
 ```bash
 npm i mitt
 ```
-
-
 
 ```js
 import mitt from 'mitt';
@@ -21,7 +23,7 @@ export const useMitt = (nameOrMap, callback) => {
   // 处理事件注册逻辑
   const registerEvents = () => {
     if (!nameOrMap) return; // 无参数时不注册具体事件
-    
+
     if (typeof nameOrMap === 'string') {
       if (typeof callback === 'function') {
         globalEmitter.on(nameOrMap, callback);
@@ -41,7 +43,7 @@ export const useMitt = (nameOrMap, callback) => {
   // 处理事件移除逻辑
   const unregisterEvents = () => {
     if (!nameOrMap) return; // 无参数时不执行移除
-    
+
     if (typeof nameOrMap === 'string') {
       if (typeof callback === 'function') {
         globalEmitter.off(nameOrMap, callback);
@@ -70,7 +72,7 @@ export const useMitt = (nameOrMap, callback) => {
 
 示例1：字符串事件名 + 回调函数
 
-```js
+```vue
 <script setup>
 import { useMitt } from '@/hooks/useMitt';
 
@@ -89,7 +91,7 @@ const handleSubmit = () => {
 
 示例2：事件映射对象（推荐新用法）
 
-```js
+```vue
 <script setup>
 import { useMitt } from '@/hooks/useMitt';
 
@@ -114,4 +116,3 @@ const createNewOrder = () => {
 };
 </script>
 ```
-

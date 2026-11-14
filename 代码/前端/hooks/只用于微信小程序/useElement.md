@@ -1,3 +1,7 @@
+# useElement
+
+> 获取 wxml 节点信息（位置、尺寸）。
+
 ```ts
 import { isArray } from './useValidate'
 
@@ -28,4 +32,3 @@ export function useElementByComponent(this: WxComponent, id: string): Promise<Re
 }
 
 ```
-

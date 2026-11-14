@@ -1,8 +1,10 @@
-## node通过exe文件安装的node，直接去官网下最新包安装就好
+# node与cnpm安装和升级
+
+> node通过exe文件安装的node，直接去官网下最新包安装就好
 
 ## 安装cnpm（淘宝镜像）
 
-```
+```bash
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 ```
 

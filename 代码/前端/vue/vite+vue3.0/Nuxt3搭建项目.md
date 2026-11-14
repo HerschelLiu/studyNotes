@@ -1,3 +1,5 @@
+# Nuxt3搭建项目
+
 ## 安装
 
 ### 创建项目
@@ -26,8 +28,6 @@ pnpm install --shamefully-hoist
 ## Modules
 
 在[Modules · Nuxt](https://nuxt.com/modules)中的可以直接在`nuxt.config.ts`中配置引用，其他的需要在`plugins/`目录下新建配置文件[插件 plugins | Nuxt 3 - 中文文档 (nuxtjs.org.cn)](https://www.nuxtjs.org.cn/directory-structure/plugins.html#插件目录)
-
-
 
 ### [Pinia](https://pinia.vuejs.org/)安装配置
 
@@ -69,10 +69,6 @@ npm install --save pinia @pinia/nuxt pinia-plugin-persist --legacy-peer-deps
 ```bash
 pnpm add vue
 ```
-
-
-
-
 
 ### Element-plus安装配置
 
@@ -118,15 +114,11 @@ export default defineNuxtConfig({
 >
 > **nuxt3目前不支持自动按需引入，需要在页面中import，不然报错**。[Element Plus按需导入](https://element-plus.gitee.io/zh-CN/guide/quickstart.html#按需导入)，其中不需要AutoImport
 
-
-
 ### prettier
 
 ```bash
 npm i -D prettier
 ```
-
-
 
 ```js
 // .prettierrc
@@ -173,8 +165,6 @@ npm i -D eslint eslint-plugin-prettier eslint-config-prettier
 // 以下另需安装 eslint-plugin-eslint-plugin、eslint-plugin-import、eslint-plugin-node、eslint-plugin-self、eslint-plugin-simple-import-sort、eslint-plugin-vue
 ```
 
-
-
 ### SASS
 
 ```bash
@@ -191,13 +181,10 @@ export default defineNuxtConfig({
         css: {
             preprocessorOptions: {
                 scss: {
-                    additionalData: '@use "@/assets/styles/default.scss" as *;'	
+                    additionalData: '@use "@/assets/styles/default.scss" as *;'
                 }
             }
         }
     }
 })
 ```
-
-
-

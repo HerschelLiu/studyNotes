@@ -1,3 +1,7 @@
+# useBase
+
+> 小程序基础能力：登录、读取用户信息、获取 wxcode、全局数据。
+
 ```ts
 import { login, readUserInfo } from '../api/account'
 import { getWxcodeValue } from '../api/common'
@@ -299,8 +303,8 @@ Page({
     },
     ...useStaticData, // 一些每个页面固定字段，比如页面名称pageName
   },
-  
-  
+
+
   /** 自定义前置事件 */
   beforeLoad() {},
 
@@ -310,4 +314,3 @@ Page({
   },
 })
 ```
-

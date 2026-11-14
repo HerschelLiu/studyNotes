@@ -1,3 +1,7 @@
+# useStyle
+
+> 对象转内联样式字符串、单位补全 + 小程序 `rpxToPx`
+
 ```ts
 import { useLineString } from '@/hooks/useString'
 
@@ -49,4 +53,3 @@ export function useUnit(value: string | number, unit = 'rpx') {
   return /^-?\d+(\.\d+)?$/.test(value.toString()) ? value + unit : value.toString()
 }
 ```
-

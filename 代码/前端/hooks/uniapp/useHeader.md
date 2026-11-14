@@ -1,6 +1,8 @@
+# useHeader
+
+> 自定义导航栏：读取状态栏/导航栏信息并计算高度，适配刘海屏与胶囊按钮。
+
 ![6B3E9949-9A60-4DDF-9F6E-7FDCE0D76E19](./useHeader.assets/6B3E9949-9A60-4DDF-9F6E-7FDCE0D76E19-8227057-8227061.jpeg)
-
-
 
 ```js
 export function getNavInfo() {
@@ -59,4 +61,3 @@ export function getNavInfo() {
   }
 }
 ```
-

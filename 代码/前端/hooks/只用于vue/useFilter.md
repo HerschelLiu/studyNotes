@@ -1,3 +1,7 @@
+# useFilter
+
+> 展示层过滤器：金额、折扣、日期、默认头像；依赖 useDate/useValidate
+
 ```ts
 import defaultHeadimg from '@/assets/headimg.png'
 import { useDateFormat } from '@/hooks/useDate'
@@ -119,4 +123,3 @@ export function FileSizeFilter(size: number): string {
 }
 
 ```
-

@@ -1,3 +1,5 @@
+# vue2+ts
+
 [toc]
 
 ## 准备
@@ -47,21 +49,21 @@ export default class App extends Vue {
 
 ```js
   import {Component, Prop, Vue} from 'vue-property-decorator'
-   
+
   @Component
   export default class App extends Vue {
    name:string = 'Simon Zhang'
-   
+
    // computed
    get MyName():string {
    	return `My name is ${this.name}`
    }
-   
+
    // methods
    sayHello():void {
    	alert(`Hello ${this.name}`)
    }
-   
+
    mounted() {
      this.sayHello();
     }
@@ -77,17 +79,17 @@ export default class App extends Vue {
       name: 'Simon Zhang'
      }
    },
-   
+
    mounted () {
    	this.sayHello()
    },
-   
+
    computed: {
      MyName() {
       return `My name is ${this.name}`
      }
    },
-   
+
    methods: {
      sayHello() {
       alert(`Hello ${this.name}`)
@@ -110,7 +112,7 @@ import { Component, Emit, Inject, Model, Prop, Provide, Vue, Watch } from 'vue-p
   template: '<button @click="onClick">Click!</button>'
 })
 export class MyComponent extends Vue {
-  
+
   @Prop()
   propA: number = 1
 
@@ -154,8 +156,6 @@ export default {
   }
 }
 ```
-
-
 
 ## 注意
 
@@ -216,4 +216,3 @@ parserOptions: {
   "@babel/plugin-proposal-class-properties"
 ]
 ```
-

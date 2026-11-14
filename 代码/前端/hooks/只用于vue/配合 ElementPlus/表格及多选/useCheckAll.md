@@ -1,3 +1,7 @@
+# useCheckAll
+
+> 跨页选择：全选/取消、按主键去重合并、复合主键（`id-type`）。
+
 ```ts
 /** 跨页选择行需要的最小字段 */
 type SelectableRow = { checked?: boolean; disabled?: boolean }
@@ -179,4 +183,3 @@ export function useCheckAll<Q, R extends object & SelectableRow>(
 }
 
 ```
-

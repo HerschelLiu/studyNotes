@@ -17,6 +17,9 @@ hooks/
 ├── 跨框架（纯JS）/          # 无框架依赖，可直接复用
 ├── 只用于vue/               # Vue 专用
 │   ├── 配合 ElementPlus/    # EP 强耦合
+│   │   ├── 表格及多选/       # 表格多选 / useCheckAll / useSearch
+│   │   ├── 表格+表单校验/    # 表格内表单校验
+│   │   └── useSelect选择弹窗表格/
 │   ├── useArray/            # 数组/树工具（模块 + 文档）
 │   └── vue-query/           # @tanstack/vue-query 生态
 ├── 只用于微信小程序/         # wx.* 原生小程序
@@ -76,6 +79,7 @@ hooks/
 | `useElementVisible.md` ⚠️ | **纯 DOM**（getBoundingClientRect + computedStyle），可移到跨框架 |
 | `useWatchElement.md` ⚠️ | **纯 DOM**（MutationObserver 监听元素挂载/移除），可移到跨框架 |
 | `useScrollTo.md` ⚠️ | **纯 DOM**（requestAnimationFrame 平滑滚动），可移到跨框架 |
+| `表单缓存.md` | 表单草稿缓存与恢复（配合 useStorage） |
 
 ### useArray（数组/树模块）
 
@@ -100,7 +104,7 @@ hooks/
 | `queryKeys统一管理.md` | queryKeys 的组织方式 |
 | `useListQuery（已有新useList文件，仅做保留及查看）.md` | 旧版列表查询，仅保留查阅 |
 | `useSubmit.md` | `useMutation` 提交与 loading 状态 |
-| `useTansQuery.md` | queryClient 配置、缓存联动 |
+| `useTanStackQuery.md` | queryClient 配置、缓存联动 |
 | `处理queryKeys文件脚本.md` | 批量生成/处理 queryKeys 的脚本 |
 | `列表表格中，同一接口不同数据源.md` | 同一接口多数据源处理 |
 | `全局联动list↔tree模块.md` | list ↔ tree 联动模块 |
@@ -114,14 +118,14 @@ hooks/
 | `useTip.md` | **基础依赖**：`ElMessage` / `ElMessageBox` / `ElLoading` 统一封装 |
 | `useRules.md` | 表单校验规则：基于 `FormItemRule`（async-validator），支持 `MaybeRef` 动态 required |
 | `useState.md` | 页面状态：busy/loading/request/handleCancel，依赖 EP Loading |
-| `useFormAttachment静态附件管理(非通用).md` | 表单静态附件增删改（EP Upload 类型），**含业务耦合，非通用** |
+| `useFormAttachment静态附件管理（非通用）.md` | 表单静态附件增删改（EP Upload 类型），**含业务耦合，非通用** |
 | `CommonTable/` | 通用表格组件 |
 | `useDatePicker.md` / `useTimePicker.md` | 日期、时间选择器封装 |
 | `useTableStyle.md` | 表格样式 |
 | `表格多选和单选.md` | 表格多选/单选逻辑 |
-| `useSelect选择弹窗表格/` | 弹窗选择表格 |
-| `表格+表单校验/` | 表格内表单校验 |
-| `表格及多选/` | 表格与多选（含 useList 原始版本） |
+| `useSelect选择弹窗表格/` | 弹窗选择表格：`弹窗选择.md`（用法）、`useSelect选择弹窗表格.md`（useSelect 实现与签名） |
+| `表格+表单校验/` | 表格内表单校验：`useTable.md`、`表格+表单.md` |
+| `表格及多选/` | 表格与多选：`useCheckAll.md`（跨页选择）、`useSearch.md`（搜索态）、`表格示例.md`、`useList原始智达版.md` |
 
 ## 只用于微信小程序
 
@@ -159,10 +163,10 @@ useString（纯JS） ← useStyle / useTip
 
 - `useState.md` 有**两份**：`只用于vue/useState.md`（ref + setState）、`只用于vue/配合 ElementPlus/useState.md`（页面 busy/loading/request）。建议重命名，如 `useRefState` / `usePageState`。
 - `log.md` 与 `useLog.md`：前者纯浏览器美化打印，后者多端（含小程序上报 + template 调试）。可合并为一份「多端日志」。
-- `useUtils.md` 与 `utils.md`：前者是业务工具函数，后者是 DOM/浏览器片段速查，命名太像，建议 `utils.md` → `domSnippets.md`。
+- `useUtils.md` 与 `utils.md`：前者是业务工具函数，后者是 DOM/浏览器片段速查，命名太像，建议把 `utils.md` 更名为 `domSnippets`（去掉 .md 的命名建议）。
 - `useArray` 与 `useList通用` 都涉及数组/树，但前者纯函数、后者是查询状态，边界清晰，保持分开。
 - `useElementVisible` / `useWatchElement` / `useScrollTo` 是纯 DOM，放在 `只用于vue` 里只是因为「只在 Vue 项目用过」；若想严格按能力分，可移入 `跨框架（纯JS）`。
-- 多端文件（⚠️）建议后续拆成 `xxx.vue.md` / `xxx.wx.md`，或至少在文首加「适用端」标签。
+- 多端文件（⚠️）建议后续按端拆分（如 `xxx.vue` / `xxx.wx`），或至少在文首加「适用端」标签。
 
 ## 新增约定
 

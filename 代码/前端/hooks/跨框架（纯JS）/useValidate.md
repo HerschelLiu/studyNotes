@@ -1,3 +1,7 @@
+# useValidate
+
+> 类型/格式判断：日期、外链、有效值、手机号…
+
 ```ts
 /** 空字符串值（字符串类型下视为“无值”） */
 const EMPTY_STRINGS = new Set(['', 'undefined', 'null'])
@@ -156,4 +160,3 @@ export function isVersion(value: unknown): value is string {
 }
 
 ```
-

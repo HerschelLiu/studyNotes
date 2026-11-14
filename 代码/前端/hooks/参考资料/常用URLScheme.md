@@ -1,3 +1,7 @@
+# 常用URLScheme
+
+> App 的 URL Scheme 速查（WIFI、电池、微信、支付宝等），用于 H5/小程序唤起原生应用。
+
 * WIFI : `prefs:root=WIFI`
 * 蜂窝数据 : `prefs:root=MOBILE_DATA_SETTINGS_ID://`
 * 电池 : `prefs:root=BATTERY_USAGE://`

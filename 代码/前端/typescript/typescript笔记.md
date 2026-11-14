@@ -1,3 +1,19 @@
+# typescript笔记
+
+## 目录
+
+- [函数](#函数)
+  - [void 0(数字0)](#void-0数字0)
+  - [剩余参数](#剩余参数)
+  - [函数重载](#函数重载)
+  - [特定重载签名（没理解）](#特定重载签名没理解)
+- [类](#类)
+- [接口](#接口)
+  - [接口之间的关系](#接口之间的关系)
+  - [继承（关键字extends）](#继承关键字extends)
+  - [混合](#混合)
+- [在ts中使用JQuery](#在ts中使用jquery)
+
 ## 函数
 
 ```typescript
@@ -34,8 +50,6 @@ function func (foo, bar, footer) {
     return foo + bar + footer;
 }
 ```
-
-
 
 `void 0`是typescript编译器检测一个变量是否为`undefined`的用法。**默认参数也必须位于必选参数后面**
 
@@ -88,8 +102,6 @@ interface Document {
 }
 ```
 
-## 面向对象编程
-
 ## 类
 
 ```typescript
@@ -98,7 +110,7 @@ class Email {
 	constructor(email: string) {
 		if(this.validateEmail(email))
 			this.email = email;
-		else 
+		else
 			throw new Error('Invalid email!');
 	}
 	validateEmail(email: string) {
@@ -125,7 +137,7 @@ let me: Person = new Person('chichi', 24, new Email('email.email@email.com'));
 me.greet();
 ```
 
-##  接口
+## 接口
 
 typescript中：
 
@@ -222,11 +234,11 @@ class School extends Teacher ...
 class Animal {
     eat() {...}
 }
-    
+
 class Mammal extends Animal { // 哺乳动物
     breathe() {...}
 }
-    
+
 class WingedAnimal extends Animal { // 飞行动物
     fly() {...}
 }
@@ -285,10 +297,6 @@ bat.breathe();
 bat.fly();
 ```
 
-
-
-## 使用注意
-
 ## 在ts中使用JQuery
 
 通过类型定义文件(*.d.ts)实现在TS中使用JQuery
@@ -297,7 +305,7 @@ bat.fly();
 
      项目地址： https://github.com/DefinitelyTyped/DefinitelyTyped
 
-     页面两种引用方式: 
+     页面两种引用方式:
 
      * ` <reference path="jquery/jquery.d.ts" />`
      * `import "jquery/jquery.d.ts"`
@@ -306,7 +314,7 @@ bat.fly();
 
      项目地址：https://github.com/typings/typings
 
-     ```
+     ```bash
      npm install -g typings
      typings search jquery
      typings install dt~jquery --global
@@ -317,7 +325,3 @@ bat.fly();
 ```
 $.isArray(null);
 ```
-
-
-
-

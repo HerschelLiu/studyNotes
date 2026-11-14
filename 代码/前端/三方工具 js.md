@@ -1,4 +1,38 @@
-[TOC]
+# 三方工具 js
+
+## 目录
+
+- [通用](#通用)
+  - [JavaScript 库时间格式化功能：Luxon和date-fns](#javascript-库时间格式化功能luxon和date-fns)
+  - [跨平台桌面应用框架tauri：](#跨平台桌面应用框架tauri)
+  - [样式](#样式)
+  - [动画](#动画)
+  - [Luckysheet (gitee.io)纯前端类似excel的在线表格](#luckysheet-giteeio纯前端类似excel的在线表格)
+  - [bpmn.js：流程图](#bpmnjs流程图)
+  - [web 3D](#web-3d)
+  - [lorem图片Lorem Picsum：不是 npm 包，只是个网址](#lorem图片lorem-picsum不是-npm-包只是个网址)
+  - [Formily - 阿里巴巴统一前端表单解决方案 - Formily (formilyjs.org)](#formily---阿里巴巴统一前端表单解决方案---formily-formilyjsorg)
+  - [拖拽](#拖拽)
+  - [自动化测试工具](#自动化测试工具)
+  - [npkill](#npkill)
+  - [数据库](#数据库)
+  - [Canvas](#canvas)
+  - [PDF](#pdf)
+  - [请求工具集](#请求工具集)
+  - [文件预览](#文件预览)
+  - [格式化](#格式化)
+- [vue](#vue)
+  - [拖拽](#拖拽-1)
+  - [动画](#动画-1)
+  - [截图（canvas）](#截图canvas)
+  - [其他](#其他)
+- [React](#react)
+  - [hooks](#hooks)
+  - [通用](#通用-1)
+  - [动画](#动画-2)
+  - [拖拽](#拖拽-2)
+- [vite](#vite)
+  - [Unplugin-auto-import-模块自动导入,有很多子包，支持多种编译工具](#unplugin-auto-import-模块自动导入有很多子包支持多种编译工具)
 
 ## 通用
 
@@ -31,7 +65,6 @@ Tauri 是一个构建适用于所有主流桌面和移动平台的轻快二进�
 
 #### **[Lottie](https://lottiefiles.com/)**
 
-
 ### [Luckysheet (gitee.io)](https://mengshukeji.gitee.io/luckysheetdocs/zh/)纯前端类似excel的在线表格
 
 ### bpmn.js：流程图
@@ -49,8 +82,6 @@ Tauri 是一个构建适用于所有主流桌面和移动平台的轻快二进�
 ### 拖拽
 
 #### [Atlassian Design System](https://atlassian.design/get-started)
-
-
 
 ### 自动化测试工具
 
@@ -81,8 +112,6 @@ npx npkill
 选项
 
 npkill 提供了多种选项来定制搜索和删除操作，例如：
-
-
 
 - *-c, --bg-color*：更改行高亮颜色（可选颜色：blue, cyan, magenta, white, red, yellow）。
 - *-d, --directory*：设置开始搜索的目录（默认是当前目录）。
@@ -165,8 +194,6 @@ function generatePDF() {
 }
 ```
 
-
-
 ### 请求工具集
 
 #### [alovajs](https://alova.js.org/zh-CN/tutorial/getting-started/introduce)
@@ -193,7 +220,7 @@ npm install alova --save
 ```bash
 # vue 3
 npm i @open-file-viewer/core @open-file-viewer/vue
-# pdf 
+# pdf
 pdfjs-dist
 ```
 
@@ -203,8 +230,6 @@ pdfjs-dist
 @vue-office/docx
 @vue-office/excel
 ```
-
-
 
 ### 格式化
 
@@ -277,4 +302,3 @@ export default defineConfig({
   ]
 })
 ```
-

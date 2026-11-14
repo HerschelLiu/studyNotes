@@ -1,3 +1,7 @@
+# useEcharts
+
+> ECharts 实例 + 生命周期 + tooltip 响应式修复
+
 ## VUE
 
 `npm i echarts`
@@ -57,4 +61,3 @@ export function useEcharts(
 }
 
 ```
-

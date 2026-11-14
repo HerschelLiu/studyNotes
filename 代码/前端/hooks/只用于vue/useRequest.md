@@ -1,3 +1,7 @@
+# useRequest
+
+> axios 实例 + 拦截器 + 统一提示（间接依赖 `useTip`）
+
 ## Axios
 
 > 注意：axios@0.x才有AxiosPromise，从 **axios 1.0 升级到 1.x** 后，官方直接返回 `Promise<AxiosResponse<T>>`，不再定义单独的 `AxiosPromise` 类型，因为这与原生 `Promise` 完全一致。
@@ -170,4 +174,3 @@ export { useRequest }
     setToken(state)
   }
 ```
-

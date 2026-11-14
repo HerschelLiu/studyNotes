@@ -1,3 +1,7 @@
+# useTip
+
+> **基础依赖**：`ElMessage` / `ElMessageBox` / `ElLoading` 统一封装
+
 ## VUE
 
 `npm i element-plus`
@@ -181,4 +185,3 @@ export function useShowActionSheet(options: WechatMiniprogram.ShowActionSheetOpt
 }
 
 ```
-

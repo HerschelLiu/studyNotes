@@ -1,3 +1,5 @@
+# vitePress
+
 VitePress 是 VuePress 的兄弟，它建立在 Vite 之上
 
 > ```
@@ -10,13 +12,13 @@ VitePress 是 VuePress 的兄弟，它建立在 Vite 之上
 
 顺便说一句，Vite 很好地解决了这些问题:服务器几乎立即启动，按需编译只编译所服务的页面，以及快速的 HMR。
 
-### 它使用 Vite 之下的优势
+## 它使用 Vite 之下的优势
 
 - 更快的开发服务器启动
 - 更快的热更新
 - 更快的构建(内部使用 Rollup)
 
-### 更轻的页面
+## 更轻的页面
 
 - Vue 3 摇树 + Rollup 代码拆分(摇掉代码中未引用部分（dead-code),production 模式下会自动使用 tree-shaking 打包时除去未引用的代码。作用是优化项目代码)
 - 不为每个请求的每个页面提供元数据。这样可以将页面权重从总页面数中分离出来。只发送当前页的元数据。客户端导航同时获取新页面的组件和元数据
@@ -29,31 +31,31 @@ VitePress 是 VuePress 的兄弟，它建立在 Vite 之上
 
 步骤 1:创建并更改到一个新目录。
 
-```
+```bash
 mkdir vitepress-starter && cd vitepress-starter
 ```
 
 步骤 2:用首选`yarn`包管理器初始化。
 
-```
+```bash
 yarn init
 ```
 
 步骤 3:本地安装 VitePress
 
-```
+```bash
 yarn add --dev vitepress
 ```
 
 步骤 4:创建您的第一个文档
 
-```
+```bash
 mkdir docs && echo '# Hello VitePress' > docs/index.md
 ```
 
 步骤 5:向 package.json 中添加一些脚本。
 
-```
+```json
 {
   "scripts": {
     "docs:dev": "vitepress dev docs",
@@ -65,7 +67,7 @@ mkdir docs && echo '# Hello VitePress' > docs/index.md
 
 步骤 6:在本地服务器上提供文档站点。
 
-```
+```bash
 $ yarn run docs:dev
 ```
 

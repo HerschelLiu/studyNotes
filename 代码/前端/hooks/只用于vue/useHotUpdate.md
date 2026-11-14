@@ -1,3 +1,7 @@
+# useHotUpdate
+
+> 打包后轮询 HTML 检测版本更新并提示刷新（依赖 useTip/useDate）
+
 ```ts
 import { useConfirm } from '@/hooks/useTip'
 
@@ -49,4 +53,3 @@ async function getHtmlText() {
 }
 
 ```
-

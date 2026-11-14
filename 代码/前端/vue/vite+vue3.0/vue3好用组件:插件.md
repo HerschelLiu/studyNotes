@@ -1,3 +1,30 @@
+# vue3好用组件:插件
+
+## 目录
+
+- [vueuse](#vueuse)
+- [dom-to-image](#dom-to-image)
+- [js-base64](#js-base64)
+- [nprogress](#nprogress)
+- [path-to-regexp](#path-to-regexp)
+- [tinymce](#tinymce)
+- [vuedraggable](#vuedraggable)
+- [unocss](#unocss)
+- [js-cookie](#js-cookie)
+- [normalize.css](#normalizecss)
+- [nprogress](#nprogress-1)
+- [QS](#qs)
+- [screenfull](#screenfull)
+- [v-viewer](#v-viewer)
+- [vue-awesome-swiper](#vue-awesome-swiper)
+- [vue-countTo](#vue-countto)
+- [vue-cropper：图片裁剪](#vue-cropper图片裁剪)
+- [拖拽](#拖拽)
+- [vue-svgicon：一个创建 svg 图标组件的工具](#vue-svgicon一个创建-svg-图标组件的工具)
+- [vuex-module-decorators](#vuex-module-decorators)
+- [vue-class-component](#vue-class-component)
+- [vue-property-decorator](#vue-property-decorator)
+
 ## vueuse
 
 一款基于Vue组合式API的函数工具集。
@@ -6,7 +33,7 @@
 
 **安装**
 
-```
+```bash
 npm i @vueuse/core
 // or
 yarn add @vueuse/core
@@ -48,7 +75,7 @@ const { counter, pause, resume } = useInterval(200, { controls: true })
 
 // counter 一个 Ref 对象，它是响应式的，counter.value等于已经计数的次数
 // pause() 暂停
-// resume() 恢复 
+// resume() 恢复
 </script>
 
 <template>
@@ -142,12 +169,12 @@ var domtoimage = require('dom-to-image');
 
 1. 获取PNG图像base64编码的data URL：
 
-```js
+```vue
 <div id="my-node"></div>
 
 var node = document.getElementById('my-node');
 // options 可不传
-var options = {}  
+var options = {}
 domtoimage.toPng(node, options)
     .then(function (dataUrl) {
         var img = new Image();
@@ -164,7 +191,7 @@ domtoimage.toPng(node, options)
 
 ```js
 domtoimage.toBlob(document.getElementById('my-node'))
-    .then(function (blob) { 
+    .then(function (blob) {
         console.log('blob', blob)
     });
 ```
@@ -187,7 +214,7 @@ domtoimage.toJpeg(document.getElementById('my-node'), { quality: 0.95 })
 function filter (node) {
     return (node.tagName !== 'i');
 }
- 
+
 domtoimage.toSvg(document.getElementById('my-node'), {filter: filter})
     .then(function (dataUrl) {
         /* do something */
@@ -198,7 +225,7 @@ domtoimage.toSvg(document.getElementById('my-node'), {filter: filter})
 
 ```javascript
 var node = document.getElementById('my-node');
- 
+
 domtoimage.toPixelData(node)
     .then(function (pixels) {
         for (var y = 0; y < node.scrollHeight; ++y) {
@@ -210,8 +237,6 @@ domtoimage.toPixelData(node)
         }
     });
 ```
-
-
 
 > 作者：知其
 > 链接：https://juejin.cn/post/6988045156473634852
@@ -377,11 +402,11 @@ Vue.use(SvgIcon, {
         </p>
     </div>
 </template>
- 
+
 <script>
 // �使用之前需要引入生成的图标�
 import 'src/icons/components/404'
- 
+
 export default {
     name: 'app',
     data() {
@@ -407,21 +432,21 @@ TypeScriptES7装饰器，用于以声明方式创建Vuex模块
 
 ```js
 import {Component, Prop, Vue} from 'vue-property-decorator'
- 
+
 @Component
 export default class App extends Vue {
  name:string = 'Simon Zhang'
- 
+
  // computed
  get MyName():string {
  return `My name is ${this.name}`
  }
- 
+
  // methods
  sayHello():void {
  alert(`Hello ${this.name}`)
  }
- 
+
  mounted() {
  this.sayHello();
  }
@@ -437,17 +462,17 @@ export default {
   name: 'Simon Zhang'
  }
  },
- 
+
  mounted () {
  this.sayHello()
  },
- 
+
  computed: {
  MyName() {
   return `My name is ${this.name}`
  }
  },
- 
+
  methods: {
  sayHello() {
   alert(`Hello ${this.name}`)

@@ -1,3 +1,5 @@
+# 配置问题导致vscode中页面红色波浪线
+
 ## 每个文件首行红波浪（Parsing error: Cannot read file ‘**\tsconfig.json‘）
 
 `.eslintrc.js` 文件下新增

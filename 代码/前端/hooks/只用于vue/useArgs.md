@@ -1,9 +1,13 @@
+# useArgs
+
+> URL query ↔ 响应式参数（类型转换/校验），提示依赖 `useTip` + `## 微信小程序` 段
+
 ## VUE
 
 `vue3.x`
 
 ```tsx
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, shallowRef, watch } from 'vue'
 
 import { useError } from './useTip'
 
@@ -14,7 +18,7 @@ const SEPARATOR = ','
 const FALSY = new Set(['', '0', 'false', 'null', 'undefined', 'void 0'])
 
 /** 数字参数：空值/非法数字返回 undefined */
-function toNumber(value: string) {
+const toNumber = (value: string) => {
   if (!value.trim()) return undefined
   const number = Number(value)
   return Number.isFinite(number) ? number : undefined
@@ -24,7 +28,7 @@ function toNumber(value: string) {
 const toBoolean = (value: string) => !FALSY.has(value)
 
 /** JSON 参数：解析失败返回 undefined（不抛错） */
-function toJson<T>(value: string): T | undefined {
+const toJson = <T>(value: string): T | undefined => {
   if (!value) return undefined
   try {
     return JSON.parse(value) as T
@@ -40,31 +44,55 @@ const normalizeRaw = (raw: unknown) => (Array.isArray(raw) ? raw.join(SEPARATOR)
  * 获取路由参数并转换：number、boolean、array、json，数组方法逐项处理。
  *
  * - 必须在组件 setup 内调用（内部使用 useRoute + watch）
+ * - setup 内同步读取当前路由参数，消费方可在 setup 中直接使用返回值
  * - required 只校验参数是否存在，空字符串不报错
  * - 参数缺失或为空串时取 defaultValue；给了默认值即视为可选，不再提示缺少参数
+ * - 参数缺失提示会等路由稳定后再次确认，参数已补齐或已切到其他页面时不提示
  * - 返回可写 Ref，写值只更新本地参数，不回写 URL
  */
 export function useValidateArgs<T extends string = string>(args: string, required = true, defaultValue?: T) {
   const route = useRoute()
-  const value = ref('' as T)
+  /**
+   * 本组件所属路由的匹配路径：打开其他页面时全局 route 也会变化
+   * （keep-alive 缓存的页面同样会收到），用路径字符串比较不受路由记录重建影响。
+   */
+  const ownMatchedPath = route.matched[route.matched.length - 1]?.path
+  const isOwnRoute = () => route.matched[route.matched.length - 1]?.path === ownMatchedPath
+
+  const readRaw = () => route.query[args] ?? route.params[args]
+  /** 原始值 → 本地值（缺失/空串时回落到默认值） */
+  const parseRaw = (raw: unknown) => (normalizeRaw(raw) || defaultValue || '') as T
+
+  const value = shallowRef(parseRaw(readRaw()))
   /** 必传参数只提示一次，避免路由再次变化时重复报错 */
   let validated = false
 
-  watch(
-    () => route.query[args] ?? route.params[args],
-    raw => {
-      // 取不到参数（缺失/空串）时回落到默认值
-      value.value = (normalizeRaw(raw) || defaultValue || '') as T
-      // 有默认值时参数视为可选，不再提示缺少参数
-      if (raw == null && required && defaultValue === undefined && !validated) {
-        useError(`缺少关键参数${args}`)
-        validated = true
-      }
-    },
-    { immediate: true }
-  )
+  /** 必传校验：等路由稳定（下一帧）后参数仍缺失才提示，避免参数刚落位时误报 */
+  const warnMissing = () => {
+    if (validated || !required || defaultValue !== undefined) return
+    validated = true
+    nextTick(() => {
+      // 期间已切到其他页面或参数已补齐：不再提示
+      if (!isOwnRoute() || readRaw() != null) return
+      useError(`缺少关键参数${args}`)
+    })
+  }
 
-  /** 单值可写 computed：get 解析、set 序列化（空值写空串） */
+  const applyRaw = (raw: unknown) => {
+    // 已打开其他页面：不再读取参数、不再提示缺少参数
+    if (!isOwnRoute()) return
+    value.value = parseRaw(raw)
+    // 取到参数即视为校验通过
+    if (raw != null) {
+      validated = true
+      return
+    }
+    warnMissing()
+  }
+
+  watch(readRaw, applyRaw, { immediate: true })
+
+  /** 可写 computed：读取时解析，写入时序列化（空值写空串） */
   const scalar = <R>(parse: (raw: string) => R, stringify: (next: R) => string | undefined) =>
     computed<R>({
       get: () => parse(value.value),
@@ -78,7 +106,7 @@ export function useValidateArgs<T extends string = string>(args: string, require
     value.value = (items.join(SEPARATOR) || '') as T
   }
 
-  /** 数组元素映射：逐项解析/序列化（逗号拼接，元素本身不能含分隔符） */
+  /** 数组元素逐项解析/序列化（元素本身不能含分隔符） */
   const mapList = <R>(parse: (item: string) => R | undefined, stringify: (item: R) => string) =>
     computed<R[]>({
       get: () =>
@@ -99,29 +127,14 @@ export function useValidateArgs<T extends string = string>(args: string, require
     })
 
   return Object.assign(value, {
-    /** 单值 → 数字 */
-    number: <R extends number = number>() =>
-      scalar<R | undefined>(raw => toNumber(raw) as R | undefined, next => String(next)),
-
-    /** 单值 → 布尔（写回 'true' / 'false'） */
-    boolean: () =>
-      computed<boolean>({
-        get: () => toBoolean(value.value),
-        set: next => {
-          value.value = (next ? 'true' : 'false') as T
-        },
-      }),
-
-    /** 单值 → JSON */
+    number: <R extends number = number>() => scalar<R | undefined>(raw => toNumber(raw) as R | undefined, next => String(next)),
+    boolean: () => scalar<boolean>(toBoolean, next => String(next)),
     json: <R = unknown>() => scalar<R | undefined>(raw => toJson<R>(raw), next => JSON.stringify(next)),
-
     array,
   })
 }
 
 ```
-
-
 
 `vue2.x`
 
@@ -152,8 +165,6 @@ export async function useValidateArgs(args: string, required = true): Promise<st
   } else return Promise.resolve('')
 }
 ```
-
-
 
 ## 微信小程序
 
@@ -213,6 +224,5 @@ export function useArgsObjToStr(obj: AnyObject): string {
   }
   return url
 }
- 
-```
 
+```

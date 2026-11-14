@@ -1,3 +1,7 @@
+# useCommon
+
+> uni-app 通用能力：图片上传（含 OCR 等场景）与结果处理。
+
 ## 上传图片
 
 ```ts
@@ -66,6 +70,3 @@ export const useUpload = async <T>(options: { paths: string[];name?: string }, t
 }
 
 ```
-
-
-

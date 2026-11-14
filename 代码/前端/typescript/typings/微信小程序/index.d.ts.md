@@ -1,3 +1,5 @@
+# index.d.ts
+
 ```ts
 declare module '*.js' {
   export const js: any
@@ -24,4 +26,3 @@ interface InitOptions {
   needLogin: boolean
 }
 ```
-

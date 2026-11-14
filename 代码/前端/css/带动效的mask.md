@@ -1,3 +1,5 @@
+# 带动效的mask
+
 ```css
 .mask {
     position: fixed;
@@ -8,7 +10,7 @@
     background: rgba(0, 0, 0, 0.4);
     z-index: -999999;
     opacity: 0;
-   
+
 }
 
 .mask.active {
@@ -17,4 +19,3 @@
     transition: opacity 0.1s;
 }
 ```
-

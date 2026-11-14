@@ -1,3 +1,7 @@
+# useTimePicker
+
+> 时间选择器封装：v-model、快捷时间列表、格式化。
+
 ```ts
 import type { Ref } from 'vue'
 import { computed } from 'vue'
@@ -57,17 +61,17 @@ export function useTimePickerByForm(form: Record<string, any>, startKey: string,
 >       <el-form-item>
 >         <el-input v-model="query.title" clearable placeholder="活动名称" class="width-240" />
 >       </el-form-item>
-> 
+>
 >       <el-form-item>
 >         <el-select v-model="query.status" clearable placeholder="选择活动状态" class="width-240" @change="handleSearch">
 >           <el-option v-for="item in EventStatusList" :key="item.key" :value="item.key" :label="item.value" />
 >         </el-select>
 >       </el-form-item>
-> 
+>
 >       <el-form-item>
 >         <comp-date-picker v-model="rangeTime" label="活动" size="default" @change="handleSearch" />
 >       </el-form-item>
-> 
+>
 >       <el-form-item>
 >         <el-button v-busy.Search="loading" plain size="default" native-type="submit">查询</el-button>
 >         <el-button plain size="default" @click="handleReset">重置</el-button>
@@ -79,16 +83,16 @@ export function useTimePickerByForm(form: Record<string, any>, startKey: string,
 >     </template>
 >   </comp-fixed-header>
 > </template>
-> 
+>
 > <script lang="ts" setup>
 > import { EventStatus } from '@/enum/choose'
 > import { useEnumArray } from '@/hooks/useEnum'
 > import { useIcon } from '@/hooks/useIcon'
 > import { defineSearchEmits, defineSearchProps, useSearch } from '@/hooks/useSearch'
 > import { useTimePicker } from '@/hooks/useTimePicker'
-> 
+>
 > import type { RequestList } from '../index.vue'
-> 
+>
 > const props = defineProps({
 >   /** 定义搜索的基础参数 */
 >   ...defineSearchProps<RequestList>()
@@ -99,16 +103,16 @@ export function useTimePickerByForm(form: Record<string, any>, startKey: string,
 >   'create',
 >   'export'
 > ])
-> 
+>
 > /** 搜索基础数据 */
 > const { query, startTime, endTime, handleReset, handleSearch } = useSearch<Required<RequestList>>(props, { emit })
-> 
+>
 > /** 定义日期选择器 */
 > const { rangeTime } = useTimePicker(startTime, endTime)
-> 
+>
 > const EventStatusList = useEnumArray(EventStatus)
 > </script>
-> 
+>
 > ```
 >
 > ```vue
@@ -127,24 +131,24 @@ export function useTimePickerByForm(form: Record<string, any>, startKey: string,
 >     </el-form>
 >     <!-- 表单主体 end -->
 > </template>
-> 
+>
 > <script lang="ts" setup>
 > /** form的Ref */
 > const { ELForm } = useRefs()
-> 
+>
 > /** 静态数据 */
 > const assetsData = {
 >   startTime: '',
 >   endTime: '',
 > }
-> 
+>
 > /** 表单 */
 > const form = reactive<TypeTemplateList>(useClone(assetsData))
-> 
+>
 > /** 定义日期选择器 */
 > const { rangeDate } = useDatePickerByForm(form, 'startTime', 'endTime')
 > </script>
-> 
+>
 > ```
 >
 
@@ -287,4 +291,3 @@ watch(
 </script>
 
 ```
-

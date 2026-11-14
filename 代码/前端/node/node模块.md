@@ -1,3 +1,5 @@
+# node模块
+
 ## nodemon
 
 `npm i nodemon -g`
@@ -16,11 +18,9 @@
 
 **安装**`npm i -g nrm`
 
-**查看当前镜像源`nrm ls 
+**查看当前镜像源`nrm ls
 
 **切换镜像源地址**`nrm use ** `
-
-## MIME
 
 ## MIME的说明
 
@@ -41,13 +41,13 @@ nodejs核心并没有提供用于处理mime的模块。但是我们可以在`npm
 
 安装：
 
-```json
+```bash
 npm i mime
 ```
 
 使用：
 
-```json
+```js
 // 引入mime模块
 const mime = require('mine')
 // 获取路径对应的MIME类型
@@ -62,4 +62,3 @@ console.log(mime.getType('http://127.0.0.1:3000/views/index.js'))
 console.log(mime.getType('http://127.0.0.1:3000/images/aa.jpg'))
 console.log(mime.getType('http://127.0.0.1:3000/images/aa.gif'))
 ```
-

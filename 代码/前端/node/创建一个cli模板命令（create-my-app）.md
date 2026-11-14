@@ -1,4 +1,4 @@
-
+# 创建一个cli模板命令（create-my-app）
 
 ## 使用自定义cli来完成统一模板
 
@@ -19,8 +19,6 @@ npx tsc --init
 - `ora` & `chalk`: 美化控制台输出
 - `inquirer`：在命令行中有询问的效果，还可以用prompts 库
 - `tsup`: 打包工具
-
-
 
 #### **`tsconfig.json`**
 
@@ -58,7 +56,7 @@ npx tsc --init
 >
 > **`"declaration": true`**：生成 `.d.ts` 类型声明文件（适合发布库）。
 
-####  **`tsup.config.ts`**
+#### **`tsup.config.ts`**
 
 ```ts
 import { defineConfig } from 'tsup';
@@ -73,8 +71,6 @@ export default defineConfig({
   banner: { js: '#!/usr/bin/env node' } // 保持 CLI 可执行性
 });
 ```
-
-
 
 #### **`package.json`**
 
@@ -140,8 +136,6 @@ export default defineConfig({
 └── tsup.config.ts
 ```
 
-
-
 ### **功能实现**
 
 [create-project](https://github.com/HerschelLiu/create-project)
@@ -152,8 +146,6 @@ export default defineConfig({
 npm link #默认读取`package.json`的bin字段
 create-herschel-project test
 ```
-
-
 
 ### **发布到 npm**
 

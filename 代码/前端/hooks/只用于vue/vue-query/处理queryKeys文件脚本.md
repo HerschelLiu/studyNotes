@@ -1,3 +1,7 @@
+# 处理queryKeys文件脚本
+
+> 批量生成/处理 queryKeys 的脚本
+
 `/scripts/gen-query-keys.mjs`
 
 ```js
@@ -279,8 +283,6 @@ try {
 
 ```
 
-
-
 `package.json`
 
 ```json
@@ -289,4 +291,3 @@ try {
     "gen:query-keys:check": "node scripts/gen-query-keys.mjs --check"
   }
 ```
-

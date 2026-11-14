@@ -8,6 +8,27 @@
 >
 > 本文命令以 fnm 1.39 为准，不同版本参数可能略有差异，可用 `fnm --help` 查看。
 
+## 目录
+
+- [安装](#安装)
+  - [一键安装（macOS / Linux）](#一键安装macos--linux)
+  - [脚本升级](#脚本升级)
+  - [手动安装](#手动安装)
+  - [配置 shell](#配置-shell)
+- [常用命令](#常用命令)
+- [自动切换与版本文件策略](#自动切换与版本文件策略)
+  - [--use-on-cd](#--use-on-cd)
+  - [--version-file-strategy](#--version-file-strategy)
+  - [--resolve-engines](#--resolve-engines)
+- [项目中指定版本](#项目中指定版本)
+- [共享 npm 全局模块](#共享-npm-全局模块)
+- [修改 Node 下载源](#修改-node-下载源)
+- [升级 fnm](#升级-fnm)
+- [卸载 fnm](#卸载-fnm)
+- [移除 nvm](#移除-nvm)
+- [其他常用配置](#其他常用配置)
+- [注意](#注意)
+
 ## 安装
 
 ### 一键安装（macOS / Linux）
@@ -174,7 +195,7 @@ node --version > .node-version
 
 ```bash
 // 下载最新 LTS，lts-latest 自动指过去
-fnm install --lts	
+fnm install --lts
 ```
 
 下载最新 LTS+指定default封装成一条命令写进 `~/.zshrc`
@@ -188,8 +209,6 @@ fnm-lts() {
   echo "✅ 已切到 $(node -v)"
 }
 ```
-
-
 
 ## 共享 npm 全局模块
 

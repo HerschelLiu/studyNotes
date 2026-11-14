@@ -1,1 +1,0 @@
-## 查看详细构建报告： `npx vite-bundle-visualizer`

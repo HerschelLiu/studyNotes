@@ -1,3 +1,5 @@
+# axios.d.ts
+
 ```ts
 /** request补充 */
 declare namespace WechatMiniprogram {
@@ -73,4 +75,3 @@ interface ResponseList<T> {
 }
 
 ```
-

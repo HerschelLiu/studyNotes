@@ -1,4 +1,8 @@
-### 通用
+# useRules
+
+> 表单校验规则：基于 `FormItemRule`（async-validator），支持 `MaybeRef` 动态 required
+
+## 通用
 
 `npm i validing`
 
@@ -217,9 +221,7 @@ export const validateTcp = (rule: any, value: any, callback: any) => {
 
 ```
 
-
-
-### `获取async-validator的某个字段的required是否为true`
+## `获取async-validator的某个字段的required是否为true`
 
 ```ts
 import type { MaybeRefOrGetter } from 'vue'
@@ -265,7 +267,7 @@ export function useRulesRequired(rules: MaybeRefOrGetter<boolean | Record<string
 }
 ```
 
-#### `示例`
+### `示例`
 
 ```ts
 // rules 是「字段名 → 规则」的集合，如 { pkAccountId: [{ required: true }] }
@@ -289,4 +291,3 @@ fn('single')     // true
 fn('arrayField') // true
 fn('items')      // true
 ```
-

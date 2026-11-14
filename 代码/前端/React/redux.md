@@ -1,3 +1,13 @@
+# redux
+
+## 目录
+
+- [开始](#开始)
+- [createSlice](#createslice)
+- [createAsyncThunk与extraReducers](#createasyncthunk与extrareducers)
+- [useSelector与记忆化的 Selector 函数](#useselector与记忆化的-selector-函数)
+- [归一化State与createEntityAdapter](#归一化state与createentityadapter)
+
 ## 开始
 
 [React-Redux](https://www.reduxjs.cn/tutorials/essentials/part-1-overview-concepts#react-redux)
@@ -18,8 +28,6 @@ pnpm add react-redux @reduxjs/toolkit
 		|- index.ts
 		|- xxx.ts // reducer
 ```
-
-
 
 ```tsx
 // store/user.ts
@@ -50,8 +58,6 @@ export default userSlice.reducer
 
 ```
 
-
-
 ```tsx
 // store/index.ts
 
@@ -66,8 +72,6 @@ export default configureStore({
   }
 })
 ```
-
-
 
 ```tsx
 // main.tsx React18之前
@@ -115,11 +119,11 @@ import { useSelector, useDispatch } from 'react-redux'
 const Container: React.FC = () => {
   const token = useSelector((state: any) => state.user.token)
   const dispatch = useDispatch()
-  
+
   const handleSetToken = () => {
     dispatch(setToken(+new Date()))
   }
-  
+
   return (
   	<>
       <div>
@@ -193,8 +197,8 @@ const userSlice = createSlice({
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
-  data: [], 
-  loading: false, 
+  data: [],
+  loading: false,
   error: null
 }
 
@@ -274,8 +278,8 @@ export default userSlice.reducer
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
-  data: [], 
-  loading: false, 
+  data: [],
+  loading: false,
   error: undefined
 }
 
@@ -313,8 +317,6 @@ export default userSlice.reducer
 
 ```
 
-
-
 ## `useSelector`与记忆化的 Selector 函数
 
 `useSelector` *总会* 返回一个新的数组，所以 *每次* 执行以上操作我们的组件都将重新渲染，即使返回的数据并没有发生改变！
@@ -350,7 +352,7 @@ const postsForUser = useSelector(state => {
 // store/xxx.ts
 
 import { createSelector } from '@reduxjs/toolkit'
-                            
+
 export const selectPostsByUser = createSelector(
   [selectAllPosts, (state, userId) => userId], // 数组或单一项
   (posts, userId) => posts.filter(post => post.id === userId)
@@ -359,8 +361,6 @@ export const selectPostsByUser = createSelector(
 // viewx/xxx.tsx
 const postsForUser = useSelector(state => selectPostsByUser(state, userId))
 ```
-
-
 
 ## 归一化State与`createEntityAdapter`
 
@@ -476,7 +476,7 @@ const Container: React.FC = () => {
 
     return null
   }
-  
+
   // 使用记忆化Selector
   const users = useSelector((state: any) => selectUsers(state.user))
   const userIds = useSelector((state: any) => selectUsersIds(state.user))
@@ -489,7 +489,7 @@ const Container: React.FC = () => {
 
     return null
   }
-  
+
   return (
     <>
       <div>
@@ -497,7 +497,7 @@ const Container: React.FC = () => {
       	<div>{ userIds.join(',') }</div>
         <ul>
           {
-            user.map((item: any) => 
+            user.map((item: any) =>
               (<li key={item.id}>
                 {item.id}: {item.name}
                  <UserById key={item.id} id={item.id} />
@@ -511,8 +511,6 @@ const Container: React.FC = () => {
 
 export default Container
 ```
-
-
 
 `createEntityAdapter` 接受一个选项对象，该对象可能包含一个 `sortComparer` 函数，该函数将用于通过比较两个项目来保持项目 id 数组的排序(工作方式与 `array.sort()` 相同)。
 
@@ -532,8 +530,6 @@ export default Container
 
 - `getInitialState`：返回一个类似于 `{ ids: [], entities: {} }` 的对象，用于存储 item 的标准化 state 以及包含所有 item ID 的数组
 - `getSelectors`：生成一组标准的 selector 函数
-
-
 
 1. `selectAll`：`selectAll`是一个选择器函数，用于从实体状态中选择所有的实体数据。它接受一个参数，即完整的实体状态对象，返回一个数组，包含实体状态中所有的实体数据。例如，`selectAllUsers(state)`将返回一个包含所有用户数据的数组。
 2. `selectById`：`selectById`是一个选择器函数，用于根据实体的ID从实体状态中选择指定的实体数据。它接受两个参数，即完整的实体状态对象和实体的ID，返回一个包含指定ID的实体数据。例如，`selectUserById(state, userId)`将返回一个包含指定ID用户数据的对象。

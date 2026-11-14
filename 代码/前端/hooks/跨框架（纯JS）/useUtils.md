@@ -1,3 +1,7 @@
+# useUtils
+
+> 业务小工具：富文本取图、数字转中文、sleep、可控定时器
+
 ```ts
 import { isHaveValue } from './useValidate'
 
@@ -156,4 +160,3 @@ export const setIntervalOut = (func: (progress: number) => any, options?: { dela
     }
   })
 ```
-

@@ -1,3 +1,7 @@
+# useFormatValue
+
+> 统一值格式化：boolean/date/enum/dict，支持 `MaybeRef`
+
 `useFormatValue`
 
 ```ts
@@ -103,29 +107,27 @@ export function useFormatValue(
 
 ```
 
-
-
 > ```ts
 > // 1. 不传 options（向后兼容，placeholder 默认 '--'）
 > useFormatValue(row, 'boolean', '是:否')
 > useFormatValue(row, 'date')
-> 
+>
 > // 2. formatStr + options
 > useFormatValue(row, 'boolean', '是:否', { placeholder: '-' })
 > useFormatValue(row, 'date', 'YYYY-MM-DD', { placeholder: '/' })
-> 
+>
 > // 3. 省略 formatStr，直接传 options（仅 boolean/date，formatStr 本就可选）
 > useFormatValue(row, 'boolean', { placeholder: '/' })
 > useFormatValue(row, 'date', { placeholder: '/' })
-> 
+>
 > // enum/dict 的 formatStr 是必传的，options 作为第四参数
 > useFormatValue(row, 'enum', enumObj, { placeholder: '/' })
-> 
+>
 > // 不传 type，只传 options（budgetExpense/index.vue 的用法）
 > useFormatValue(row.deptCode, { placeholder: '' })
-> 
+>
 > // 不传 type，不传 options（向后兼容）
 > useFormatValue(row.code)
 > ```
 >
-> 
+>

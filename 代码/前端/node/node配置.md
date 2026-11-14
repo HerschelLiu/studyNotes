@@ -1,3 +1,5 @@
+# node配置
+
 启动cmd输入
 
 ```bash

@@ -1,6 +1,18 @@
-[TOC]
 
 # vite+vue3.0
+
+## 目录
+
+- [快速上手](#快速上手)
+- [开箱即用](#开箱即用)
+- [配置](#配置)
+- [搭配 Typescript(index.html只要把main的后缀改为ts就不能运行)](#搭配-typescriptindexhtml只要把main的后缀改为ts就不能运行)
+- [Router](#router)
+- [vuex](#vuex)
+- [自定义 Hooks](#自定义-hooks)
+- [Teleport](#teleport)
+- [Suspense](#suspense)
+- [vite插件](#vite插件)
 
 ## 快速上手
 
@@ -38,8 +50,6 @@ bunx create-vite my-vue-app --template vue
 
 >  查看 [create-vite](https://github.com/vitejs/vite/tree/main/packages/create-vite) 以获取每个模板的更多细节：`vanilla`，`vanilla-ts`, `vue`, `vue-ts`，`react`，`react-ts`，`react-swc`，`react-swc-ts`，`preact`，`preact-ts`，`lit`，`lit-ts`，`svelte`，`svelte-ts`，`solid`，`solid-ts`，`qwik`，`qwik-ts`。
 
-
-
 **注：Vite 目前只支持 Vue.js 3.0 版本**。
 
 ## 开箱即用
@@ -62,8 +72,6 @@ bunx create-vite my-vue-app --template vue
   }
 }
 ```
-
-
 
 新建`vite.config.ts`(相当于`vue.config.js`)
 
@@ -219,7 +227,7 @@ export default ({ mode }) => {
     ],
     "references": [{ "path": "./tsconfig.node.json" }]
   }
-  
+
   ```
 
   **tsconfig.node.json**
@@ -235,8 +243,6 @@ export default ({ mode }) => {
   }
   ```
 
-  
-
 * src 目录下新建 types 文件夹，里面需要配置 ts 的类型
 
   **自动创建组件的类型文件**
@@ -245,7 +251,7 @@ export default ({ mode }) => {
   import chalk from 'chalk'
   import fg from 'fast-glob' // devDependencies
   import fs from 'fs-plus' // devDependencies
-  
+
   const entries = await fg(['src/components/**/index.vue'], { dot: true })
   let localComponents = ''
   entries.sort((v1, v2) => {
@@ -263,25 +269,25 @@ export default ({ mode }) => {
     })
     localComponents += `\n    Comp${name}: typeof import('${path}')['default']`
   })
-  
+
   const text = `/** eslint-disable spaced-comment */
-  
+
   /// <reference types="vite/client" />
-  
+
   declare module 'vue' {
     export interface GlobalComponents {${localComponents}
     }
   }
-  
+
   export {}
   `
-  
+
   fs.writeFile('src/types/components.d.ts', text, () => {
     // eslint-disable-next-line no-console
     console.log(chalk.green('类型文件创建成功！！'))
   })
   ```
-  
+
   ```json
   // package.json
   {
@@ -290,14 +296,12 @@ export default ({ mode }) => {
     }
   }
   ```
-  
-  
-  
+
   **shims.axios.d.ts**
-  
+
   ```tsx
   import { AxiosRequestConfig } from 'axios'
-  
+
   declare module 'axios' {
     export interface AxiosRequestConfig {
       shotToast?: boolean
@@ -306,11 +310,11 @@ export default ({ mode }) => {
     }
   }
   ```
-  
+
   **vite-env.d.ts**
   ```tsx
    /** eslint-disable spaced-comment */
-   
+
   // / <reference types="vite/client" />
   ```
 
@@ -318,16 +322,16 @@ export default ({ mode }) => {
 
       ```tsx
       /** eslint-disable spaced-comment */
-      
+
       // / <reference types="vite/client" />
-      
+
       declare module '*.vue' {
         import type { DefineComponent } from 'vue'
         // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
         const component: DefineComponent<{}, {}, any>
         export default component
       }
-      
+
       declare module '*.svg'
       declare module '*.png'
       declare module '*.jpg'
@@ -338,13 +342,13 @@ export default ({ mode }) => {
       declare module '*.yaml'
       declare module '*.json'
       declare module 'vue3-drag-resize'
-      
+
       declare type ImageFit = '' | 'fill' | 'none' | 'contain' | 'cover' | 'scale-down'
-      
+
       interface AnyObject {
         [key: string]: any
       }
-      
+
       type Words =
         | 'a'
         | 'b'
@@ -372,13 +376,11 @@ export default ({ mode }) => {
         | 'x'
         | 'y'
         | 'z'
-      
+
       /** 限定首字母大写 */
       type Cap = `${Capitalize<Words>}${string}`
-      
+
       ```
-
-
 
 * 将`main.js`改为`main.ts`，并将 `index.html` 中引入的 `main.js` 改为 `main.ts`。
 
@@ -391,8 +393,6 @@ export default ({ mode }) => {
   app.use(xxx)
   app.mount('#app')
   ```
-
-  
 
 * 将 `App.vue` 的 `<script>` 修改为 `<script lang="ts">`，就可以编写 `TypeScript `语法。
 
@@ -457,7 +457,7 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
 
   ```js
   import { createStore } from 'vuex'
-  
+
   export default createStore({
       state () {
           return {
@@ -494,7 +494,7 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
 
   ```js
   import { useStore } from 'vuex'
-  
+
   const store = useStore() // 相当于 vue2 中的 this.$store
   store.dispatch() // 通过 store 对象来 dispatch 派发异步任务
   store.commit() // commit 修改 store 数据
@@ -555,13 +555,13 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
           ```html
           <template>
               <!-- 这种形式在组件内使用的时候需要obj.count -->
-              <p>{{ obj.count }}</p> 
+              <p>{{ obj.count }}</p>
           </template>
           ```
-        
+
           ```js
           import { reactive } from 'vue';
-          
+
           export default defineComponent({
               setup () {
                   const obj = reactive({ count: 0 })
@@ -569,19 +569,19 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
               }
           })
           ```
-        
+
         + 第二种返回形式
-        
+
           ```html
           <template>
               <!-- 这种形式在组件内使用的时候跟之前一样 -->
-              <p>{{ count }}</p> 
+              <p>{{ count }}</p>
           </template>
           ```
-        
+
           ```js
           import { reactive, toRefs } from 'vue';
-          
+
           export default defineComponent({
               setup () {
                   const obj = reactive({ count: 0 })
@@ -589,8 +589,6 @@ const router = useRouter() // 相当于 vue2 中的 this.$router
               }
           })
           ```
-        
-          
 
 ### ref 接受一个参数值并返回一个响应式且可改变的 ref 对象。ref 对象拥有一个指向内部值的单一属性 .value。
 
@@ -647,12 +645,11 @@ state.foo++
 console.log(fooRef.value) // 3
 ```
 
-
   9. nextTick 跟之前的作用一样只不过呢写法略有不同。
 
      ```js
      import { nextTick } from 'vue';
-     
+
      export default defineComponent({
          setup () {
              nextTick(() => {
@@ -661,7 +658,6 @@ console.log(fooRef.value) // 3
          }
      })
      ```
-
 
 ### watch 与 watchEffect 的用法
 
@@ -677,7 +673,7 @@ watch(source, callback, [options])
 - callback: 执行的回调函数
 - options：支持deep、immediate 和 flush 选项。`{ deep: true, immediate: true }`
 
-```vue
+```js
 import { defineComponent, ref, reactive, toRefs, watch } from "vue";
 export default defineComponent({
   setup() {
@@ -700,7 +696,7 @@ export default defineComponent({
     const year = ref(0)
 
     setTimeout(() =>{
-        year.value ++ 
+        year.value ++
     },1000)
 
     watch(year, (newVal, oldVal) =>{
@@ -738,7 +734,7 @@ setTimeout(()=>{
 
 #### watchEffect
 
-```vue
+```js
 import { defineComponent, ref, reactive, toRefs, watchEffect } from "vue";
 export default defineComponent({
   setup() {
@@ -773,7 +769,7 @@ export default defineComponent({
 
 我们约定这些「自定义 Hook」以 use 作为前缀，和普通的函数加以区分。
 
-```vue
+```js
 // 使用ts
 import { ref, Ref, computed } from "vue";
 
@@ -850,7 +846,7 @@ Teleport 就像是哆啦A梦中的「任意门」，任意门的作用就是可�
 
 我们希望Dialog渲染的dom和顶层组件是兄弟节点关系, 在`index.html`文件中定义一个供挂载的元素:
 
-```
+```html
 <body>
 <div id="app"></div>
 + <div id="dialog"></div>
@@ -859,7 +855,7 @@ Teleport 就像是哆啦A梦中的「任意门」，任意门的作用就是可�
 
 定义一个`Dialog`组件`Dialog.vue`, 留意 `to` 属性， 与上面的`id`选择器一致：
 
-```
+```html
 <template>
     <teleport to="#dialog">
         <div class="dialog">
@@ -883,7 +879,7 @@ Teleport 就像是哆啦A梦中的「任意门」，任意门的作用就是可�
 
 最后在一个子组件`Header.vue`中使用`Dialog`组件,这里主要演示 Teleport的使用，不相关的代码就省略了。`header`组件
 
-```
+```html
 <div class="header">
     ...
     <navbar />
@@ -955,7 +951,7 @@ export default defineComponent({
 </script>
 ```
 
-### 在 Vue2.x 中， `template`中只允许有一个根节点,但是在 Vue3.x 中，你可以直接写多个根节点
+> 在 Vue2.x 中， `template`中只允许有一个根节点,但是在 Vue3.x 中，你可以直接写多个根节点
 
 ### 示例
 
@@ -964,12 +960,12 @@ export default defineComponent({
   import { useStore, mapState } from 'vuex'
   export default {
       name: 'Home',
-      setup(props, ctx) { 
-          /* 
+      setup(props, ctx) {
+          /*
            * 不可以使用ES6解构，解构会消除它的响应式。
            * props 父组件传值
            * context/ctx上下文对象，这个上下文对象中包含了一些有用的属性，这些属性在 Vue2.0 中需要通过 this 才能访问到(3.0无法访问this)，在 vue3.0 中，访问他们变成以下形式：
-           * context.parent--> this.$parent 
+           * context.parent--> this.$parent
            * context.root--> this
            * context.emit-->this.$emit
            * context.refs-->this.$refs
@@ -1003,7 +999,7 @@ export default defineComponent({
           onMounted(() => console.log('mounted!')) // 会自动引入
   		// 利用watchEffect可以监听props。
           // 监听器的升级版本，立即执行传入的一个函数，并响应式追踪其依赖，并在其依赖变更时重新运行该函数。
-          watchEffect(() => { // 利用watchEffect监听props 
+          watchEffect(() => { // 利用watchEffect监听props
      			console.log(props.val); // 首次以及props改变才会执行这里的代码
           })
           // 暴露给模板或渲染函数.可以返回对象或方法
@@ -1012,7 +1008,7 @@ export default defineComponent({
   };
   ```
 
-  * setup是一个新的组件选项，也是其他API的入口。也就是说，你所有的操作都将在setup函数内部定义和执行， Vue3.0也将用函数代替Vue2.x的类也就是new 
+  * setup是一个新的组件选项，也是其他API的入口。也就是说，你所有的操作都将在setup函数内部定义和执行， Vue3.0也将用函数代替Vue2.x的类也就是new
 
 ## vite插件
 
@@ -1104,7 +1100,7 @@ svg 文件名
 
 则生成的 SymbolId 为注释所写
 
-```
+```bash
 # src/icons
 - icon1.svg # icon-icon1
 - icon2.svg # icon-icon2

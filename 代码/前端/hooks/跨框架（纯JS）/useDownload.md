@@ -1,3 +1,13 @@
+# useDownload
+
+> 浏览器下载（Blob/直链/objectURL 释放）+ `## 微信小程序` 段
+
+## 目录
+
+- [JS](#js)
+- [微信小程序](#微信小程序)
+- [搭配useDownloadFile](#搭配usedownloadfile)
+
 ## JS
 
 ```ts

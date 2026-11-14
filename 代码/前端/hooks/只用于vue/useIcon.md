@@ -1,10 +1,12 @@
+# useIcon
+
+> vite-plugin-svg-icons + `SvgIcon` 组件，默认挂载 EP 图标目录
+
 ## VUE
 
 ```bash
 npm i vite-plugin-svg-icons -D
 ```
-
-
 
 ```ts
 // main.ts
@@ -30,8 +32,6 @@ export default () => {
   })
 }
 ```
-
-
 
 ```ts
 import { createElementVNode, defineComponent } from 'vue'
@@ -143,4 +143,3 @@ Vue.use(SvgIcon, {
   stroke: none;
 }
 ```
-

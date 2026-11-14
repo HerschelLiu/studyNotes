@@ -1,3 +1,7 @@
+# useList原始智达版
+
+> 早期项目版列表 hook（含分页/查询/本地缓存），仅留档查阅。
+
 搭配elementPlus
 
 ```ts
@@ -154,10 +158,6 @@ export const useListRef = <Q = null, R = object>(props: any, context: { emit: (e
 
 ```
 
-
-
-
-
 精简
 
 ```ts
@@ -264,11 +264,10 @@ export const useListRef = (props, context) => {
       context.emit('update:list', value);
     },
   });
-  
+
   return {
     list,
   };
 };
 
 ```
-

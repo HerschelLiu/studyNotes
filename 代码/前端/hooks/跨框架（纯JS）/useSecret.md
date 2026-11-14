@@ -1,6 +1,10 @@
+# useSecret
+
+> RSA 加解密（jsencrypt）
+
 `npm i jsencrypt`
 
-[http://www.travistidwell.com/jsencrypt](vscode-file://vscode-app/Applications/Visual Studio Code.app/Contents/Resources/app/out/vs/code/electron-sandbox/workbench/workbench.html)
+<http://www.travistidwell.com/jsencrypt>
 
 ```ts
 import JSEncrypt from 'jsencrypt'
@@ -28,4 +32,3 @@ export function useDeSecret(str: string, key: string) {
 }
 
 ```
-

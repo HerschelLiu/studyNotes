@@ -1,3 +1,5 @@
+# vue3中的 ref 和reactive
+
 ## ref和 reactive
 |       特性       |                             ref                              |                           reactive                           |
 | :--------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
@@ -9,21 +11,17 @@
 
 数组推荐使用 ref，因为一般情况下使用数组，需要带着下标值进行改变，或者数组整体改变，而使用 reactive，下标赋值可能不会触发视图更新
 
-
-
 **性能差异**
 
 - `ref`对简单值的性能开销更低，`reactive`处理深层嵌套对象时可能有更高内存消耗
 - 复杂对象用 `reactive` 更高效（仅一次代理）
-
-
 
 **Object.assign**
 
 ```js
 const state = reactive({ name: 'Alice' });
 // ✅ 正确：合并到原有对象
-Object.assign(state, { name: 'Bob' }); 
+Object.assign(state, { name: 'Bob' });
 ```
 
 此时 `state` 的引用未改变，仅更新了属性值，因此响应性保留.
@@ -36,8 +34,6 @@ state = Object.assign({}, state, { name: 'Bob' });
 ```
 
 此时 `state` 被重新赋值，原有的响应式代理被覆盖，新的普通对象不具备响应性
-
-
 
 ## shallowRef 和shallowReactive
 

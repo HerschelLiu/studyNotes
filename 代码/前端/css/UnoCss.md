@@ -1,8 +1,10 @@
+# UnoCss
+
 ## 各框架如何使用unocss-preset-weapp
 
 分享自uniapp, taro 如何使用 UnoCSS 原子化css - Mellow的文章 - 知乎 https://zhuanlan.zhihu.com/p/569976147
 
-###[微信小程序原生](https://github.com/MellowCo/unocss-wechat)
+### [微信小程序原生](https://github.com/MellowCo/unocss-wechat)
 
 两种预设任选一种
 
@@ -114,11 +116,9 @@ export default defineConfig({
 },
 ```
 
+### uniapp-vue2
 
-
-
-
-### [uniapp-vue2]([unocss-preset-weapp/examples/uniapp_vue2 at main · MellowCo/unocss-preset-weapp · GitHub](https://github.com/MellowCo/unocss-preset-weapp/tree/main/examples/uniapp_vue2))
+参考：[unocss-preset-weapp/examples/uniapp_vue2](https://github.com/MellowCo/unocss-preset-weapp/tree/main/examples/uniapp_vue2)
 
 1. App平台 v3 模式暂不支持在 js 文件中引用"uno.css" 请改在 style 内引用
 
@@ -212,8 +212,6 @@ export default {
 }
 </style>
 ```
-
-
 
 ### [uniapp-vue3](https://github.com/MellowCo/unocss-preset-weapp/tree/main/examples/uniapp_vue3)
 
@@ -318,8 +316,6 @@ module.exports = function (merge) {
 }
 ```
 
-
-
 ```ts
 // unocss.config.ts webpack4
 import presetWeapp from 'unocss-preset-weapp'
@@ -396,8 +392,6 @@ export default defineConfig({
 } )
 ```
 
-
-
 ```ts
 // app.ts
 import 'uno.css'
@@ -445,4 +439,3 @@ export default defineConfig({
   ],
 })
 ```
-

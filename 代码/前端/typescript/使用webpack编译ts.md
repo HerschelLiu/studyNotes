@@ -1,6 +1,8 @@
+# 使用webpack编译ts
+
 ## 全局安装`typescript`
 
-```
+```bash
 npm install -g typescript
 ```
 
@@ -28,7 +30,7 @@ tsc --init
 
 > 针对不同的项目需求，引入的库文件可能不同。
 >
-> 
+>
 >
 > ```bash
 > "lib": ["es2015", "dom"]
@@ -48,7 +50,7 @@ tsc --init
 
 ## 编辑完成后，再安装`webpack`和`webpack-cli`，这两个库建议本地安装，不要全局安装：
 
-```
+```bash
 npm install --save-dev webpack webpack-cli
 ```
 
@@ -59,8 +61,6 @@ npm install --save-dev typescript ts-loader
 ```
 
 1. 完成上述动作后，接下来在项目根目录创建`webpack.config.js`文件，并编辑它，设置配置属性：
-
-
 
 ```tsx
 const path = require('path');
@@ -86,7 +86,7 @@ module.exports = {
 
 ## 我们还要编辑`package.json`文件，添加运行`webpack`的脚本：
 
-```
+```json
 "scripts": {
   "build": "webpack"
 },
@@ -98,8 +98,6 @@ module.exports = {
  也可以安装`awesome-typescript-loader`库来代替`ts-loader`库，它俩的功能是一样的，但据说`awesome-typescript-loader`比`ts-loader`编译`.ts`文件速度更快。
 
 - 安装`awesome-typescript-loader`库
-
-
 
 ```undefined
 npm install --save-dev awesome-typescript-loader

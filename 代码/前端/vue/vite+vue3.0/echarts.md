@@ -1,3 +1,5 @@
+# echarts
+
 ```js
 import { onMounted, onUnmounted, ref, Ref } from 'vue'
 import * as echarts from 'echarts'
@@ -47,4 +49,3 @@ export const useEcharts = (id: string, option: echarts.EChartsCoreOption = {}, n
 }
 
 ```
-

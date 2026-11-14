@@ -1,3 +1,7 @@
+# useFormat
+
+> 输入框格式化：金额、纯整数、小数、千分位
+
 ```ts
 /** 格式化金额 */
 export const useInputMoneyFormat = (value: string) =>
@@ -70,4 +74,3 @@ export function useFormatMoney(
 }
 
 ```
-

@@ -1,3 +1,5 @@
+# nvm
+
 **[官网](https://github.com/nvm-sh/nvm#installing-and-updating)**
 
 **安装时迁移全局包**
@@ -18,11 +20,9 @@ nvm install 'lts/*' --reinstall-packages-from=default --latest-npm
 
 或者，您可以随时运行以下命令，以获取当前节点版本上受支持的最新 npm 版本：
 
-```bash   
+```bash
 nvm install-latest-npm
 ```
-
-
 
 **卸载**
 
@@ -38,14 +38,12 @@ export NVM_DIR="$HOME/.nvm"
 [[ -r $NVM_DIR/bash_completion ]] && \. $NVM_DIR/bash_completion
 ```
 
-
-
 ## 使用gitee源安装nvm
 
 使用`gitee镜像`安装nvm到本地
 
 ```bash
-git clone https://gitee.com/mirrors/nvm.git ~/.nvm && cd ~/.nvm && git checkout `git describe --abbrev=0 --tags` 
+git clone https://gitee.com/mirrors/nvm.git ~/.nvm && cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`
 ```
 
 配置nvm环境变量
@@ -68,4 +66,3 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 ```
-

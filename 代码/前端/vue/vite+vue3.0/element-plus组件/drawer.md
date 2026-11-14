@@ -1,4 +1,6 @@
-```ts
+# drawer
+
+```vue
 <template>
   <el-drawer
     v-model="value"
@@ -176,4 +178,3 @@ onBeforeMount(() => {
 }
 </style>
 ```
-

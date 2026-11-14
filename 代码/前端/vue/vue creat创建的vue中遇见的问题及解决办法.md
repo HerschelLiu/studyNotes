@@ -1,3 +1,5 @@
+# vue creat创建的vue中遇见的问题及解决办法
+
 ## vsCode编辑时出现大面积黄色波浪线
 
 这是由于不符合eslint或prettier的规则造成的

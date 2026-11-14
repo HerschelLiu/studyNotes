@@ -1,3 +1,15 @@
+# koa开发
+
+## 目录
+
+- [准备](#准备)
+- [配置](#配置)
+  - [修改目录结构](#修改目录结构)
+  - [代码实现](#代码实现)
+- [其他](#其他)
+  - [使用import](#使用import)
+- [引用](#引用)
+
 ## 准备
 
 ```bash
@@ -23,7 +35,7 @@ pnpm add chalk
 
 # 安装koa，因为使用koa-generator，所以koa相关包已经引入；删除koa-onerror
 pnnpm add -D @types/koa @types/koa-router @types/debug @types/koa-logger @types/koa
--json @types/koa-bodyparser    
+-json @types/koa-bodyparser
 
 # ESLint + Prettier（可选）
 pnpm add eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier eslint-config-prettier
@@ -42,22 +54,18 @@ tsc --init
 
 ## 配置
 
-
-
 ```json
 {
-  
+
 }
 ```
-
-
 
 ### 修改目录结构
 
 koa-generator生成的目录结构
 
 ```diff
-|-- 
+|--
     |-- app.js
     |-- package.json
     |-- pnpm-lock.yaml
@@ -84,7 +92,7 @@ koa-generator生成的目录结构
 修改后目录结构
 
 ```diff
-|-- 
+|--
 +   |-- index.js
 -   |-- app.js
     |-- package.json
@@ -150,8 +158,6 @@ koa-generator生成的目录结构
 }
 
 ```
-
-
 
 ```js
 // src/app
@@ -373,7 +379,7 @@ import ApiErrorNames from "./apiErrorNames";
 
 /**
  * 如果babel将class编译为es5，导致instanceof没用的话用function
- * @param name 
+ * @param name
  */
 function ApiError(name) {
   Error.call(this)
@@ -413,13 +419,13 @@ export default async (ctx, next) => {
 
 ```
 
-##  其他
+## 其他
 
 ### 使用import
 
 使用babel。随着每年新的es语法的出现，有要对新的语法做适配。后面就出现babel-preset-es2016、babel-preset-es2017、babel-preset-es2018...，所以后面，把这些包做成了一个集合**babel-preset-env**
 
-```
+```json
   // .babelrc
   {
     "parsets": ["@babel/preset-env"]

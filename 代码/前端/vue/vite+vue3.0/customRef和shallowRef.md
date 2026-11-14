@@ -1,4 +1,6 @@
-##  `customRef`
+# customRef和shallowRef
+
+## `customRef`
 
 创建一个自定义的`ref`，并对其依赖跟踪和更新触发进行显式控制。
 
@@ -31,8 +33,6 @@ export function useDebouncedRef<T> (value: T, delay = 500) {
 }
 ```
 
-
-
 ```vue
 <template>
   <input v-model="searchText" placeholder="输入500ms后触发更新" type="text">
@@ -53,13 +53,9 @@ const searchText = useDebouncedRef('', 500);
 
 ```
 
-
-
 ## `shallowRef`
 
 **性能优化的利器**。当我们有大型的、不可变的数据结构时（例如一个巨大的JSON对象、一个第三方库的实例），使用`ref`会对其进行深度递归代理，造成不必要的性能开销。此时`shallowRef`就是最佳选择。
-
-
 
 假设我们需要引入一个庞大的图表库实例，这个实例本身有很多内部属性，但我们只关心实例本身是否被替换。
 
@@ -92,8 +88,6 @@ function updateChartWithoptions(newOptions) {
 </script>
 
 ```
-
-
 
 ## 引用
 

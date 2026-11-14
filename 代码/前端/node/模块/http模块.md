@@ -1,3 +1,5 @@
+# http模块
+
 1、http ->操作服务的内置模块
 
 var http=require('http')
@@ -19,8 +21,6 @@ console.log(http)
 `http://localhost:8080/patj?id=1&num=3`
 
 地址栏参数 查询参数 查询入参
-
-
 
 1、引入
 
@@ -44,8 +44,6 @@ response.end();
 console.log(2)
 
 ```
-
-
 
 require ->请求 ->客户端
 
@@ -80,7 +78,7 @@ server.listen(8080);
 
 * 设置响应内容并结束`response.end(Buffer.from('www'));`
 
-1、引入  require 
+1、引入  require
 
 2、创建服务 http.createServer(function(request,response){})
 
@@ -98,7 +96,7 @@ server.listen(8080);
 
 ```javascript
 var path = require('path');
-require('http').createServer(function (req, res) { 
+require('http').createServer(function (req, res) {
     if (req.url === '/favicon.ico') {
         return;
     }
@@ -125,7 +123,7 @@ require('http').createServer(function (req, res) {
  // 服务器接到每一条请求路径都以/作为第一个字符
 ```
 
-**服务器接到每一条请求路径都以/作为第一个字符** 
+**服务器接到每一条请求路径都以/作为第一个字符**
 
 > content-type
 >
@@ -162,13 +160,13 @@ require('http').createServer(function (req, res) {
 get
 
 ```javascript
-require('http').createServer(function (req, res) { 
+require('http').createServer(function (req, res) {
     if (req.url === '/favicon.ico') {
         return;
     }
 
     var obj = {};
-    req.url.split('?')[1].split('&').forEach(function (file) { 
+    req.url.split('?')[1].split('&').forEach(function (file) {
         obj[file.split('=')[0]] = file.split('=')[1];
      });
      console.log(obj);
@@ -179,15 +177,15 @@ require('http').createServer(function (req, res) {
 post
 
 ```javascript
-require('http').createServer(function (req, res) { 
+require('http').createServer(function (req, res) {
     if (req.url === '/favicon.ico') {
         return;
     }
 
     req.setEncoding('utf-8');
-    req.on('data', function (chunk) { 
+    req.on('data', function (chunk) {
         console.log(chunk);
-        
+
      });
      res.end('hello');
  }).listen(8899);
@@ -226,7 +224,7 @@ require('http').createServer(function (req, res) {
 // querystring 某块用于实现url参数字符串与参数对象的相互转换， 以及对参数进行解码 / 编码
 var querystring = require('querystring');
 var params = 'id=1&name=zs&pwd=123';
-var obj = querystring.parse(params); 
+var obj = querystring.parse(params);
 {
     id: '1',
     name: 'zs',
@@ -246,7 +244,7 @@ var params = 'name=张三&sex=男';
 console.log(querystring.escape(params));
 ```
 
-#### 起服务 node-dev
+## 起服务 node-dev
 
 语法:
 
@@ -273,8 +271,6 @@ url 操作整条地址
 
 querystring ？之后的参数
 
-
-
 `http://localhost:8080/path?name=zs&pwd=123`
 
 * `http://`协议protocol
@@ -282,15 +278,13 @@ querystring ？之后的参数
 * `path`路径pathname
 * `?name=zs&pwd=123`query查询参数
 
-### ajax
+## ajax
 
 1、创建对象
 
-```
+```ts
 var  xml=window.XMLHttpRequest?new XMLHttpRequest():new ActiveXObject('Microsoft.XMLHTTP‘）
 ```
-
-
 
 2、连接服务器
 
@@ -318,8 +312,6 @@ xml.onreadystatechange = function () {
 }
 ```
 
-
-
 放在服务器环境下  读取文件
 
 ```javascript
@@ -332,8 +324,6 @@ res.writeHead(200, {
 
 接口就是端口号后边加一个/
 
-
-
-取后缀名  
+取后缀名
 
 `var  ext=path.extname(pathname)`

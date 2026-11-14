@@ -1,3 +1,7 @@
+# useEnum
+
+> 枚举对象转 `{key,value}` 选项、按值取枚举名
+
 ```ts
 export type EnumSource = Record<string, string | number>
 

@@ -1,3 +1,7 @@
+# useDate
+
+> 日期获取/格式化/时间戳校准；**依赖 `useStorage`，因此算 Vue 侧**
+
 ```ts
 import { useStorage } from '@/hooks/useStorage'
 import { isDate } from '@/hooks/useValidate'
@@ -269,9 +273,7 @@ export function useTimeStamp(date?: string) {
 
 ```
 
-
-
-### `useDateFormat优化`
+## `useDateFormat优化`
 
 解决单独传入时间导致 format 不正确问题
 
@@ -361,4 +363,3 @@ export function useSetDate(date: IDate, days: number = 365) {
   return date
 }
 ```
-

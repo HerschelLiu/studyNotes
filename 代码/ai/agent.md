@@ -1,18 +1,20 @@
+# agent
+
 ## 基础
 
 ### 名词及实现
 
-##### LLM
+#### LLM
 
 **Large Language Model**，中文叫“大语言模型”
 
 你可以把它想象成一个**超级聪明的“文字接龙机器”**：你给它一句开头，它根据学过的大量资料，一个字一个字地往下猜，猜出最可能的下文。举例：你说“今天天气真”，它大概率接“好”、“不错”、“糟糕”等。它不会真正“懂”意思，但它算出来的文字组合很接近真实人类。
 
-##### Prompt（美 [prɑːmpt] p rang —— 特）
+#### Prompt（美 [prɑːmpt] p rang —— 特）
 
 Prompt = 你给 LLM 的**输入指令/问题**。比如“用一句话介绍 Vue3”就是一个 Prompt。
 
-##### Token
+#### Token
 
 LLM 不是按“字”读的，而是把文字切成一个个小块（可能是半个词、一个词或标点），这些小块叫 **Token**。
 
@@ -20,7 +22,7 @@ LLM 不是按“字”读的，而是把文字切成一个个小块（可能是�
 
 为什么要关心它？因为模型有**上下文窗口**限制（比如一次最多处理 8k token），超出就报错或丢失信息。而且 Token 也影响计费。
 
-##### Agent 又是什么？和普通聊天机器人有什么区别？
+#### Agent 又是什么？和普通聊天机器人有什么区别？
 
 你问聊天机器人：“帮我把深圳本周的天气整理成表格。” 它只能回答：“我做不到，因为我不能访问天气数据。”
 
@@ -32,12 +34,12 @@ LLM 不是按“字”读的，而是把文字切成一个个小块（可能是�
 
 **核心区别：Agent 能通过“工具”去改变世界，而聊天机器人只能躺着说话。**
 
-##### (Agent Loop)Agent 到底是怎么“运作”的？——一个完整的循环
+#### (Agent Loop)Agent 到底是怎么“运作”的？——一个完整的循环
 
 ```
-用户提问 
+用户提问
   ↓
-调用 LLM，把问题发给它 
+调用 LLM，把问题发给它
   ↓
 LLM 决定要调用哪个工具（比如天气查询）
   ↓
@@ -54,11 +56,11 @@ LLM 根据结果生成最终回答
 
 **现在你只需要记住：Agent 开发 = 写这个循环。**
 
-##### Tool（工具）
+#### Tool（工具）
 
 就是 Agent 可以调用的**一个函数**。 比如“查天气”是一个工具，“算数学题”也是一个工具。 在代码里，你只需要写一个普通的函数，然后把它的描述告诉模型。
 
-##### Function Calling（函数调用）
+#### Function Calling（函数调用）
 
 这是 LLM 的一个特殊能力： 当你告诉模型“有哪些工具可以用”，模型在回答你的问题时，如果发现需要某一个工具，它不会自己去执行，而是返回一个**“请求”**，比如：
 
@@ -66,7 +68,7 @@ LLM 根据结果生成最终回答
 
 真正执行这个函数的是你的代码。执行完再把结果还给模型，模型才给你最终答案。
 
-##### Skills（技能）
+#### Skills（技能）
 
 **Skills** 是社区里很火的一个说法，尤其在一些 AI 产品里（比如 OpenAI 的 Skills、Claude 的 Skills）。 你可以把它理解成 **Tool 的进阶版**。
 
@@ -84,7 +86,7 @@ LLM 根据结果生成最终回答
 
 > 你在代码里定义的工具，就是你的 Agent 所拥有的“技能”。
 
-##### RAG（检索增强生成）
+#### RAG（检索增强生成）
 
 RAG 全称 **Retrieval-Augmented Generation**，中文叫“检索增强生成”。 它解决一个问题：**LLM 不知道你公司内部资料，也不知道最新发生的事情。**
 
@@ -104,7 +106,7 @@ RAG 的做法非常简单，用三步走：
 
 这样 Agent 就可以在回答问题时，主动调用 `search_docs` 工具获取信息，再结合上下文回答问题。 可以说，**RAG 是一个专门负责“查资料”的工具**。
 
-##### MCP
+#### MCP
 
 MCP 全称 **Model Context Protocol**，中文叫**模型上下文协议**。
 
@@ -115,7 +117,7 @@ MCP 全称 **Model Context Protocol**，中文叫**模型上下文协议**。
 
 在 AI 里，MCP 是一个**标准化协议**，它让 AI 应用（比如 Claude、Cursor）和外部工具 / 数据源之间，通过一种统一的格式互相沟通。
 
-##### **Embedding（嵌入）**
+#### **Embedding（嵌入）**
 
 把一段文字（或者一张图片、一个声音）转换成一串数字（向量），让计算机能“理解”它的含义。 比如：
 
@@ -124,30 +126,30 @@ MCP 全称 **Model Context Protocol**，中文叫**模型上下文协议**。
 
 这两个向量数值很像，说明它们含义相近。 Embedding 是 RAG 和语义搜索的基础。
 
-##### Vector Database（向量数据库）
+#### Vector Database（向量数据库）
 
 专门用来存储和搜索“向量”的数据库。 比如你有很多文档，每段都转成向量后存进向量数据库，以后查询时它会快速找到“最像”的向量。 常见的免费开源选择：ChromaDB、Qdrant、Milvus。
 
-##### Chunking（分块）
+#### Chunking（分块）
 
 把一篇很长的文档切成一段段小片段。 比如一篇文章有 10000 字，你按 500 字切成 20 块。 切块的目的是为了方便做 Embedding 和检索，因为模型一次能处理的文字有限。
 
-##### Context Window（上下文窗口）
+#### Context Window（上下文窗口）
 
 模型能同时“看到”的最大文字量。 比如 GPT-4o mini 可以有 128k 的上下文窗口，意味着你可以一次输入很长的对话历史。 如果超出窗口，模型会“忘记”最早的内容。
 
-##### Temperature（温度）
+#### Temperature（温度）
 
 控制模型输出随机性的参数。
 
 - 温度低（比如 0）：回答保守、稳定，适合 Agent（需要确定性）。
 - 温度高（比如 1）：回答更有创造力，但可能胡言乱语。
 
-##### Fine-tuning（微调）
+#### Fine-tuning（微调）
 
 在一个已经训练好的大模型基础上，用你自己的数据再训练一小段时间，让模型更擅长某个特定任务。 比如你收集了很多客服对话，微调一个模型专做客服。 **注意**：对于 Agent 开发，90% 的情况下不需要微调，用 RAG 就够了，微调成本高且容易过时。
 
-##### Prompt Template（提示词模板）
+#### Prompt Template（提示词模板）
 
 提前写好的 Prompt 框架，可以动态填入变量。 比如：
 
@@ -157,11 +159,11 @@ MCP 全称 **Model Context Protocol**，中文叫**模型上下文协议**。
 
 工程上使用模板可以方便复用和修改。
 
-##### Structured Output（结构化输出）
+#### Structured Output（结构化输出）
 
 让模型输出格式化的 JSON，而不是自由文本。 这在 Agent 开发中特别重要，因为程序需要解析模型的回复来决定下一步动作。
 
-##### 记忆 Memory
+#### 记忆 Memory
 
 - 短期记忆：多轮对话消息列表
 - 长期记忆：向量数据库存储历史/用户偏好
@@ -233,7 +235,7 @@ express-agent/
 # 设置国内环境
 npm config set registry https://registry.npmmirror.com
 
-npm install express axios cors dotenv 
+npm install express axios cors dotenv
 npm -D i @types/express @types/node tsx typescript@5
 
 npx tsc --init
@@ -391,15 +393,13 @@ app.listen(3000, () => {
 >
 > ```
 > data: {"choices":[{"delta":{"content":"你好"}}]}
-> 
+>
 > data: {"choices":[{"delta":{"content":"，世界"}}]}
-> 
+>
 > data: [DONE]
 > ```
 >
-> 
-
-
+>
 
 `index.html`
 
@@ -464,7 +464,7 @@ app.listen(3000, () => {
 > - `response.body` 是一个 `ReadableStream` 对象（Web Streams API），里面装的是从网络**持续到来的字节流**，不是一次性给的字符串。
 > - `.getReader()` 把这个流锁定到一个 reader 上，之后只能通过 `reader.read()` 一块一块地取数据。
 >
-> `const text = await response.text()` 一次性取——等整个响应结束才返回，看不到"逐字蹦出来"的效果 
+> `const text = await response.text()` 一次性取——等整个响应结束才返回，看不到"逐字蹦出来"的效果
 
 > node端可以使用axios，用户端为什么使用fetch？
 >
@@ -476,13 +476,13 @@ app.listen(3000, () => {
 >
 > ```json
 > data: {"choices":[{"delta":{"content":"你好"}}]}
-> 
+>
 > data: {"choices":[{"delta":{"content":"，世界"}}]}
-> 
+>
 > data: [DONE]
 > ```
 >
-> 
+>
 
 #### 第二步：让 Agent 能调用工具（Function Calling）
 
@@ -626,7 +626,7 @@ app.listen(3000, () => {
 
 postmand调用
 
-```
+```json
 POST http://localhost:3000/agent
 {
   "message": "帮我查一下张三的订单"
@@ -678,8 +678,6 @@ app.post('/agent', async (req, res) => {
 
 但你现在不需要一次全部学会，**先把上面四步走完**，你就已经掌握了 Agent 开发最核心的骨架。
 
-
-
 ## 框架
 
 - 偏向底层、灵活、体积小的：**自己写 Agent 循环**（+ 用 **Vercel AI SDK** 处理流式输出。
@@ -688,9 +686,9 @@ app.post('/agent', async (req, res) => {
 1. **前端**：Vue + Vercel AI SDK 的 `useChat`（或 `useAssistant`）来处理流式聊天 UI。
 2. **后端**：用 Mastra 定义工具和 Agent，然后把它封装进 NestJS 或 Nuxt 的 API 路由里。
 
-#### LangChain/Mastra/Vercel AI SDK
+### LangChain/Mastra/Vercel AI SDK
 
-##### 谁该选哪个
+#### 谁该选哪个
 
 - **Next.js 14+ 项目,前端流式优先**：Vercel AI SDK
 - **重 retriever / RAG / 多 chain 组合**、生态更倾向 Python 版,JS 版功能滞后约 1-2 个月。：LangChain JS
@@ -698,7 +696,7 @@ app.post('/agent', async (req, res) => {
 - **预算紧、要快**：Vercel AI SDK,代码最少
 - **要 self-host workflow runner**：Mastra
 
-##### 局限
+#### 局限
 
 - Vercel AI SDK 在长 workflow（>10 步）上需要自己包 state machine
 - LangChain JS 生态分散,文档版本碎片化
@@ -767,4 +765,3 @@ const agent = new Agent({
 const response = await agent.generate('张三的订单有什么？');
 console.log(response.text);
 ```
-

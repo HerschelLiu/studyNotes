@@ -1,6 +1,10 @@
+# utils
+
+> 浏览器/DOM 片段：点击空白关闭、手机号格式化、监听返回、全局回车
+
 ## 点击空白位置浮层消失
 
-#### 方法一**监听弹出层的点击事件->判断点击的区域不是内容区也不是内容区的子元素->关闭**
+### 方法一**监听弹出层的点击事件->判断点击的区域不是内容区也不是内容区的子元素->关闭**
 
 ```html+javascript
 <body>
@@ -19,7 +23,7 @@ $(document).on('click', function(e) {
 });
 ```
 
-#### 方法二**：用Event对象的stopPropagation()方法来停止事件的传播**
+### 方法二**：用Event对象的stopPropagation()方法来停止事件的传播**
 
 ```html+javascript
 <body>
@@ -37,8 +41,6 @@ $(document).on('click', function(e) {
     }
 });
 ```
-
-
 
 ## 格式化手机号码(加空格)
 
@@ -51,8 +53,6 @@ export function getPhoneNumberStyle(mobilePhone: string) {
   return mobilePhone.replace(reg, ' ')
 }
 ```
-
-
 
 ## 获取#或？传值后的值
 
@@ -83,24 +83,22 @@ hash值得是#后的值,search指的是?后的值
 ## 监听浏览器返回
 
 ```javascript
-pushHistory();  
-            window.addEventListener("popstate", function(e) {  
-                alert("我监听到了浏览器的返回按钮事件啦");//根据自己的需求实现自己的功能 
-        }, false);  
-        function pushHistory() {  
-            var state = {  
-                title: "title",  
-                url: "#"  
-            };  
-            window.history.pushState(state, "title", "#");  
+pushHistory();
+            window.addEventListener("popstate", function(e) {
+                alert("我监听到了浏览器的返回按钮事件啦");//根据自己的需求实现自己的功能
+        }, false);
+        function pushHistory() {
+            var state = {
+                title: "title",
+                url: "#"
+            };
+            window.history.pushState(state, "title", "#");
         }
 ```
 
 可以用在浏览器或者是微信公众号哪里,其他地方没试.
 
 只要浏览器触发了回退的操作就会触发
-
-
 
 ## 检测是否为数组的兼容写法
 
@@ -117,8 +115,6 @@ function isArrayFn(value){
 alert(isArrayFn(arr));// true
 alert(isArrayFn(arr2));// true
 ```
-
-
 
 ## 排列组合函数(笛卡尔积)
 
@@ -138,8 +134,6 @@ function calcDescartes (array) {
     });
 }
 ```
-
-
 
 ## 判断浏览器类型
 
@@ -184,13 +178,11 @@ if(isAndroid||isIOS){
 }
 ```
 
-
-
 ## 全局回车事件
 
 ```js
 document.onkeydown = function(e) {
-    // 兼容FF和IE和Opera 
+    // 兼容FF和IE和Opera
     var theEvent = e || window.event;
     var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
     if (code == 13) {
@@ -200,4 +192,3 @@ document.onkeydown = function(e) {
     return true;
 };
 ```
-

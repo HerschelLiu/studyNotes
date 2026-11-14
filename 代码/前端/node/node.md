@@ -1,14 +1,16 @@
+# node
+
 node.js简介 （解析器）
 
 1. 用js语言做后台开发 2.是javaScript的运行环境 3.对V8引擎的封装 （速度快，性能好）
 
-2. 优势：  
+2. 优势：
 
       a. 性能高
       b. 由nodejs带来的编译工具为前端开发提供了便利。（gulp,webpack）
       c. 省开发成本
 
-3. 特点     
+3. 特点
 4. 单线程异步非阻塞
 
     1. 异步 I/O        I是input输入   O是onput输出
@@ -41,7 +43,6 @@ commonJS
 ​          2.模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就被缓存了，以后在加载，就直接读取缓存结果。（require.cache）
   3.模块加载的顺序，按照其代码的顺序。
 
-
 require
 1.require命令是commonJS规范之中，用来加载其他模块的命令。
 2.require命令的基本功能是，读入并执行一个JavaScript文件，然后返回该模块的module.exports对象，如果没有发现制定模块，会报错
@@ -65,7 +66,7 @@ console.log(module.exports)
 4.module.parent 返回一个对象 /null，表示调用该模块的模块
 5.module.children 返回一个数字，表示该模块要用到的其他模块。
 6.module.exports表示模块对外输出的值
-7.module.dirname 返回当前模块的相对路径 
+7.module.dirname 返回当前模块的相对路径
 4.CommonJS规定，每个文件的对外接口是module.exports对象。这个对象的所哟与属性和方法，都可以被其他文件导入，让调用require方法引入模块时，其实是加载模块的module.exports属性。
 5.module.exports初始值为一个空对象。
 exports
@@ -90,7 +91,7 @@ npm 强大的包管理工具（负责包的上传，下载，卸载）
 package.json 包管理文件 （包名，作者等） npm-init       version版本 author作者 dependencies依赖  main入口文件 description描述
 scripts字段可以封装一些命令函数指令  {  start:指令------> 运行方式：npm start      自定义指令：指令-------->运行方式：  npm run 自定义指令}   多个指令之间用&隔开
 6.没有window对象
-下载：	
+下载：
 npm install 包名
 npm install 包名 --save
 npm install 包名 --S
@@ -128,9 +129,9 @@ npm root	    查看本地路径
  上传包
 第三方包加载规则：以当前工作目录为基准依次向上查找
 var ejs = require("ejs")  require加载第三方包，加载的实则是包内的某一个js文件，该文件被称为入口文件。
-特点 
-必须放置于node_modules           
-必须配置入口文件 
+特点
+必须放置于node_modules
+必须配置入口文件
 入口文件必须提供对外的接口 module.exports
 是个文件夹
 入口文件
@@ -158,7 +159,6 @@ var a = require("./lib")   index.js(默认入口文件)
 在文件中输入要执行的命令，并以%*结尾、   node + js文件的相对路径
 输入@pause  防止程序执行完毕退出终端
 双击运行
-
 
 命令
 1.安装包，默认会安装最新的版本 npm i package
@@ -198,7 +198,6 @@ ml/doc/cli/npm-install.html
    type + js
 
 ml/css  =>查看文件内容
-
 
 //封装
 module.exports = {
@@ -314,13 +313,10 @@ fs.readFile("./index.html", "utf-8", function(err, data) {
 ​        })
 ​    })
 
-
 同步：
 同步
 ​    var data = fs.readFileSync("./index.html", "utf-8");
 ​    console.log(data)
-
-
 
 更换背景颜色
 获取新颜色   node index color     newcolor = process.argv[2]
@@ -377,7 +373,7 @@ st.isFile()是否为文件
 st.isdirectory()是否为文件夹
 })
 同步 fs.statSync("文件/文件夹")
-​      
+​
 流（node.js的移动数据的方式 可读可写）
 特点：由于数据是流，这就意味着在完成数据读取之前，从收到的最初几个字节开始，就可以对数据动作。
 简介：
@@ -404,7 +400,7 @@ ws.on("drain", function() {
 rs.on("end", function() {
 ​    //读取完成之后 停止写
 ​    ws.end();
-})															
+})
 流的可读可写
 1. 创建一个可读数据流
   var rs = fs.createReadStream
@@ -424,12 +420,12 @@ rs.on("end", function() {
   ​        }
   path(操作磁盘路径的内置模块)
   path.normalize()  格式化路径 将不标准路径转为标准路径
-  path.delimiter   提供特定平台的路径分隔符   
+  path.delimiter   提供特定平台的路径分隔符
   ;对于windows
   ：对于POSIX
   3.path.extname(index.html)  获取文件的后缀名   //html
   当参数没有 . 或只有一个 . 或以 . 开头则都返回空字符串
-  以 . 结尾   则返回 . 
+  以 . 结尾   则返回 .
   4.path.join() 可以穿0 - 多个参数
   使用平台特定分隔符将所有给定的段连接在一起，然后对结果路径进行规范化
   5.path.dirname()  返回代表文件夹的部分
@@ -452,7 +448,7 @@ rs.on("end", function() {
   //1引入
   var http = require("http")
   //2搭建服务器
-  var server = http.createServer(function(request,response){	
+  var server = http.createServer(function(request,response){
     //回调函数什么时候执行   当客户端发起请求时被执行
     //回调函数执行的次数与客户端的请求次数有关系
     //3设置响应头信息
@@ -549,8 +545,8 @@ if (req.method === "GET") {
 ​        var obj = url.parse(req.url, true).query;
 ​        var user = obj.name;
 ​        res.end(JSON.stringify({ "mes": "hello:" + user }))
-​    } 
-post  请求方式 -----》 
+​    }
+post  请求方式 -----》
 req.on（“data”，function（）{}）
 ​    req.on（“end”，function（）{}）
 监听body体中传递的数据    （传值时触发------》 异步）
@@ -559,7 +555,7 @@ else if (request.method === "post") {
 ​        req.on("data", function(chunk) {
 ​            str += chunk;
 ​        })
-//console.log(str) 
+//console.log(str)
 //空字符串   原因：函数回调是异步的，而post是在传值时触发的，在这段时间内，先输出了str，所以是空字符串
 ​        req.on("end", function() {
 ​            str.split("&").forEach(function(file) {
@@ -582,12 +578,10 @@ else if (req.method === "POST") {
 ​    }
 //post事件触发的次数和前端传来的数据的大小有关，当前端传输的数据的量较大时，会将数据分段传送，每发一段，该事件就会被触发一次
 
-
 post请求加一个设置头部
 xml.setRequestHeader("content-type", "application/x-www-form-urlencoded");
 
-
-querystring 
+querystring
 querystring模块用于实现url参数字符串与参数对象的互相转换，以及对参数进行编码解码。
 querystring.parse()     字符串转对象
 querystring.stringify()  对象转字符串
@@ -597,10 +591,9 @@ querystring.stringify()  对象转字符串
 参数3：分配符
 querystring.escape（）  编码（符号和汉字）
 querystring.unescape（） 解码
-url 
+url
   url模块允许解析url，生成url
 url.parse(address,true)  默认false，加true是可以把query由一个string转为object
-
 
 适用场景
 ​                                               转对象                       转字符串                适用场景
@@ -664,17 +657,17 @@ http.createServer(function (req, res) {
 ​            res.end(JSON.stringify({msg: 'hello'}));
 ​        }
 ​    }
-}).listen(8000);               
+}).listen(8000);
 http状态码为300表示 不成功 还需要进一步操作 比如重定向
 
-buffor 
+buffor
 代表一个缓冲区，存储二进制数据，是字节流，网络传输时，就传输的这种字节流，写文件时，也是写的字节流。、
 zlib  压缩与解压
 压缩
 1.
 //创建一个只读流
 var rs = fs.createReadStream("./baidu.html");
-//创建一压缩流                                                          
+//创建一压缩流
 var gzip = zlib.createGzip();
 //创建一个只写流
 var ws = fs.createWriteStream("./bdw.html");
@@ -734,7 +727,7 @@ res.download() 提示下载文件 参数：下载内容的路径
 res.end()   结束响应
 res.json()  发送json格式的响应
 res.jsonp()
-res.redirect（）  重定向请求  参数：定向的路由 
+res.redirect（）  重定向请求  参数：定向的路由
 res.render()  渲染视图模板
 res.send()  发送各类型的响应 除了buffer格式 参数：send里面如果传入number会将其解析为状态码
 res.sendStatus()  设置状态码，并以字符串作为响应的一部分返回
@@ -752,7 +745,7 @@ req方法
 req.path(请求路径) 不含参  url.parse(req.url).pathname
 req.url  含参的路径
 req.method 请求方式
-req.params  获取以“:”隔开的参数数值     路由路径参数  
+req.params  获取以“:”隔开的参数数值     路由路径参数
 app.get("/getUser/:name/:pwd", function(req, res, next) {
 ​    var obj = req.params; //获取/:name/:pwd变量值
 ​    if (obj.name === "zs" && obj.pwd === "1123") {
@@ -762,7 +755,7 @@ app.get("/getUser/:name/:pwd", function(req, res, next) {
 ​    }
 }, function(req, res) {
 ​    res.send({ msg: "error" }) //发送内容
-}); 
+});
 req.query  获取？后面的地址栏参数   url.parse(req.url,true).query
 res.setHeader    只能设一个
 res.writeHead(200,{})  可以设多个值
@@ -780,7 +773,7 @@ app.route(服务器路径)
 .method2(function(req,res){})
 4.创建路由路径的链式路由句柄  定义一个路径，拆分多种请求方式 app.route()
 5.express.Router   创建模块化 可挂载的路由句柄
-必须挂载     
+必须挂载
 挂载到应用 app.use([虚拟路径]，router)  虚拟路劲默认“/”      若app.use("./src",router)  访问 ./src/app
 ​      6.next() 将控制权交给下一个处理器函数
 ​      7.next("route") 将控制权交给下一个同名路由器
@@ -831,23 +824,22 @@ app.use(function(err, req, res, next) {
 ​    var msg = err.status ? err.message : "服务器错误";
 ​    res.status(err.status || 500).send(msg) //响应错误
 });
-第三方  
+第三方
 body-parser  获取post方式传递的参数；
 var bodyParser = require("body-parser");
-var urlParser = bodyParser.urlencode({extended:false})         =express.urlencoded({extended:false}); 
+var urlParser = bodyParser.urlencode({extended:false})         =express.urlencoded({extended:false});
 获取body体内的内容
 内置中间件
 express.static() ------> 返回值是中间件     //加载静态资源
 参数：静态资源所在的文件夹 相对路径
  该root参数制定从中提供静态资源的根目录，该函数通过req.url与提供的root目录组合来确				定需提供的文件，当找不到文件时，他不是发送404来响应而是调用next()继续下一个中间件。允许堆叠和回退。
-express.urlencoded({extended:false}); 
+express.urlencoded({extended:false});
 中间件小结：
 应用级：绑定在app上  三个参数
 路由级：绑定在router上
 错误处理  四个参数 err,req，res,next
 内置  express自带
 第三方 去下载
-
 
 增删改查
 增：添加数据

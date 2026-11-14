@@ -1,1 +1,0 @@
-比如地址为`https://gitee.com/FishSay/studyNotes`,则ssh地址为`git@gitee.com:FishSay/studyNotes.git`

@@ -1,3 +1,7 @@
+# useSelect选择弹窗表格
+
+> `useSelect`：弹窗选择表格的选择逻辑（主键比较、数量校验、全选/清除、保存）。
+
 ```ts
 import type { ComputedRef, Ref } from 'vue'
 
@@ -16,11 +20,13 @@ export const SelectAction = {
 export type SelectAction = (typeof SelectAction)[keyof typeof SelectAction]
 
 /** useSelect 依赖的组件 props */
-export interface UseSelectProps {
+export interface UseSelectProps<R = object> {
   /** 最大选择数量，0 表示不限制 */
   maxLength?: number
   /** 最小选择数量，默认 1 */
   minLength?: number
+  /** 禁用选择的行：单行选择与全选本页都会跳过 */
+  disabledRow?: (row: R) => boolean
 }
 
 /** useSelect 依赖的列表对象 */
@@ -48,7 +54,7 @@ type SelectKeys = Ref<string> | ComputedRef<string> | string
  * - `maxLength = 0` 表示不限制数量
  */
 export function useSelect<Q, R extends object>(
-  props: UseSelectProps,
+  props: UseSelectProps<R>,
   context: { emit: (event: any, ...args: any[]) => void },
   checkAll: UseSelectCheckAll<R>,
   list: UseSelectList<Q, R>,
@@ -102,6 +108,9 @@ export function useSelect<Q, R extends object>(
       return
     }
 
+    // 禁用行兜底：UI 已禁用选择按钮，避免函数被直接调用时误选
+    if (props.disabledRow?.(row)) return
+
     // 先按主键去重，避免同一行重复入列
     const rest = selected.filter(item => rowKeyOf(item, fields.value) !== rowKey)
     const maxLength = getMaxLength()
@@ -127,9 +136,11 @@ export function useSelect<Q, R extends object>(
     checkAll.selected.value = []
   }
 
-  /** 全选本页 */
+  /** 全选本页（跳过禁用行） */
   const handleSelectedPage = () => {
-    checkAll.selected.value = putSelectedList(checkAll.selected.value, list.items, unref(keys))
+    const isDisabled = props.disabledRow
+    const rows = isDisabled ? list.items.filter(item => !isDisabled(item)) : list.items
+    checkAll.selected.value = putSelectedList(checkAll.selected.value, rows, unref(keys))
   }
 
   /** 清除本页 */
@@ -162,4 +173,3 @@ export function useSelect<Q, R extends object>(
 }
 
 ```
-

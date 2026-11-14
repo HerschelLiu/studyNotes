@@ -1,4 +1,6 @@
-# [关于textarea限制字数的总结](https://www.cnblogs.com/duzjextjs/p/5915405.html)
+# 限制 textarea 标签字数
+
+> 转载：[关于textarea限制字数的总结](https://www.cnblogs.com/duzjextjs/p/5915405.html)
 
 在input标签中，只需要设置maxlength=”200”即可，但是在textarea标签中，IE9及IE9以下浏览器是不支持的，IE10、IE11则支持，估计后续的版本应该都会支持。
 
@@ -7,8 +9,6 @@
 ```
 <textarea rows="5"  maxlength="200" onchange="this.value=this.value.substring(0, 200)" onkeydown="this.value=this.value.substring(0, 200)" onkeyup="this.value=this.value.substring(0, 200)" ></textarea>
 ```
-
-
 
 这样子即可。
 

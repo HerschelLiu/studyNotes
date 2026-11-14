@@ -1,8 +1,8 @@
-### 深度拷贝
+# fs模块
+
+## 深度拷贝
 
 如果里面有文件夹那就拷贝文件夹里的  如果文件夹里还有文件夹就继续往下找  知道把这个文件夹拷贝完
-
-
 
 var fs=require("fs')  操作磁盘文件的内置模块
 
@@ -35,17 +35,9 @@ fs.readFile("./index.html","utf-8",function(err,data){
 
 ```
 
-
-
 err---->成功：null  失败：错误对象
 
 data---->成功：文件内容 失败：undefined
-
-
-
-
-
-
 
 同步读取显示报错
 
@@ -59,7 +51,7 @@ fs.readFile('./2.png','base64',function(err,data)
     if(err){
 
          if (err) {
-            console.error(err);     
+            console.error(err);
         } else {
             console.log(data);
 
@@ -133,24 +125,20 @@ fs.writeFileSync("./style.css",data);
 
    fs读取文件夹（文件目录） read  directory
 
-
-
    ```
    fs.readdir('./a',function(err,paths){
-   
+
        if(err){
-   
+
            throw err;
-   
+
        }
-   
+
         console.log(paths)
-   
+
    }
-   
+
    ```
-
-
 
    paths是所有文件的集合
 
@@ -202,8 +190,6 @@ console.log(paths)
 }
 ```
 
-
-
 同步读取文件目录：fs.readdirSync("")
 
 fs创建文件夹 makedir
@@ -217,8 +203,6 @@ console.log(exist)；//返回布尔值  true（存在）或false（不存在）
 })
 
 判断有无dist文件夹，有就拷贝，没有就创建在拷贝
-
-
 
 ———dirname 表示当前js文件所在的绝对路径
 
@@ -236,21 +220,21 @@ console.log(exist)；//返回布尔值  true（存在）或false（不存在）
 
    2、只写数据流
 
-   ```
+   ```ts
    var ws = fs.WriteStream("./3.mp4");
-   
-   
-   
+
+
+
    rs.on('data', function (chunk) { // chunk每次触发
-   
+
        ws.write(chunk)
-   
+
    });
-   
+
    rs.on("end", fucntion() {
-   
+
        ws.end()
-   
+
    })
    ```
 
@@ -261,7 +245,7 @@ console.log(exist)；//返回布尔值  true（存在）或false（不存在）
    ```javascript
    // 1.只读数据流
    var rs = fs.ReadStream('./1.mp4');
-   
+
    // 2.只写数据流
    var ws = fs.WriteStream('./3.mp4');
    rs.on('data',function(chunk){
@@ -270,11 +254,11 @@ console.log(exist)；//返回布尔值  true（存在）或false（不存在）
            rs.pause();
        }
    });
-   
+
    ws.on('drain',function(){
        rs.resume(); // 继续读取
    });
-   
+
    rs.on('end',function(){
        ws.end();
    });
@@ -292,11 +276,9 @@ console.log(exist)；//返回布尔值  true（存在）或false（不存在）
 
    rs.pipe(ws)
 
-
-
    drain事件表示什么时候只写数据流已经将缓存中的数据写入到目标，可传入下一段待写数据
 
-### 分步拷贝
+## 分步拷贝
 
 ```javascript
 var fs = require("fs");
@@ -329,4 +311,3 @@ setInterval(function() {
     process.stdout.write("已完成:" + passedSize + "MB,百分比:" + prosedsize + "%,当前进度:" + size + "MB/S");
 }, 1000)
 ```
-

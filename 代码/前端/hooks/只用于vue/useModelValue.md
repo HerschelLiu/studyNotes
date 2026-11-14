@@ -1,3 +1,7 @@
+# useModelValue
+
+> v-model 双向绑定（vue3.3 新增 `defineModel` 前的写法）
+
 ## VUE
 
 > vue3.3开始新增**实验特性**不需要此代码，因新增defineModel<T>(‘modelValue’, { default: any, request: boolean })(如果第一个参数是字符串，它将用作 prop 名称;否则，道具名称将默认为“modelValue”。在这两种情况下，您还可以传递一个额外的对象，该对象将用作道具的选项。)和useModel，将自动注册 props 和事件 ，并返回一个 ref：
@@ -7,10 +11,10 @@
 > ```vue
 > <script setup>
 > const modelValue = defineModel()
-> 
+>
 > console.log(modelValue.value)
 > </script>
-> 
+>
 > <template>
 >   <input v-model="modelValue">
 > </template>
@@ -22,7 +26,7 @@
 > <script setup>
 > import { ref } from 'vue'
 > import Comp from './Comp.vue'
-> 
+>
 > const msg = ref('')
 > </script>
 > <template>
@@ -30,7 +34,7 @@
 > </template>
 > ```
 >
-> 
+>
 >
 > 此功能是实验性的，需要明确的选择加入。[RFC#503](https://github.com/vuejs/rfcs/discussions/503)
 >
@@ -49,7 +53,7 @@
 >   ]
 >   ...
 > }
->   
+>
 > // vue-cli vue-loader@^17.1.1
 >  module.exports = {
 >     chainWebpack: (config) => {
@@ -66,7 +70,7 @@
 > }
 > ```
 >
-> 
+>
 
 使用`useModelValue(props, { emit })`
 
@@ -101,4 +105,3 @@ export function useModelValue<T>(props: any, context: { emit: (event: any, ...ar
 }
 
 ```
-

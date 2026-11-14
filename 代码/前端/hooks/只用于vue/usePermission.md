@@ -1,3 +1,7 @@
+# usePermission
+
+> 路由/按钮权限判断（vue-router）
+
 ## VUE
 
 ```ts
@@ -98,4 +102,3 @@ type Words =
 /** 限定首字母大写 */
 type Cap = `${Capitalize<Words>}${string}`
 ```
-

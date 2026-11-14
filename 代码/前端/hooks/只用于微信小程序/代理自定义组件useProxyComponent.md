@@ -1,3 +1,7 @@
+# 代理自定义组件useProxyComponent
+
+> 自定义组件代理：给 `Component` 增加 computed 等能力。
+
 ```ts
 /* eslint-disable prefer-rest-params */
 
@@ -41,4 +45,3 @@ useProxyComponent()
 
 App({...})
 ```
-

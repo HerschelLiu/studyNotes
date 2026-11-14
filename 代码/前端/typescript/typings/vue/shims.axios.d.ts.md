@@ -1,3 +1,5 @@
+# shims.axios.d.ts
+
 ```ts
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import 'axios'
@@ -19,4 +21,3 @@ declare module 'axios' {
 }
 
 ```
-

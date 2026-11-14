@@ -1,3 +1,7 @@
+# useElementVisible
+
+> **纯 DOM**（getBoundingClientRect + computedStyle），可移到跨框架
+
 ```ts
 /** 判断元素是否可见 */
 const useElementVisible = (element: Element) => {
@@ -25,4 +29,3 @@ const useElementVisible = (element: Element) => {
 export default useElementVisible
 
 ```
-

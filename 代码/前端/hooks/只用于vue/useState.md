@@ -1,3 +1,7 @@
+# useState
+
+> 页面状态：busy/loading/request/handleCancel，依赖 EP Loading
+
 ```ts
 import type { WatchOptions } from 'vue'
 
@@ -90,4 +94,3 @@ export function useState<T>(initialState: T | (() => T), options?: UseStateOptio
 }
 
 ```
-

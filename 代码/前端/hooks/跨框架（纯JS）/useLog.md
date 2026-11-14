@@ -1,3 +1,7 @@
+# useLog
+
+> 带样式打印 + `## 微信小程序` 日志上报段
+
 ## JS
 ```ts
 /* eslint-disable no-console */
@@ -14,8 +18,6 @@ export function useLog(title: string, info: string | undefined) {
 }
 
 ```
-
-
 
 ## 微信小程序
 
@@ -60,4 +62,3 @@ const logData = reactive({
   height: 600
 })
 ```
-

@@ -1,3 +1,5 @@
+# 如何在vue中使用mock
+
 1. 在根目录下创建mock文件夹，里面新建js（我的叫mymock.js）文件用以存放mockjs相关数据
 2. 在mymock.js中
 

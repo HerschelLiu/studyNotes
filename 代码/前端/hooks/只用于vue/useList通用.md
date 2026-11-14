@@ -1,3 +1,13 @@
+# useList通用
+
+> 列表/分页/查询状态，含 vue-query、`## vue3uniapp`、`## 小程序` 三个版本
+
+## 目录
+
+- [vue3](#vue3)
+- [vue3uniapp](#vue3uniapp)
+- [小程序](#小程序)
+
 ## vue3
 
 ```ts
@@ -5,7 +15,7 @@ import type { QueryKey } from '@tanstack/vue-query'
 import type { AjaxResult } from '@/types/api/common'
 import type { MaybeRef, MaybeRefOrGetter } from 'vue'
 
-import { computed, reactive, toValue, unref, watch } from 'vue'
+import { computed, reactive, toRaw, toValue, unref, watch } from 'vue'
 import { useStorage } from '@vueuse/core'
 import { useQuery } from '@tanstack/vue-query'
 import { useAssign, useValue } from '@/hooks/useObject'
@@ -37,7 +47,7 @@ export interface DefineListEmits<T = Object, R = Object> {
 }
 // #endregion
 
-// #region List 骨架工厂与分页参数（共享内部工具）
+// #region List 骨架工厂、分页参数与响应解析（共享内部工具）
 /**
  * 插入分页参数
  * @param enablePage 是否启用分页
@@ -59,6 +69,33 @@ export const createListState = <Q = Record<string, any>, R = Record<string, any>
   request: async () => {},
   ...init
 })
+
+/** 列表接口响应（兼容 rows / data） */
+type ApiResult<R> = Omit<AjaxResult<R>, 'data' | 'rows'> & {
+  data?: R[]
+  rows?: R[]
+}
+
+/** 接口响应解析结果 */
+interface ParsedList<R> {
+  items: R[]
+  total: number
+}
+
+/**
+ * 解析接口响应，兼容 rows / data / 纯数组三种返回结构
+ * @param res 接口响应
+ */
+const resolveRows = <R>(res: unknown): ParsedList<R> => {
+  /** TanStack Query 的 data 是 readonly 代理，行内 v-model（如表格勾选）写入会被拦截，需先还原原始对象 */
+  const target = toRaw(res)
+  if (Array.isArray(target)) return { items: target as R[], total: target.length }
+  const body = target as ApiResult<R> | null | undefined
+  return {
+    items: (body?.rows ?? body?.data ?? []) as R[],
+    total: typeof body?.total === 'number' ? body.total : 0
+  }
+}
 // #endregion
 
 // #region useList —— 传统 callback 模式
@@ -69,25 +106,25 @@ export const createListState = <Q = Record<string, any>, R = Record<string, any>
  */
 export const useList = <Q = null, R = object>(otherQuery: Partial<Q>, enablePage = true) => {
   const list = reactive(
-    createListState<Q, R>({
-      query: {
-        ...getPage(enablePage),
-        ...otherQuery
-      } as unknown as Q & ListBaseQuery,
-      request: async function (callback: any) {
-        if (this.loading) return
-        this.loading = true
-        try {
-          const data = await callback()
-          this.items = Array.isArray(data.rows) ? data.rows : Array.isArray(data) ? data : []
-          this.total = typeof data.total === 'number' ? data.total : Array.isArray(data) ? data.length : 0
-          this.loading = false
-        } catch (error) {
-          console.error(error)
+      createListState<Q, R>({
+        query: {
+          ...getPage(enablePage),
+          ...otherQuery
+        } as unknown as Q & ListBaseQuery,
+        request: async function (callback: () => Promise<unknown>) {
+          if (this.loading) return
+          this.loading = true
+          try {
+            const { items, total } = resolveRows<R>(await callback())
+            this.items = items
+            this.total = total
+          } catch (error) {
+            console.error(error)
+          } finally {
+            this.loading = false
+          }
         }
-        this.loading = false
-      }
-    })
+      })
   )
 
   return list
@@ -125,10 +162,6 @@ export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
   onError?: (err: unknown) => void
 }
 
-type ApiResult<R> = Omit<AjaxResult<R>, 'data' | 'rows'> & {
-  data?: R[]
-  rows?: R[]
-}
 /**
  * 列表查询 hook（基于 @tanstack/vue-query）
  *
@@ -140,10 +173,10 @@ type ApiResult<R> = Omit<AjaxResult<R>, 'data' | 'rows'> & {
  * @param options    其他配置
  */
 export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiResult<R>>(
-  otherQuery: MaybeRefOrGetter<Partial<Q>> = {},
-  queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
-  queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
-  options: UseListQueryOptions<Q, R> = {}
+    otherQuery: MaybeRefOrGetter<Partial<Q>> = {},
+    queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
+    queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
+    options: UseListQueryOptions<Q, R> = {}
 ) => {
   const { enablePage = true, enabled = true, onError = err => console.error('useListQuery error:', err) } = options
 
@@ -153,39 +186,45 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiRes
   const mergeQuery = (seed: Partial<Q>): Q & ListBaseQuery => ({ ...pageFields, ...seed } as unknown as Q & ListBaseQuery)
 
   const list = reactive(
-    createListState<Q, R>({
-      query: mergeQuery(toValue(otherQuery)),
-      /** 兼容旧的，对于useListQuery来说是冗余字段 */
-      request: async () => {
-        await refetch()
-      }
-    })
+      createListState<Q, R>({
+        query: mergeQuery(toValue(otherQuery)),
+        /** 兼容旧的，对于useListQuery来说是冗余字段 */
+        request: async () => {
+          await refetch()
+        }
+      })
   ) as List<Q, R>
 
   /** otherQuery 响应式变化 → 更新 list.query 的非分页字段 */
   watch(
-    () => toValue(otherQuery),
-    newSeed => {
-      const snapshot = mergeQuery(newSeed)
-      Object.keys(snapshot).forEach(key => {
-        if (!(key in pageFields)) (list.query as any)[key] = snapshot[key]
-      })
-    },
-    { deep: true }
+      () => toValue(otherQuery),
+      newSeed => {
+        const snapshot = mergeQuery(newSeed)
+        Object.keys(snapshot).forEach(key => {
+          if (!(key in pageFields)) (list.query as any)[key] = snapshot[key]
+        })
+      },
+      { deep: true }
   )
 
   const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
 
   const finalQueryKey = computed<QueryKey>(() => (typeof queryKey === 'function' ? queryKey(queryParams.value) : [...queryKey, queryParams.value]))
 
+  /** 查询结果 → list.items/total */
+  const syncList = (res: TData | undefined) => {
+    if (!res) return
+    const { items, total } = resolveRows<R>(res)
+    list.items = items
+    list.total = total
+  }
+
   const queryResult = useQuery<TData, Error>({
     queryKey: finalQueryKey,
     queryFn: async () => {
       try {
         const res = await queryFn(queryParams.value)
-        const body = res as unknown as ApiResult<R>
-        list.items = (body.rows ?? body?.data ?? (Array.isArray(res) ? res : [])) as any
-        list.total = typeof body.total === 'number' ? body.total : Array.isArray(res) ? res.length : 0
+        syncList(res)
         return res
       } catch (err) {
         onError(err)
@@ -195,19 +234,31 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiRes
     enabled: typeof enabled === 'function' ? computed(() => enabled(list)) : enabled
   })
 
+  /**
+   * TanStack Query 同一 queryKey 只保留创建缓存条目时的 queryFn，
+   * 缓存命中或组件重建时新实例的 queryFn 不会执行，
+   * 因此这里用 data 兜底同步，避免新的观察者 list.items 恒为空
+   */
+  watch(queryResult.data, syncList, { immediate: true })
+
   const { isLoading, refetch } = queryResult
 
   watch(isLoading, loading => (list.loading = loading), { immediate: true })
 
-  /** 整体重置：清空 items/total，query 还原为当前 otherQuery + 分页字段 */
+  /** 整体重置：清空 items/total，query 还原为当前 otherQuery + 分页字段，并移除已失效的查询键 */
   const resetList = () => {
+    const query = list.query as Record<string, any>
+    const nextQuery = mergeQuery(toValue(otherQuery))
+    Object.keys(query).forEach(key => {
+      if (!(key in nextQuery)) delete query[key]
+    })
+    useAssign(list.query, nextQuery)
     list.items = []
     list.total = 0
-    useAssign(list.query, mergeQuery(toValue(otherQuery)))
   }
 
   /** 手动请求（自动/手动模式都可用） */
-  const getList = async () => refetch()
+  const getList = () => refetch()
 
   return {
     list,
@@ -225,25 +276,34 @@ export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiRes
  * @param loading 加载状态（boolean / ref / getter）
  */
 export const useListAdaptor = <R = Record<string, any>, Q = Record<string, any>>(
-  items: MaybeRefOrGetter<R[]>,
-  loading: MaybeRefOrGetter<boolean> = false
+    items: MaybeRefOrGetter<R[]>,
+    loading: MaybeRefOrGetter<boolean> = false
 ) => {
   const list = reactive(createListState<Q, R>())
 
+  // 数组整体替换时同步 items/total；原地增删（push/splice）时只同步 total
+  // 不使用 deep 深度监听，避免大列表编辑单元格时遍历所有行
   watch(
-    () => toValue(items),
-    v => {
-      list.items = v as any
-      list.total = v.length
-    },
-    { immediate: true, deep: true }
+      () => toValue(items),
+      v => {
+        list.items = v as any
+        list.total = v.length
+      },
+      { immediate: true }
   )
   watch(
-    () => toValue(loading),
-    v => {
-      list.loading = v
-    },
-    { immediate: true }
+      () => toValue(items).length,
+      total => {
+        list.total = total
+      },
+      { immediate: true }
+  )
+  watch(
+      () => toValue(loading),
+      v => {
+        list.loading = v
+      },
+      { immediate: true }
   )
 
   return list
@@ -284,10 +344,6 @@ declare global {
   }
 }
 ```
-
-### 配合`@tanstack/vue-query`
-
-见`vue-query`文件夹
 
 ## vue3uniapp
 
@@ -453,8 +509,6 @@ interface List<Q = null, R = object> {
   reGet: boolean
 }
 ```
-
-
 
 ## 小程序
 
@@ -653,4 +707,3 @@ interface ResponseList<T> {
   total: number
 }
 ```
-

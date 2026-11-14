@@ -1,3 +1,13 @@
+# useCanvas
+
+> canvas 节点获取与绘制封装（含 uniapp 段）。
+
+## 目录
+
+- [微信小程序](#微信小程序)
+- [vue](#vue)
+- [uniapp](#uniapp)
+
 ## 微信小程序
 
 ```ts
@@ -90,7 +100,7 @@ export function canvasToTempFilePath(canvas: WechatMiniprogram.Canvas): Promise<
 ## vue
 
 ```ts
-import { useRemoveHtmlTag } from '@/utils/useString' 
+import { useRemoveHtmlTag } from '@/utils/useString'
 import { useSub, useDivide } from '@/utils/useCalc'
 
 /**
@@ -171,7 +181,7 @@ async function processBackground(background, borderRadius, size, position = { le
         console.log(`图片获取失败: ${JSON.stringify(error)}`);
       }
     }
-    
+
     if (background['color']) {
       ctx.save()
       const [w, h] = [getPx(size['w']), getPx(size['h'])]
@@ -198,28 +208,28 @@ function processBorderRadio(borderRadius, size, position = { left: 0, top: 0 }, 
       const [tl, tr, bl, br] = [getPx(borderRadius['topLeft']), getPx(borderRadius['topRight']), getPx(borderRadius['bottomLeft']), getPx(borderRadius['bottomRight'])]
       /** 左上角 */
       ctx.arc(x + tl, y + tl, tl, Math.PI, 1.5 * Math.PI)
-      
+
       /** 上边 */
       ctx.lineTo(x + tl, y)
       ctx.lineTo(x + w - tl, y)
-      
+
       /** 右上角 */
       ctx.arc(x + w - tr, y + tr, tr, 1.5 * Math.PI, 2 * Math.PI)
-      
+
       /** 右边 */
       ctx.lineTo(x + w, y + tr)
       ctx.lineTo(x + w, y + h - tr)
-      
+
       /** 右下角 */
       ctx.arc(x + w - br, y + h - br, br, 0, 0.5 * Math.PI)
-      
+
       /** 下边 */
       ctx.lineTo(x + br, y + h)
       ctx.lineTo(x + w - br, y + h)
-      
+
       /** 左下角 */
       ctx.arc(x + bl, y + h - bl, bl, 0.5 * Math.PI, Math.PI)
-      
+
       /** 左边 */
       ctx.lineTo(x, y + bl)
       ctx.lineTo(x, y + h - bl)
@@ -227,7 +237,7 @@ function processBorderRadio(borderRadius, size, position = { left: 0, top: 0 }, 
       const r = getPx(borderRadius)
       ctx.arc(x + r, y + r, r, 0, 2 * Math.PI)
     }
-    
+
     ctx.closePath()
     ctx.clip()
     ctx.fill()
@@ -253,7 +263,7 @@ function processFont(font, size, position = { left: 0, top: 0 }, ctx) {
   return Promise.resolve()
 }
 
-/** 
+/**
  * 处理多行文字
  * @return {{
     text: string,
@@ -270,7 +280,7 @@ function dealWords(font, size, position, ctx) {
   let endPos = 0 //当前字符串的截断点
   const lineHeight = useDivide(h, count)
   const words = []
-  
+
   for (let i = 0; i < count; i++) {
     const nowStr = text.slice(endPos) //当前剩余的字符串
     let rowWid = 0 //每一行当前宽度
@@ -306,10 +316,10 @@ function dealWords(font, size, position, ctx) {
 
 /**
  * 绘画
- * @param {object[]} options 
- * @param {number} width 
- * @param {number} height 
- * @returns 
+ * @param {object[]} options
+ * @param {number} width
+ * @param {number} height
+ * @returns
  */
 export default function useDraw(options, width, height) {
   const canvasW = getPx(width) || uni.getSystemInfoSync().windowWidth
@@ -360,7 +370,7 @@ export default function useDraw(options, width, height) {
 >       )
 > ```
 >
-> 
+>
 
 ## uniapp
 
@@ -383,4 +393,3 @@ export function useCanvasElementByComponent(instance: ComponentInternalInstance,
   })
 }
 ```
-

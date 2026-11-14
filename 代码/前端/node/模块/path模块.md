@@ -1,10 +1,12 @@
+# path模块
+
 1、path -> 操作磁盘路径的内置模块 带盘符的相对路径或者绝对路径
 
 2、格式化路径  path.normalize(p)
 
 3、提供特定于平台的路径分隔符  path.delimiter
 
-4、******获取文件后缀名  path.extname(p)   
+4、******获取文件后缀名  path.extname(p)
 
 如果路径中不带.,或者只有点，或以点开头，则该方法返回空字符串
 
@@ -18,7 +20,7 @@
 
 5、使用平台特定的分隔符将所有给定的段连接在一起，然后对结果路径进行格式化
 
-*********path.join() 可以传 0- 多个参数  _dirname+'/lib'+file 
+*********path.join() 可以传 0- 多个参数  _dirname+'/lib'+file
 
 6、返回代表文件夹的部分
 
@@ -42,8 +44,6 @@ __dirname 在哪个文件夹里返回的就是当前的绝对路径
 
 ​                  是该变量所在的js文件的绝对路径，会随自身的位置发生改变
 
-
-
 `process.cwd()  ==path.resolve()  `
 
 ```javascript
@@ -53,23 +53,17 @@ console.log(path.resolve());
 
 如果没有path段传值,path.resolve()将返回当前工作目录的绝对路径.如果在处理所有给定path段之后,还没有生成绝对路径,则使用当前工作目录进行追加.路径从右往左依次追加,直到找到绝对路径就停止追加,直接返回
 
-
-
 如果dir存在，则忽略root；
 
 base如果存在，则忽略ext和name
 
-
-
 重点：join extname resolve format
-
- 
 
 深度拷贝：
 
  思路： 1、找出所有文件
 
-​              2、分类拷贝   big  small  
+​              2、分类拷贝   big  small
 
 ​      (1)  引入模块
 
@@ -79,8 +73,6 @@ var  fs=require("fs");
 var path=require("path")
 
                ```
-
-
 
 ​       (2) 读取src文件目录，获取到src中所有文件的集合
 
@@ -92,8 +84,6 @@ fs.readdir(path.join(__dirname, 'src'), function (err, path) {
 });
 ```
 
-
-
 (3)  遍历目录
 
  ```javascript
@@ -104,8 +94,6 @@ paths.forEach(funcntion(file){
 var  pathname=path.join(_dirname,'src',file);
 
  ```
-
-
 
 (5) 查看文件信息
 
@@ -119,8 +107,6 @@ fs.stat(pathname, function (err, st) {
     }
 });
 ```
-
-
 
 (6)判断
 
@@ -302,4 +288,3 @@ var exists = function(src, dst, callback) {
 exists('./src', './dit', copy);
 console.log(path.resolve(__dirname + "/src"));
 ```
-

@@ -1,10 +1,12 @@
+# vuecreate错误及解决
+
 ## Error: Cannot find module 'vue-template-compiler'
 
 `npm i vue-template-compiler -g `或`yarn add vue-template-compiler -g`
 
 ## 如何切换包管理器
 
-明确的说明了包管理器和淘宝npm镜像源会存入 ~/.vuerc 
+明确的说明了包管理器和淘宝npm镜像源会存入 ~/.vuerc
 
 此文件如果是windows环境，则存在了 C:/user/administrator/ 下：
 

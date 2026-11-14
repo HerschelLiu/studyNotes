@@ -1,3 +1,7 @@
+# useRouter
+
+> 页面栈与路由封装（解决直播等场景 `getCurrentPages()` 为空的问题）。
+
 ```ts
 /** 获取页面栈，解决直播的页面栈为null */
 export function getCurrentPagesList(): IUniPage[] {
@@ -107,4 +111,3 @@ export function redirectTo(options: UniApp.RedirectToOptions) {
 }
 
 ```
-

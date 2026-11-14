@@ -1,4 +1,6 @@
-```js
+# upload
+
+```vue
 <template>
   <div class="flex flex-wrap">
     <div v-if="list.length" class="img-box">
@@ -289,4 +291,3 @@ const handleRemove = (index) => {
 </style>
 
 ```
-

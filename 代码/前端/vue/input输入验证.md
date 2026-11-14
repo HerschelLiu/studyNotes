@@ -1,3 +1,5 @@
+# input输入验证
+
 ```vue
 <input
     type="text"
@@ -43,8 +45,8 @@ new Vue({
                         if (_arr2.length > 2) {
                             _arr2.splice(-1, 1);
                             _arr[1] = _arr2.join('').replace(/,/ig, '');
-                        } 
-                        return _arr.join('.');  
+                        }
+                        return _arr.join('.');
                     }
                 } else {
                     return str;
@@ -65,4 +67,3 @@ new Vue({
 });
 </script>
 ```
-

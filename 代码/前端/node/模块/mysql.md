@@ -1,3 +1,5 @@
+# mysql
+
 ```javascript
 // 1、引入
 var mysql = require('mysql');
@@ -18,12 +20,12 @@ con.connect(function (err) {
     }
 });
 // 操作数据表
-con.query('delete from where id=1', function (err, result, field) { 
+con.query('delete from where id=1', function (err, result, field) {
     if (err) {
         throw err;
     }
     console.log(result);
-    
+
  });
 ```
 
