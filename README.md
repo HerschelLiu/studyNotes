@@ -111,7 +111,7 @@
     - [hooks/](代码/前端/hooks/README.md)（80 篇）
       - **uniapp/**（5 篇）
         - **useHeader.assets/**（0 篇）
-          - [6B3E9949-9A60-4DDF-9F6E-7FDCE0D76E19-8227057-8227061.jpeg](代码/前端/hooks/uniapp/useHeader.assets/6B3E9949-9A60-4DDF-9F6E-7FDCE0D76E19-8227057-8227061.jpeg)
+          - [微信小程序顶部区域计算方案.jpeg](代码/前端/hooks/uniapp/useHeader.assets/6B3E9949-9A60-4DDF-9F6E-7FDCE0D76E19-8227057-8227061.jpeg)
         - [settings.md](代码/前端/hooks/uniapp/settings.md)
         - [useCommon.md](代码/前端/hooks/uniapp/useCommon.md)
         - [useHeader.md](代码/前端/hooks/uniapp/useHeader.md)
