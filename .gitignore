@@ -2,3 +2,12 @@ node_modules/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# 构建与缓存（内容只有 content/ 一份，不再生成副本）
+apps/vitepress/.vitepress/cache/
+apps/vitepress/.vitepress/dist/
+apps/astro/dist/
+apps/astro/.astro/
+
+# 模板只保留源码，不提交安装产物
+.pages/

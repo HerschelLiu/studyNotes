@@ -1,0 +1,15 @@
+---
+title: "git设置账户及ssh"
+---
+
+```bash
+git config --global user.name "name"
+git config --global user.email "mail"
+
+//生成ssh
+ssh-keygen -t rsa -C "email"
+//接下来会让你设置密码，直接enter就不设置密码
+
+// 读取文件内容
+cat ~/.ssh/id_rsa.pub
+```

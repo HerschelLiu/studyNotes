@@ -1,0 +1,4 @@
+minimumReleaseAgeExclude:
+  - '@astrojs/markdown-remark@7.3.10'
+  - '@astrojs/runtime@0.1.2'
+  - astro@7.4.13

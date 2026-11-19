@@ -1,0 +1,717 @@
+---
+title: "学习笔记 · 全库索引"
+---
+
+> 📖 在线阅读：<https://herschelliu.github.io/studyNotes/> ｜ 本地启动与交互示例见[VitePress 搭建与部署指南](代码/前端/工程化/vitepress/文档站搭建与部署指南.md)；Astro 搭建见[Astro 搭建与部署](代码/前端/工程化/astro/Astro文档站搭建与部署.md)；双栈共享内容见[monorepo 与脚手架](<代码/前端/工程化/monorepo/monorepo.md>)，部署见[GitHub Pages 指南](<代码/系统与运维/github-pages/GitHub Pages 静态站点部署指南.md>)。
+
+> 点击**带链接的目录名**进入该目录的 README；点击**文件名**直接打开文件。加粗且无链接的目录名表示该目录没有 README。
+>
+> 全库 400+ 篇 Markdown。本文件按目录结构自动生成，新增 / 删除 / 移动文件后重新生成一次即可。
+
+## 分类
+
+| 分类 | 文档数 | 入口 |
+| --- | --- | --- |
+| ai | 8 | [README](代码/ai/README.md) |
+| 前端 | 312 | [README](代码/前端/README.md) |
+| 后端 | 7 | [README](代码/后端/README.md) |
+| 工具 | 36 | [README](代码/工具/README.md) |
+| 系统与运维 | 23 | [README](代码/系统与运维/README.md) |
+| 资源 | 4 | [README](代码/资源/README.md) |
+
+## 完整目录
+
+- [代码/](代码/README.md)（391 篇）
+  - [ai/](代码/ai/README.md)（8 篇）
+    - **_backup/**（1 篇）
+      - [AGENTS-2026-11-11-pre-restructure.md](代码/ai/_backup/AGENTS-2026-11-11-pre-restructure.md)
+    - **docs/**（2 篇）
+      - **agent/**（2 篇）
+        - [minyi-vue3.md](代码/ai/docs/agent/minyi-vue3.md)
+        - [vue-conventions.md](代码/ai/docs/agent/vue-conventions.md)
+    - [AGENTS.md](代码/ai/AGENTS.md)
+    - [agent.md](代码/ai/agent.md)
+    - [dsh可安装的插件.md](代码/ai/dsh可安装的插件.md)
+    - [vue3-ai.md](代码/ai/vue3-ai.md)
+  - [前端/](代码/前端/README.md)（312 篇）
+    - **Android/**（2 篇）
+      - [Android.md](代码/前端/Android/Android.md)
+      - [Android的一些问题.md](代码/前端/Android/Android的一些问题.md)
+    - **Cocos/**（1 篇）
+      - **cocoscreator资源/**（0 篇）
+        - [29.精灵图集_FlappyBird素材.rar](代码/前端/Cocos/cocoscreator资源/29.精灵图集_FlappyBird素材.rar)
+        - [41.微信飞机大战练习.rar](代码/前端/Cocos/cocoscreator资源/41.微信飞机大战练习.rar)
+        - [50.动画曲线与事件.rar](代码/前端/Cocos/cocoscreator资源/50.动画曲线与事件.rar)
+        - [52.屏幕Canvas.rar](代码/前端/Cocos/cocoscreator资源/52.屏幕Canvas.rar)
+        - [59.对话框练习.rar](代码/前端/Cocos/cocoscreator资源/59.对话框练习.rar)
+        - [68.socket.io ts版本.rar](代码/前端/Cocos/cocoscreator资源/68.socket.io%20ts版本.rar)
+        - [72.打小鸟资源.rar](代码/前端/Cocos/cocoscreator资源/72.打小鸟资源.rar)
+        - [85.Egret引擎飞机大战资源.rar](代码/前端/Cocos/cocoscreator资源/85.Egret引擎飞机大战资源.rar)
+      - **项目案例/**（0 篇）
+        - **2048/**（0 篇）
+          - **assets/**（0 篇）
+            - [2048资源文件.zip](代码/前端/Cocos/项目案例/2048/assets/2048资源文件.zip)
+            - [源码.zip](代码/前端/Cocos/项目案例/2048/assets/源码.zip)
+        - **ShootGame/**（0 篇）
+          - [airplane0.png](代码/前端/Cocos/项目案例/ShootGame/airplane0.png)
+          - [airplane1.png](代码/前端/Cocos/项目案例/ShootGame/airplane1.png)
+          - [airplane2.png](代码/前端/Cocos/项目案例/ShootGame/airplane2.png)
+          - [airplane3.png](代码/前端/Cocos/项目案例/ShootGame/airplane3.png)
+          - [airplane4.png](代码/前端/Cocos/项目案例/ShootGame/airplane4.png)
+          - [bee0.png](代码/前端/Cocos/项目案例/ShootGame/bee0.png)
+          - [bee1.png](代码/前端/Cocos/项目案例/ShootGame/bee1.png)
+          - [bee2.png](代码/前端/Cocos/项目案例/ShootGame/bee2.png)
+          - [bee3.png](代码/前端/Cocos/项目案例/ShootGame/bee3.png)
+          - [bee4.png](代码/前端/Cocos/项目案例/ShootGame/bee4.png)
+          - [bigplane0.png](代码/前端/Cocos/项目案例/ShootGame/bigplane0.png)
+          - [bigplane1.png](代码/前端/Cocos/项目案例/ShootGame/bigplane1.png)
+          - [bigplane2.png](代码/前端/Cocos/项目案例/ShootGame/bigplane2.png)
+          - [bigplane3.png](代码/前端/Cocos/项目案例/ShootGame/bigplane3.png)
+          - [bigplane4.png](代码/前端/Cocos/项目案例/ShootGame/bigplane4.png)
+          - [gameover.png](代码/前端/Cocos/项目案例/ShootGame/gameover.png)
+          - [hero0.png](代码/前端/Cocos/项目案例/ShootGame/hero0.png)
+          - [hero1.png](代码/前端/Cocos/项目案例/ShootGame/hero1.png)
+          - [pause.png](代码/前端/Cocos/项目案例/ShootGame/pause.png)
+          - [start.png](代码/前端/Cocos/项目案例/ShootGame/start.png)
+      - [Cocos.md](代码/前端/Cocos/Cocos.md)
+    - **Flutter/**（9 篇）
+      - **img/**（0 篇）
+        - [1.png](代码/前端/Flutter/img/1.png)
+        - [2.png](代码/前端/Flutter/img/2.png)
+      - [Flutter移动端.md](代码/前端/Flutter/Flutter移动端.md)
+      - [Flutter移动端用到的方法.md](代码/前端/Flutter/Flutter移动端用到的方法.md)
+      - [Flutter笔记.md](代码/前端/Flutter/Flutter笔记.md)
+      - [dart构造函数.md](代码/前端/Flutter/dart构造函数.md)
+      - [flutter优化.md](代码/前端/Flutter/flutter优化.md)
+      - [flutter插件.md](代码/前端/Flutter/flutter插件.md)
+      - [vscode flutter插件.md](代码/前端/Flutter/vscode%20flutter插件.md)
+      - [用到的方法.md](代码/前端/Flutter/用到的方法.md)
+      - [运行Flutter时遇见的问题及解决办法.md](代码/前端/Flutter/运行Flutter时遇见的问题及解决办法.md)
+      - [Dart.xmind](代码/前端/Flutter/Dart.xmind)
+    - **React/**（4 篇）
+      - [react router.md](代码/前端/React/react%20router.md)
+      - [react-native布局.md](代码/前端/React/react-native布局.md)
+      - [react.md](代码/前端/React/react.md)
+      - [redux.md](代码/前端/React/redux.md)
+    - **css/**（15 篇）
+      - [8个有趣CSS.md](代码/前端/css/8个有趣CSS.md)
+      - [UnoCss.md](代码/前端/css/UnoCss.md)
+      - [css hack.md](代码/前端/css/css%20hack.md)
+      - [pointer-events_none.md](代码/前端/css/pointer-events_none.md)
+      - [动画.md](代码/前端/css/动画.md)
+      - [多功能提交按钮.md](代码/前端/css/多功能提交按钮.md)
+      - [实现按钮波纹效果的几种效果.md](代码/前端/css/实现按钮波纹效果的几种效果.md)
+      - [实现高斯模糊的背景图片.md](代码/前端/css/实现高斯模糊的背景图片.md)
+      - [带动效的mask.md](代码/前端/css/带动效的mask.md)
+      - [文字过长导致换行解决方法.md](代码/前端/css/文字过长导致换行解决方法.md)
+      - [文本省略.md](代码/前端/css/文本省略.md)
+      - [让border颜色是渐变.md](代码/前端/css/让border颜色是渐变.md)
+      - [通用 scss.md](代码/前端/css/通用%20scss.md)
+      - [限制textarea标签字数.md](代码/前端/css/限制textarea标签字数.md)
+      - [雪碧图换算尺寸.md](代码/前端/css/雪碧图换算尺寸.md)
+    - **electron/**（2 篇）
+      - [react代码片段软件.md](代码/前端/electron/react代码片段软件.md)
+      - [vite+vue3摄像头软件.md](代码/前端/electron/vite+vue3摄像头软件.md)
+    - [hooks/](代码/前端/hooks/README.md)（80 篇）
+      - **uniapp/**（5 篇）
+        - **useHeader.assets/**（0 篇）
+          - [微信小程序顶部区域计算方案.jpeg](代码/前端/hooks/uniapp/useHeader.assets/6B3E9949-9A60-4DDF-9F6E-7FDCE0D76E19-8227057-8227061.jpeg)
+        - [settings.md](代码/前端/hooks/uniapp/settings.md)
+        - [useCommon.md](代码/前端/hooks/uniapp/useCommon.md)
+        - [useHeader.md](代码/前端/hooks/uniapp/useHeader.md)
+        - [useImage.md](代码/前端/hooks/uniapp/useImage.md)
+        - [useRouter.md](代码/前端/hooks/uniapp/useRouter.md)
+      - **参考资料/**（2 篇）
+        - [常用URLScheme.md](代码/前端/hooks/参考资料/常用URLScheme.md)
+        - [常用正则表达式.md](代码/前端/hooks/参考资料/常用正则表达式.md)
+      - **只用于vue/**（50 篇）
+        - **useArray/**（1 篇）
+          - **useArray/**（0 篇）
+            - [index.ts](代码/前端/hooks/只用于vue/useArray/useArray/index.ts)
+            - [useCartesianArray.ts](代码/前端/hooks/只用于vue/useArray/useArray/useCartesianArray.ts)
+            - [useFindNode.ts](代码/前端/hooks/只用于vue/useArray/useArray/useFindNode.ts)
+            - [useFindNodeWithParent.ts](代码/前端/hooks/只用于vue/useArray/useArray/useFindNodeWithParent.ts)
+            - [useMapTree.ts](代码/前端/hooks/只用于vue/useArray/useArray/useMapTree.ts)
+            - [useMergeArrayByKey.ts](代码/前端/hooks/只用于vue/useArray/useArray/useMergeArrayByKey.ts)
+            - [useTreeNormalize.ts](代码/前端/hooks/只用于vue/useArray/useArray/useTreeNormalize.ts)
+            - [useUniqueByKey.ts](代码/前端/hooks/只用于vue/useArray/useArray/useUniqueByKey.ts)
+          - [useArray.md](代码/前端/hooks/只用于vue/useArray/useArray.md)
+        - **vue-query/**（7 篇）
+          - [queryKeys统一管理.md](代码/前端/hooks/只用于vue/vue-query/queryKeys统一管理.md)
+          - [useListQuery（已有新useList文件，仅做保留及查看）.md](代码/前端/hooks/只用于vue/vue-query/useListQuery（已有新useList文件，仅做保留及查看）.md)
+          - [useSubmit.md](代码/前端/hooks/只用于vue/vue-query/useSubmit.md)
+          - [useTanStackQuery.md](代码/前端/hooks/只用于vue/vue-query/useTanStackQuery.md)
+          - [全局联动list↔tree模块.md](代码/前端/hooks/只用于vue/vue-query/全局联动list↔tree模块.md)
+          - [列表表格中，同一接口不同数据源.md](代码/前端/hooks/只用于vue/vue-query/列表表格中，同一接口不同数据源.md)
+          - [处理queryKeys文件脚本.md](代码/前端/hooks/只用于vue/vue-query/处理queryKeys文件脚本.md)
+        - **配合 ElementPlus/**（17 篇）
+          - [CommonTable/](代码/前端/hooks/只用于vue/配合%20ElementPlus/CommonTable/README.md)（1 篇）
+            - [index.vue](代码/前端/hooks/只用于vue/配合%20ElementPlus/CommonTable/index.vue)
+            - [types.ts](代码/前端/hooks/只用于vue/配合%20ElementPlus/CommonTable/types.ts)
+          - **useSelect选择弹窗表格/**（2 篇）
+            - [useSelect选择弹窗表格.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useSelect选择弹窗表格/useSelect选择弹窗表格.md)
+            - [弹窗选择.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useSelect选择弹窗表格/弹窗选择.md)
+          - **表格+表单校验/**（2 篇）
+            - [useTable.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格+表单校验/useTable.md)
+            - [表格+表单.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格+表单校验/表格+表单.md)
+          - **表格及多选/**（4 篇）
+            - [useCheckAll.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格及多选/useCheckAll.md)
+            - [useList原始智达版.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格及多选/useList原始智达版.md)
+            - [useSearch.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格及多选/useSearch.md)
+            - [表格示例.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格及多选/表格示例.md)
+          - [useDatePicker.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useDatePicker.md)
+          - [useFormAttachment静态附件管理（非通用）.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useFormAttachment静态附件管理（非通用）.md)
+          - [useRules.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useRules.md)
+          - [useState.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useState.md)
+          - [useTableStyle.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useTableStyle.md)
+          - [useTimePicker.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useTimePicker.md)
+          - [useTip.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/useTip.md)
+          - [表格多选和单选.md](代码/前端/hooks/只用于vue/配合%20ElementPlus/表格多选和单选.md)
+        - [useArgs.md](代码/前端/hooks/只用于vue/useArgs.md)
+        - [useCalcHeight.md](代码/前端/hooks/只用于vue/useCalcHeight.md)
+        - [useClipboard.md](代码/前端/hooks/只用于vue/useClipboard.md)
+        - [useDate.md](代码/前端/hooks/只用于vue/useDate.md)
+        - [useEcharts.md](代码/前端/hooks/只用于vue/useEcharts.md)
+        - [useElementVisible.md](代码/前端/hooks/只用于vue/useElementVisible.md)
+        - [useFilter.md](代码/前端/hooks/只用于vue/useFilter.md)
+        - [useFormatValue.md](代码/前端/hooks/只用于vue/useFormatValue.md)
+        - [useHotUpdate.md](代码/前端/hooks/只用于vue/useHotUpdate.md)
+        - [useIcon.md](代码/前端/hooks/只用于vue/useIcon.md)
+        - [useLargeScreen.md](代码/前端/hooks/只用于vue/useLargeScreen.md)
+        - [useList通用.md](代码/前端/hooks/只用于vue/useList通用.md)
+        - [useMitt.md](代码/前端/hooks/只用于vue/useMitt.md)
+        - [useModal.md](代码/前端/hooks/只用于vue/useModal.md)
+        - [useModelValue.md](代码/前端/hooks/只用于vue/useModelValue.md)
+        - [useObject.md](代码/前端/hooks/只用于vue/useObject.md)
+        - [usePermission.md](代码/前端/hooks/只用于vue/usePermission.md)
+        - [useRequest.md](代码/前端/hooks/只用于vue/useRequest.md)
+        - [useRouteInit.md](代码/前端/hooks/只用于vue/useRouteInit.md)
+        - [useScrollTo.md](代码/前端/hooks/只用于vue/useScrollTo.md)
+        - [useState.md](代码/前端/hooks/只用于vue/useState.md)
+        - [useStorage.md](代码/前端/hooks/只用于vue/useStorage.md)
+        - [useWatchElement.md](代码/前端/hooks/只用于vue/useWatchElement.md)
+        - [改名useTempRefs.md](代码/前端/hooks/只用于vue/改名useTempRefs.md)
+        - [表单缓存.md](代码/前端/hooks/只用于vue/表单缓存.md)
+      - **只用于微信小程序/**（6 篇）
+        - [useBase.md](代码/前端/hooks/只用于微信小程序/useBase.md)
+        - [useCanvas.md](代码/前端/hooks/只用于微信小程序/useCanvas.md)
+        - [useData.md](代码/前端/hooks/只用于微信小程序/useData.md)
+        - [useElement.md](代码/前端/hooks/只用于微信小程序/useElement.md)
+        - [代理自定义组件useProxyComponent.md](代码/前端/hooks/只用于微信小程序/代理自定义组件useProxyComponent.md)
+        - [代理页面useProxyPage.md](代码/前端/hooks/只用于微信小程序/代理页面useProxyPage.md)
+        - [computed.js](代码/前端/hooks/只用于微信小程序/computed.js)
+      - **插件/**（0 篇）
+        - **1900 年至 2100 年公历、农历互转/**（0 篇）
+          - [solarlunar.min.js](代码/前端/hooks/插件/1900%20年至%202100%20年公历、农历互转/solarlunar.min.js)
+        - **base64/**（0 篇）
+          - [base64.d.ts](代码/前端/hooks/插件/base64/base64.d.ts)
+          - [base64.js](代码/前端/hooks/插件/base64/base64.js)
+      - **若依/**（1 篇）
+        - [useRouter.md](代码/前端/hooks/若依/useRouter.md)
+      - **跨框架（纯JS）/**（15 篇）
+        - [filterByQuery.md](代码/前端/hooks/跨框架（纯JS）/filterByQuery.md)
+        - [log.md](代码/前端/hooks/跨框架（纯JS）/log.md)
+        - [useCalc.md](代码/前端/hooks/跨框架（纯JS）/useCalc.md)
+        - [useDownload.md](代码/前端/hooks/跨框架（纯JS）/useDownload.md)
+        - [useEnum.md](代码/前端/hooks/跨框架（纯JS）/useEnum.md)
+        - [useFormat.md](代码/前端/hooks/跨框架（纯JS）/useFormat.md)
+        - [useLog.md](代码/前端/hooks/跨框架（纯JS）/useLog.md)
+        - [useSecret.md](代码/前端/hooks/跨框架（纯JS）/useSecret.md)
+        - [useString.md](代码/前端/hooks/跨框架（纯JS）/useString.md)
+        - [useStyle.md](代码/前端/hooks/跨框架（纯JS）/useStyle.md)
+        - [useUtils.md](代码/前端/hooks/跨框架（纯JS）/useUtils.md)
+        - [useValidate.md](代码/前端/hooks/跨框架（纯JS）/useValidate.md)
+        - [utils.md](代码/前端/hooks/跨框架（纯JS）/utils.md)
+        - [根据手机加速计计算步数的js.md](代码/前端/hooks/跨框架（纯JS）/根据手机加速计计算步数的js.md)
+        - [防抖与节流.md](代码/前端/hooks/跨框架（纯JS）/防抖与节流.md)
+    - **node/**（21 篇）
+      - **node版本管理/**（3 篇）
+        - [fnm.md](代码/前端/node/node版本管理/fnm.md)
+        - [npm 全局共享层和别名完整配置手册.md](代码/前端/node/node版本管理/npm%20全局共享层和别名完整配置手册.md)
+        - [nvm.md](代码/前端/node/node版本管理/nvm.md)
+      - **模块/**（7 篇）
+        - [express.md](代码/前端/node/模块/express.md)
+        - [fs模块.md](代码/前端/node/模块/fs模块.md)
+        - [http模块.md](代码/前端/node/模块/http模块.md)
+        - [mysql.md](代码/前端/node/模块/mysql.md)
+        - [path模块.md](代码/前端/node/模块/path模块.md)
+        - [socket.io模块.md](代码/前端/node/模块/socket.io模块.md)
+        - [zlib模块.md](代码/前端/node/模块/zlib模块.md)
+      - [koa开发.md](代码/前端/node/koa开发.md)
+      - [node.md](代码/前端/node/node.md)
+      - [node与cnpm安装和升级.md](代码/前端/node/node与cnpm安装和升级.md)
+      - [node模块.md](代码/前端/node/node模块.md)
+      - [node配置.md](代码/前端/node/node配置.md)
+      - [nrm.md](代码/前端/node/nrm.md)
+      - [pnpm.md](代码/前端/node/pnpm.md)
+      - [yarn install报错.md](代码/前端/node/yarn%20install报错.md)
+      - [使用nodejs写个接口.md](代码/前端/node/使用nodejs写个接口.md)
+      - [创建一个cli模板命令（create-my-app）.md](代码/前端/node/创建一个cli模板命令（create-my-app）.md)
+      - [删除node环境.md](代码/前端/node/删除node环境.md)
+    - **typescript/**（7 篇）
+      - **typings/**（3 篇）
+        - **vue/**（1 篇）
+          - [shims.axios.d.ts.md](代码/前端/typescript/typings/vue/shims.axios.d.ts.md)
+        - **微信小程序/**（2 篇）
+          - **wx/**（0 篇）
+            - [index.d.ts](代码/前端/typescript/typings/微信小程序/wx/index.d.ts)
+            - [lib.wx.api.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.api.d.ts)
+            - [lib.wx.app.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.app.d.ts)
+            - [lib.wx.behavior.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.behavior.d.ts)
+            - [lib.wx.cloud.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.cloud.d.ts)
+            - [lib.wx.component.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.component.d.ts)
+            - [lib.wx.event.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.event.d.ts)
+            - [lib.wx.page.d.ts](代码/前端/typescript/typings/微信小程序/wx/lib.wx.page.d.ts)
+          - [axios.d.ts.md](代码/前端/typescript/typings/微信小程序/axios.d.ts.md)
+          - [index.d.ts.md](代码/前端/typescript/typings/微信小程序/index.d.ts.md)
+      - [typescript笔记.md](代码/前端/typescript/typescript笔记.md)
+      - [使用webpack编译ts.md](代码/前端/typescript/使用webpack编译ts.md)
+      - [生成器.md](代码/前端/typescript/生成器.md)
+      - [配置问题导致vscode中页面红色波浪线.md](代码/前端/typescript/配置问题导致vscode中页面红色波浪线.md)
+    - **vue/**（31 篇）
+      - **filters/**（1 篇）
+        - [filters.md](代码/前端/vue/filters/filters.md)
+      - **vite+vue3.0/**（18 篇）
+        - **element-plus组件/**（4 篇）
+          - [drawer.md](代码/前端/vue/vite+vue3.0/element-plus组件/drawer.md)
+          - [image.md](代码/前端/vue/vite+vue3.0/element-plus组件/image.md)
+          - [svg-icon.md](代码/前端/vue/vite+vue3.0/element-plus组件/svg-icon.md)
+          - [upload.md](代码/前端/vue/vite+vue3.0/element-plus组件/upload.md)
+        - [Nuxt3搭建项目.md](代码/前端/vue/vite+vue3.0/Nuxt3搭建项目.md)
+        - [customRef和shallowRef.md](代码/前端/vue/vite+vue3.0/customRef和shallowRef.md)
+        - [echarts.md](代码/前端/vue/vite+vue3.0/echarts.md)
+        - [pinia.md](代码/前端/vue/vite+vue3.0/pinia.md)
+        - [useRoute.md](代码/前端/vue/vite+vue3.0/useRoute.md)
+        - [vite+scss.md](代码/前端/vue/vite+vue3.0/vite+scss.md)
+        - [vite+vue3.0.md](代码/前端/vue/vite+vue3.0/vite+vue3.0.md)
+        - [vitePress.md](代码/前端/vue/vite+vue3.0/vitePress.md)
+        - [vite自动导入.md](代码/前端/vue/vite+vue3.0/vite自动导入.md)
+        - [vue3中的 ref 和reactive.md](代码/前端/vue/vite+vue3.0/vue3中的%20ref%20和reactive.md)
+        - [vue3使用tsx.md](代码/前端/vue/vite+vue3.0/vue3使用tsx.md)
+        - [vue3好用组件:插件.md](代码/前端/vue/vite+vue3.0/vue3好用组件:插件.md)
+        - [vue3知识点.md](代码/前端/vue/vite+vue3.0/vue3知识点.md)
+        - [配置 https.md](代码/前端/vue/vite+vue3.0/配置%20https.md)
+      - [input输入验证.md](代码/前端/vue/input输入验证.md)
+      - [vue creat创建的vue中遇见的问题及解决办法.md](代码/前端/vue/vue%20creat创建的vue中遇见的问题及解决办法.md)
+      - [vue2+ts.md](代码/前端/vue/vue2+ts.md)
+      - [vue3使用jsx:tsx.md](代码/前端/vue/vue3使用jsx:tsx.md)
+      - [vuecreate错误及解决.md](代码/前端/vue/vuecreate错误及解决.md)
+      - [vue组件命名空间使用方式.md](代码/前端/vue/vue组件命名空间使用方式.md)
+      - [webstorm中.vue文件中写stylus.md](代码/前端/vue/webstorm中.vue文件中写stylus.md)
+      - [为什么使用$mount.md](代码/前端/vue/为什么使用$mount.md)
+      - [关于devDependencies与dependencies.md](代码/前端/vue/关于devDependencies与dependencies.md)
+      - [如何在vue中使用mock.md](代码/前端/vue/如何在vue中使用mock.md)
+      - [环境变量文件.md](代码/前端/vue/环境变量文件.md)
+      - [部署到服务器.md](代码/前端/vue/部署到服务器.md)
+    - **可视化/**（2 篇）
+      - **leaflet/**（1 篇）
+        - [leaflet.md](代码/前端/可视化/leaflet/leaflet.md)
+      - [ThreeJs.md](代码/前端/可视化/ThreeJs.md)
+    - [基础/](代码/前端/基础/README.md)（19 篇）
+      - [ES6笔记（有apply和call）.md](代码/前端/基础/ES6笔记（有apply和call）.md)
+      - [js 函数重载.md](代码/前端/基础/js%20函数重载.md)
+      - [js双等号运算符的运算和转换规则.md](代码/前端/基础/js双等号运算符的运算和转换规则.md)
+      - [null和undefined.md](代码/前端/基础/null和undefined.md)
+      - [post上传数据类型.md](代码/前端/基础/post上传数据类型.md)
+      - [reduce说明.md](代码/前端/基础/reduce说明.md)
+      - [一行代码生成UUID.md](代码/前端/基础/一行代码生成UUID.md)
+      - [事件循环.md](代码/前端/基础/事件循环.md)
+      - [元素尺寸.md](代码/前端/基础/元素尺寸.md)
+      - [前端面试题.md](代码/前端/基础/前端面试题.md)
+      - [大文件分片.md](代码/前端/基础/大文件分片.md)
+      - [枚举.md](代码/前端/基础/枚举.md)
+      - [正则笔记.md](代码/前端/基础/正则笔记.md)
+      - [正则规则.md](代码/前端/基础/正则规则.md)
+      - [洋葱圈.md](代码/前端/基础/洋葱圈.md)
+      - [笛卡尔积生成商品SKU多规格算法及两个数组组合一个数组.md](代码/前端/基础/笛卡尔积生成商品SKU多规格算法及两个数组组合一个数组.md)
+      - [链表的实现.md](代码/前端/基础/链表的实现.md)
+      - [锋利的Jquery笔记.md](代码/前端/基础/锋利的Jquery笔记.md)
+    - [小程序/](代码/前端/小程序/README.md)（53 篇）
+      - **DCloud/**（20 篇）
+        - **组件/**（7 篇）
+          - [list.md](代码/前端/小程序/DCloud/组件/list.md)
+          - [modal.md](代码/前端/小程序/DCloud/组件/modal.md)
+          - [number-input.md](代码/前端/小程序/DCloud/组件/number-input.md)
+          - [titlebar.md](代码/前端/小程序/DCloud/组件/titlebar.md)
+          - [uview-plus地区picker选择器.md](代码/前端/小程序/DCloud/组件/uview-plus地区picker选择器.md)
+          - [图片拖动排序组件.md](代码/前端/小程序/DCloud/组件/图片拖动排序组件.md)
+          - [日历选择组件.md](代码/前端/小程序/DCloud/组件/日历选择组件.md)
+        - [app动态改变是否下拉刷新.md](代码/前端/小程序/DCloud/app动态改变是否下拉刷新.md)
+        - [tsx.md](代码/前端/小程序/DCloud/tsx.md)
+        - [uniapp-ts.md](代码/前端/小程序/DCloud/uniapp-ts.md)
+        - [uniapp上传图片拖动排序.md](代码/前端/小程序/DCloud/uniapp上传图片拖动排序.md)
+        - [uniapp好用的插件.md](代码/前端/小程序/DCloud/uniapp好用的插件.md)
+        - [uniapp错误及解决.md](代码/前端/小程序/DCloud/uniapp错误及解决.md)
+        - [vscode打开HBuilderX项目解决类型问题.md](代码/前端/小程序/DCloud/vscode打开HBuilderX项目解决类型问题.md)
+        - [vue2使用vuex及数据持久化.md](代码/前端/小程序/DCloud/vue2使用vuex及数据持久化.md)
+        - [价格输入限定.md](代码/前端/小程序/DCloud/价格输入限定.md)
+        - [发行H5如何配置进php.md](代码/前端/小程序/DCloud/发行H5如何配置进php.md)
+        - [命令行.md](代码/前端/小程序/DCloud/命令行.md)
+        - [多张图片上传（微信小程序）.md](代码/前端/小程序/DCloud/多张图片上传（微信小程序）.md)
+        - [页面悬浮元素，页面滚动隐藏，停止滚动显示.md](代码/前端/小程序/DCloud/页面悬浮元素，页面滚动隐藏，停止滚动显示.md)
+      - **apicloud/**（19 篇）
+        - [APIcloud笔记.md](代码/前端/小程序/apicloud/APIcloud笔记.md)
+        - [apicloud上拉加载更多下拉刷新.md](代码/前端/小程序/apicloud/apicloud上拉加载更多下拉刷新.md)
+        - [apicloud两种遮罩层方法.md](代码/前端/小程序/apicloud/apicloud两种遮罩层方法.md)
+        - [apicloud在ios字体同步失败原因及解决办法.md](代码/前端/小程序/apicloud/apicloud在ios字体同步失败原因及解决办法.md)
+        - [apicloud头部自适应.md](代码/前端/小程序/apicloud/apicloud头部自适应.md)
+        - [apicloud实现聊天窗口滚动到底部方法.md](代码/前端/小程序/apicloud/apicloud实现聊天窗口滚动到底部方法.md)
+        - [apicloud常用模块.md](代码/前端/小程序/apicloud/apicloud常用模块.md)
+        - [apicloud的UIActionSelector模块的json.md](代码/前端/小程序/apicloud/apicloud的UIActionSelector模块的json.md)
+        - [apicloud的uichatbox一开始就获取面板高度.md](代码/前端/小程序/apicloud/apicloud的uichatbox一开始就获取面板高度.md)
+        - [apicloud自定义alert弹窗frame页面.md](代码/前端/小程序/apicloud/apicloud自定义alert弹窗frame页面.md)
+        - [apicloud自定义confirm弹窗frame页面.md](代码/前端/小程序/apicloud/apicloud自定义confirm弹窗frame页面.md)
+        - [apicloud设置api26以及请求权限.md](代码/前端/小程序/apicloud/apicloud设置api26以及请求权限.md)
+        - [apicloud超级实用技巧.md](代码/前端/小程序/apicloud/apicloud超级实用技巧.md)
+        - [apicloud输入支付密码弹窗.md](代码/前端/小程序/apicloud/apicloud输入支付密码弹窗.md)
+        - [apicloud页面间传值方法.md](代码/前端/小程序/apicloud/apicloud页面间传值方法.md)
+        - [apicloud（Atom）插件.md](代码/前端/小程序/apicloud/apicloud（Atom）插件.md)
+        - [doT和apicloud实现图片缓存.md](代码/前端/小程序/apicloud/doT和apicloud实现图片缓存.md)
+        - [webstrom的apicloud插件使用.md](代码/前端/小程序/apicloud/webstrom的apicloud插件使用.md)
+        - [自定义apicloud底部导航栏.md](代码/前端/小程序/apicloud/自定义apicloud底部导航栏.md)
+      - **微信小程序/**（10 篇）
+        - **小程序行为/**（0 篇）
+          - [computed.js](代码/前端/小程序/微信小程序/小程序行为/computed.js)
+        - **自定义音频播放器/**（0 篇）
+          - **audio-player/**（0 篇）
+            - [index.json](代码/前端/小程序/微信小程序/自定义音频播放器/audio-player/index.json)
+            - [index.ts](代码/前端/小程序/微信小程序/自定义音频播放器/audio-player/index.ts)
+            - [index.wxml](代码/前端/小程序/微信小程序/自定义音频播放器/audio-player/index.wxml)
+            - [index.wxss](代码/前端/小程序/微信小程序/自定义音频播放器/audio-player/index.wxss)
+          - [_audio-player.scss](代码/前端/小程序/微信小程序/自定义音频播放器/_audio-player.scss)
+        - [gulp+typescript.md](代码/前端/小程序/微信小程序/gulp+typescript.md)
+        - [nvm安装的node微信开发工具找不到.md](代码/前端/小程序/微信小程序/nvm安装的node微信开发工具找不到.md)
+        - [使用gulp从0构建原生小程序.md](代码/前端/小程序/微信小程序/使用gulp从0构建原生小程序.md)
+        - [小程序router.md](代码/前端/小程序/微信小程序/小程序router.md)
+        - [小程序自定义组件行为-计算属性+watch.md](代码/前端/小程序/微信小程序/小程序自定义组件行为-计算属性+watch.md)
+        - [微信小程序note.md](代码/前端/小程序/微信小程序/微信小程序note.md)
+        - [微信小程序图片相关方法封装.md](代码/前端/小程序/微信小程序/微信小程序图片相关方法封装.md)
+        - [微信小程序填坑.md](代码/前端/小程序/微信小程序/微信小程序填坑.md)
+        - [标签属性排序.md](代码/前端/小程序/微信小程序/标签属性排序.md)
+        - [计算透明度.md](代码/前端/小程序/微信小程序/计算透明度.md)
+      - [原生微信小游戏.md](代码/前端/小程序/原生微信小游戏.md)
+      - [命令行上传微信小程序.md](代码/前端/小程序/命令行上传微信小程序.md)
+      - [小程序跨包加载分包js.md](代码/前端/小程序/小程序跨包加载分包js.md)
+    - **工程化/**（13 篇）
+      - **gulp/**（2 篇）
+        - [gulpfile.md](代码/前端/工程化/gulp/gulpfile.md)
+        - [模块.md](代码/前端/工程化/gulp/模块.md)
+      - **monorepo/**（1 篇）
+        - [monorepo.md](代码/前端/工程化/monorepo/monorepo.md)
+      - **nuxt/**（1 篇）
+        - [nuxt.md](代码/前端/工程化/nuxt/nuxt.md)
+      - **vite/**（2 篇）
+        - **vite插件/**（1 篇）
+          - [vite-plugin-mock.md](代码/前端/工程化/vite/vite插件/vite-plugin-mock.md)
+        - [vite命令.md](代码/前端/工程化/vite/vite命令.md)
+      - **webpack/**（6 篇）
+        - [1基础.md](代码/前端/工程化/webpack/1基础.md)
+        - [2resolve配置.md](代码/前端/工程化/webpack/2resolve配置.md)
+        - [3搭建本地服务及热更新.md](代码/前端/工程化/webpack/3搭建本地服务及热更新.md)
+        - [4source maps.md](代码/前端/工程化/webpack/4source%20maps.md)
+        - [webpack.md](代码/前端/工程化/webpack/webpack.md)
+        - [常用.md](代码/前端/工程化/webpack/常用.md)
+      - [个人使用创建新项目准备.md](代码/前端/工程化/个人使用创建新项目准备.md)
+    - **技巧/**（24 篇）
+      - **修改滚动条/**（1 篇）
+        - [修改滚动条.md](代码/前端/技巧/修改滚动条/修改滚动条.md)
+        - [1.png](代码/前端/技巧/修改滚动条/1.png)
+      - **多种md5加密/**（1 篇）
+        - [中文可用的md5加密.md](代码/前端/技巧/多种md5加密/中文可用的md5加密.md)
+        - [calcMD5.js](代码/前端/技巧/多种md5加密/calcMD5.js)
+      - **小技巧/**（22 篇）
+        - **rsa加密解密/**（1 篇）
+          - [使用说明.md](代码/前端/技巧/小技巧/rsa加密解密/使用说明.md)
+          - [jsencrypt.js](代码/前端/技巧/小技巧/rsa加密解密/jsencrypt.js)
+          - [jsencrypt.min.js](代码/前端/技巧/小技巧/rsa加密解密/jsencrypt.min.js)
+        - [EchoJS图片懒加载.md](代码/前端/技巧/小技巧/EchoJS图片懒加载.md)
+        - [e点target兼容写法.md](代码/前端/技巧/小技巧/e点target兼容写法.md)
+        - [forEach与async:await使用踩坑.md](代码/前端/技巧/小技巧/forEach与async:await使用踩坑.md)
+        - [input常用mime类型.md](代码/前端/技巧/小技巧/input常用mime类型.md)
+        - [input框调整手机键盘为数字键盘.md](代码/前端/技巧/小技巧/input框调整手机键盘为数字键盘.md)
+        - [video高度.md](代码/前端/技巧/小技巧/video高度.md)
+        - [关于不固定宽的骚操作.md](代码/前端/技巧/小技巧/关于不固定宽的骚操作.md)
+        - [关于苹果手机active设置无效的问题.md](代码/前端/技巧/小技巧/关于苹果手机active设置无效的问题.md)
+        - [存点小技巧.md](代码/前端/技巧/小技巧/存点小技巧.md)
+        - [常用js工具库.md](代码/前端/技巧/小技巧/常用js工具库.md)
+        - [排序方法.md](代码/前端/技巧/小技巧/排序方法.md)
+        - [禁止ios将video自动全屏播放.md](代码/前端/技巧/小技巧/禁止ios将video自动全屏播放.md)
+        - [移动端 H5viewport.md](代码/前端/技巧/小技巧/移动端%20H5viewport.md)
+        - [移动端常见的兼容性问题.md](代码/前端/技巧/小技巧/移动端常见的兼容性问题.md)
+        - [移动端滑动警告.md](代码/前端/技巧/小技巧/移动端滑动警告.md)
+        - [移动端点击可点击元素时，出现蓝色默认背景色.md](代码/前端/技巧/小技巧/移动端点击可点击元素时，出现蓝色默认背景色.md)
+        - [移动端网页问题（ios,安卓）.md](代码/前端/技巧/小技巧/移动端网页问题（ios,安卓）.md)
+        - [聊天窗口自动到底部.md](代码/前端/技巧/小技巧/聊天窗口自动到底部.md)
+        - [自动全屏播放视频.md](代码/前端/技巧/小技巧/自动全屏播放视频.md)
+        - [节点操作.md](代码/前端/技巧/小技巧/节点操作.md)
+        - [设置网页自适应meta标签.md](代码/前端/技巧/小技巧/设置网页自适应meta标签.md)
+    - [组件库/](代码/前端/组件库/README.md)（16 篇）
+      - **element-plus/**（12 篇）
+        - **公共表格搜索/**（2 篇）
+          - **CommonSearchItem/**（0 篇）
+            - **controls/**（0 篇）
+              - [DatePickerControl.vue](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/DatePickerControl.vue)
+              - [InputControl.vue](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/InputControl.vue)
+              - [SelectControl.vue](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/SelectControl.vue)
+              - [TreeSelectControl.vue](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/TreeSelectControl.vue)
+              - [context.ts](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/context.ts)
+              - [index.ts](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/index.ts)
+              - [types.ts](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/controls/types.ts)
+            - [index.vue](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/index.vue)
+            - [types.ts](代码/前端/组件库/element-plus/公共表格搜索/CommonSearchItem/types.ts)
+          - [公共表格搜索search.md](代码/前端/组件库/element-plus/公共表格搜索/公共表格搜索search.md)
+          - [公共表格搜索子项CommonSearchItem.md](代码/前端/组件库/element-plus/公共表格搜索/公共表格搜索子项CommonSearchItem.md)
+        - **通用表单编辑态和展示切换组件/**（1 篇）
+          - **CompForm/**（0 篇）
+            - [CompForm.vue](代码/前端/组件库/element-plus/通用表单编辑态和展示切换组件/CompForm/CompForm.vue)
+            - [Item.vue](代码/前端/组件库/element-plus/通用表单编辑态和展示切换组件/CompForm/Item.vue)
+            - [index.ts](代码/前端/组件库/element-plus/通用表单编辑态和展示切换组件/CompForm/index.ts)
+          - [CompForm.md](代码/前端/组件库/element-plus/通用表单编辑态和展示切换组件/CompForm.md)
+        - **通用表格组件/**（1 篇）
+          - **CompTable/**（0 篇）
+            - [CompTableColumn.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/CompTableColumn.ts)
+            - [boundCompTable.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/boundCompTable.ts)
+            - [columnPath.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/columnPath.ts)
+            - [index.vue](代码/前端/组件库/element-plus/通用表格组件/CompTable/index.vue)
+            - [renderColumns.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/renderColumns.ts)
+            - [types.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/types.ts)
+            - [useColumnVisibility.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/useColumnVisibility.ts)
+            - [useCompTable.ts](代码/前端/组件库/element-plus/通用表格组件/CompTable/useCompTable.ts)
+          - [通用表格组件.md](代码/前端/组件库/element-plus/通用表格组件/通用表格组件.md)
+        - **通用选择抽屉/**（2 篇）
+          - **CompSelect/**（0 篇）
+            - [index.ts](代码/前端/组件库/element-plus/通用选择抽屉/CompSelect/index.ts)
+            - [index.vue](代码/前端/组件库/element-plus/通用选择抽屉/CompSelect/index.vue)
+            - [types.ts](代码/前端/组件库/element-plus/通用选择抽屉/CompSelect/types.ts)
+          - [CompSelect.md](代码/前端/组件库/element-plus/通用选择抽屉/CompSelect.md)
+          - [树选择完整例子.md](代码/前端/组件库/element-plus/通用选择抽屉/树选择完整例子.md)
+        - **通用预览组件/**（1 篇）
+          - **Preview/**（0 篇）
+            - [index.vue](代码/前端/组件库/element-plus/通用预览组件/Preview/index.vue)
+            - [msDocColors.ts](代码/前端/组件库/element-plus/通用预览组件/Preview/msDocColors.ts)
+            - [previewItem.vue](代码/前端/组件库/element-plus/通用预览组件/Preview/previewItem.vue)
+            - [types.ts](代码/前端/组件库/element-plus/通用预览组件/Preview/types.ts)
+            - [usePreview.ts](代码/前端/组件库/element-plus/通用预览组件/Preview/usePreview.ts)
+          - [文件预览.md](代码/前端/组件库/element-plus/通用预览组件/文件预览.md)
+          - [file-viewer.ts](代码/前端/组件库/element-plus/通用预览组件/file-viewer.ts)
+          - [已粘贴 2026-11-11 下午5.35.44.png](代码/前端/组件库/element-plus/通用预览组件/已粘贴%202026-11-11%20下午5.35.44.png)
+        - [tabs.md](代码/前端/组件库/element-plus/tabs.md)
+        - [tree与form配合.md](代码/前端/组件库/element-plus/tree与form配合.md)
+        - [公共组件抽屉Drawer.md](代码/前端/组件库/element-plus/公共组件抽屉Drawer.md)
+        - [金额输入框与展示.md](代码/前端/组件库/element-plus/金额输入框与展示.md)
+        - [预览.md](代码/前端/组件库/element-plus/预览.md)
+      - **若依/**（3 篇）
+        - [TreePanel右键菜单.md](代码/前端/组件库/若依/TreePanel右键菜单.md)
+        - [vue-draggable拖拽标签页.md](代码/前端/组件库/若依/vue-draggable拖拽标签页.md)
+        - [若依动态路由问题.md](代码/前端/组件库/若依/若依动态路由问题.md)
+    - **若依/**（2 篇）
+      - **vue3+ts版本/**（1 篇）
+        - **components/**（1 篇）
+          - [Process/](代码/前端/若依/vue3+ts版本/components/Process/README.md)（1 篇）
+            - **common/**（0 篇）
+              - [bpmnUtils.js](代码/前端/若依/vue3+ts版本/components/Process/common/bpmnUtils.js)
+              - [global.js](代码/前端/若依/vue3+ts版本/components/Process/common/global.js)
+              - [index.js](代码/前端/若依/vue3+ts版本/components/Process/common/index.js)
+              - [packed-config.js](代码/前端/若依/vue3+ts版本/components/Process/common/packed-config.js)
+            - **customPanel/**（0 篇）
+              - [CustomContextPad.js](代码/前端/若依/vue3+ts版本/components/Process/customPanel/CustomContextPad.js)
+              - [CustomPalette.js](代码/前端/若依/vue3+ts版本/components/Process/customPanel/CustomPalette.js)
+              - [customTranslate.js](代码/前端/若依/vue3+ts版本/components/Process/customPanel/customTranslate.js)
+              - [index.js](代码/前端/若依/vue3+ts版本/components/Process/customPanel/index.js)
+            - **flowable/**（0 篇）
+              - [flowable.json](代码/前端/若依/vue3+ts版本/components/Process/flowable/flowable.json)
+              - [init.js](代码/前端/若依/vue3+ts版本/components/Process/flowable/init.js)
+            - **lang/**（0 篇）
+              - [zh.js](代码/前端/若依/vue3+ts版本/components/Process/lang/zh.js)
+            - **panel/**（0 篇）
+              - [ButtonsPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/ButtonsPanel.vue)
+              - [PropertiesPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/PropertiesPanel.vue)
+              - [commonPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/commonPanel.vue)
+              - [conditionPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/conditionPanel.vue)
+              - [executionListener.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/executionListener.vue)
+              - [formPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/formPanel.vue)
+              - [multiInstance.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/multiInstance.vue)
+              - [otherPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/otherPanel.vue)
+              - [taskListener.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/taskListener.vue)
+              - [taskPanel.vue](代码/前端/若依/vue3+ts版本/components/Process/panel/taskPanel.vue)
+            - **style/**（0 篇）
+              - [flow-viewer.scss](代码/前端/若依/vue3+ts版本/components/Process/style/flow-viewer.scss)
+              - [process-panel.scss](代码/前端/若依/vue3+ts版本/components/Process/style/process-panel.scss)
+            - **viewer/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/components/Process/viewer/index.vue)
+            - [designer.vue](代码/前端/若依/vue3+ts版本/components/Process/designer.vue)
+            - [index.vue](代码/前端/若依/vue3+ts版本/components/Process/index.vue)
+          - **flow/**（0 篇）
+            - **ElInputTag/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/components/flow/ElInputTag/index.vue)
+            - **Expression/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/components/flow/Expression/index.vue)
+            - **Role/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/components/flow/Role/index.vue)
+            - **User/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/components/flow/User/index.vue)
+        - **views/**（0 篇）
+          - **flowable/**（0 篇）
+            - **components/**（0 篇）
+              - [approval.vue](代码/前端/若依/vue3+ts版本/views/flowable/components/approval.vue)
+              - [details.vue](代码/前端/若依/vue3+ts版本/views/flowable/components/details.vue)
+              - [reject.vue](代码/前端/若依/vue3+ts版本/views/flowable/components/reject.vue)
+            - **definition/**（0 篇）
+              - **components/**（0 篇）
+                - [correlation.vue](代码/前端/若依/vue3+ts版本/views/flowable/definition/components/correlation.vue)
+              - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/definition/index.vue)
+              - [model.vue](代码/前端/若依/vue3+ts版本/views/flowable/definition/model.vue)
+            - **expression/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/expression/index.vue)
+            - **listener/**（0 篇）
+              - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/listener/index.vue)
+            - **task/**（0 篇）
+              - **finished/**（0 篇）
+                - **detail/**（0 篇）
+                  - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/finished/detail/index.vue)
+                - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/finished/index.vue)
+              - **flowForm/**（0 篇）
+                - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/flowForm/index.vue)
+              - **form/**（0 篇）
+                - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/form/index.vue)
+              - **myProcess/**（0 篇）
+                - **detail/**（0 篇）
+                  - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/myProcess/detail/index.vue)
+                - **send/**（0 篇）
+                  - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/myProcess/send/index.vue)
+                - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/myProcess/index.vue)
+              - **todo/**（0 篇）
+                - **detail/**（0 篇）
+                  - **components/**（0 篇）
+                    - [record.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/todo/detail/components/record.vue)
+                  - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/todo/detail/index.vue)
+                - [index.vue](代码/前端/若依/vue3+ts版本/views/flowable/task/todo/index.vue)
+      - [若依框架增加工作流.md](代码/前端/若依/若依框架增加工作流.md)
+    - **规范/**（1 篇）
+      - [个人规则.md](代码/前端/规范/个人规则.md)
+    - **设计模式/**（3 篇）
+      - [中间件.md](代码/前端/设计模式/中间件.md)
+      - [策略模式实现表单验证.md](代码/前端/设计模式/策略模式实现表单验证.md)
+      - [设计模式.md](代码/前端/设计模式/设计模式.md)
+    - **鸿蒙/**（3 篇）
+      - **ets/**（3 篇）
+        - **utils/**（3 篇）
+          - [accessAuth.md](代码/前端/鸿蒙/ets/utils/accessAuth.md)
+          - [file.md](代码/前端/鸿蒙/ets/utils/file.md)
+          - [useImage.md](代码/前端/鸿蒙/ets/utils/useImage.md)
+    - [三方工具 js.md](代码/前端/三方工具%20js.md)
+    - [代码工具.md](代码/前端/代码工具.md)
+    - [名词解释.md](代码/前端/名词解释.md)
+  - [后端/](代码/后端/README.md)（7 篇）
+    - **java/**（1 篇）
+      - [vscode配置JAVA.md](代码/后端/java/vscode配置JAVA.md)
+    - **node/**（2 篇）
+      - **Nest/**（1 篇）
+        - [nest.md](代码/后端/node/Nest/nest.md)
+      - [node后端选型.md](代码/后端/node/node后端选型.md)
+    - **php/**（3 篇）
+      - [thinkPHP写接口.md](代码/后端/php/thinkPHP写接口.md)
+      - [小玩意.md](代码/后端/php/小玩意.md)
+      - [根据权限添加页面（官方后台）.md](代码/后端/php/根据权限添加页面（官方后台）.md)
+  - [工具/](代码/工具/README.md)（36 篇）
+    - **git/**（22 篇）
+      - **sourcetree/**（2 篇）
+        - [mac使用sourceTree连接gitee的ssh.md](代码/工具/git/sourcetree/mac使用sourceTree连接gitee的ssh.md)
+        - [sourcetree提交消息模板.md](代码/工具/git/sourcetree/sourcetree提交消息模板.md)
+      - **自己的配置/**（1 篇）
+        - **.ssh/**（0 篇）
+          - [config](代码/工具/git/自己的配置/.ssh/config)
+          - [id_rsa](代码/工具/git/自己的配置/.ssh/id_rsa)
+          - [id_rsa.pub](代码/工具/git/自己的配置/.ssh/id_rsa.pub)
+          - [id_rsa_public](代码/工具/git/自己的配置/.ssh/id_rsa_public)
+          - [id_rsa_public.pub](代码/工具/git/自己的配置/.ssh/id_rsa_public.pub)
+          - [known_hosts](代码/工具/git/自己的配置/.ssh/known_hosts)
+        - [路径.md](代码/工具/git/自己的配置/路径.md)
+        - [.gitconfig](代码/工具/git/自己的配置/.gitconfig)
+        - [.minttyrc](代码/工具/git/自己的配置/.minttyrc)
+      - [git bash主题.md](代码/工具/git/git%20bash主题.md)
+      - [git 出现的问题及解决方法.md](代码/工具/git/git%20出现的问题及解决方法.md)
+      - [gitadd.md](代码/工具/git/gitadd.md)
+      - [git多账户使用.md](代码/工具/git/git多账户使用.md)
+      - [git本地项目添加多个远程仓库.md](代码/工具/git/git本地项目添加多个远程仓库.md)
+      - [git规范.md](代码/工具/git/git规范.md)
+      - [git设置账户及ssh.md](代码/工具/git/git设置账户及ssh.md)
+      - [husky.md](代码/工具/git/husky.md)
+      - [ssh地址写法.md](代码/工具/git/ssh地址写法.md)
+      - [stash保存和恢复进度.md](代码/工具/git/stash保存和恢复进度.md)
+      - [分支管理.md](代码/工具/git/分支管理.md)
+      - [合并分支.md](代码/工具/git/合并分支.md)
+      - [回滚.md](代码/工具/git/回滚.md)
+      - [完全替换主分支的文件树，但保留历史.md](代码/工具/git/完全替换主分支的文件树，但保留历史.md)
+      - [拉取分支.md](代码/工具/git/拉取分支.md)
+      - [查看ssh公钥.md](代码/工具/git/查看ssh公钥.md)
+      - [生成新的 SSH 密钥对.md](代码/工具/git/生成新的%20SSH%20密钥对.md)
+      - [设置git别名.md](代码/工具/git/设置git别名.md)
+      - [配置不同项目不同邮箱和根据地址切换邮箱.md](代码/工具/git/配置不同项目不同邮箱和根据地址切换邮箱.md)
+    - **markdown/**（1 篇）
+      - [代码块名字.md](代码/工具/markdown/代码块名字.md)
+    - **vscode/**（8 篇）
+      - [vsCode代码片段.md](代码/工具/vscode/vsCode代码片段.md)
+      - [vsCode插件.md](代码/工具/vscode/vsCode插件.md)
+      - [vscode用户自定义设置.md](代码/工具/vscode/vscode用户自定义设置.md)
+      - [win10为VScode添加Linux终端（wsl）.md](代码/工具/vscode/win10为VScode添加Linux终端（wsl）.md)
+      - [使用typings进行nodejs提示.md](代码/工具/vscode/使用typings进行nodejs提示.md)
+      - [使用vscode调试.md](代码/工具/vscode/使用vscode调试.md)
+      - [团队安装项目推荐的vscode插件.md](代码/工具/vscode/团队安装项目推荐的vscode插件.md)
+      - [常用快捷键.md](代码/工具/vscode/常用快捷键.md)
+    - **终端/**（2 篇）
+      - **ohmyzsh/**（1 篇）
+        - [oh-my-zsh常用插件.md](代码/工具/终端/ohmyzsh/oh-my-zsh常用插件.md)
+      - [Hyper配置.md](代码/工具/终端/Hyper配置.md)
+    - **自动化测试/**（1 篇）
+      - [appium+js.md](代码/工具/自动化测试/appium+js.md)
+    - [常用命令行命名.md](代码/工具/常用命令行命名.md)
+  - [系统与运维/](代码/系统与运维/README.md)（23 篇）
+    - **docker/**（1 篇）
+      - [docker.md](代码/系统与运维/docker/docker.md)
+    - **linux/**（9 篇）
+      - [Linux.md](代码/系统与运维/linux/Linux.md)
+      - [Linux相关软件配置.md](代码/系统与运维/linux/Linux相关软件配置.md)
+      - [Manjaro-gnome.md](代码/系统与运维/linux/Manjaro-gnome.md)
+      - [linux安装node.md](代码/系统与运维/linux/linux安装node.md)
+      - [macOS使用 VMware Fusion安装manjaro gnome 版本并结合 i3wm.md](代码/系统与运维/linux/macOS使用%20VMware%20Fusion安装manjaro%20gnome%20版本并结合%20i3wm.md)
+      - [vim一些问题.md](代码/系统与运维/linux/vim一些问题.md)
+      - [win10 linux子系统.md](代码/系统与运维/linux/win10%20linux子系统.md)
+      - [文件.md](代码/系统与运维/linux/文件.md)
+      - [问题及解决.md](代码/系统与运维/linux/问题及解决.md)
+    - **macOS/**（3 篇）
+      - [MacOS 自带有Apatch服务器，本地服务器搭建.md](代码/系统与运维/macOS/MacOS%20自带有Apatch服务器，本地服务器搭建.md)
+      - [brew.md](代码/系统与运维/macOS/brew.md)
+      - [macOS使用技巧.md](代码/系统与运维/macOS/macOS使用技巧.md)
+    - **windows/**（2 篇）
+      - [windows terminal.md](代码/系统与运维/windows/windows%20terminal.md)
+      - [设置小鹤双拼.md](代码/系统与运维/windows/设置小鹤双拼.md)
+      - [git-icon.png](代码/系统与运维/windows/git-icon.png)
+      - [terminal.ico](代码/系统与运维/windows/terminal.ico)
+    - **云服务器/**（1 篇）
+      - [链接云服务器.md](代码/系统与运维/云服务器/链接云服务器.md)
+    - **虚拟机/**（4 篇）
+      - [VirtualBox安装增强工具.md](代码/系统与运维/虚拟机/VirtualBox安装增强工具.md)
+      - [virtualBox安装Manjaro.md](代码/系统与运维/虚拟机/virtualBox安装Manjaro.md)
+      - [virtualBox安装黑苹果.md](代码/系统与运维/虚拟机/virtualBox安装黑苹果.md)
+      - [virtualBox虚拟磁盘文件类型.md](代码/系统与运维/虚拟机/virtualBox虚拟磁盘文件类型.md)
+    - **装机/**（2 篇）
+      - [加装固态后，在其上安装系统.md](代码/系统与运维/装机/加装固态后，在其上安装系统.md)
+      - [将mbr分区转换为gpt分区.md](代码/系统与运维/装机/将mbr分区转换为gpt分区.md)
+  - [资源/](代码/资源/README.md)（4 篇）
+    - **svg/**（0 篇）
+      - [1.svg](代码/资源/svg/1.svg)
+    - **字体/**（1 篇）
+      - **fonts/**（0 篇）
+        - [PINGFANG_BOLD.TTF](代码/资源/字体/fonts/PINGFANG_BOLD.TTF)
+        - [PINGFANG_MEDIUM.TTF](代码/资源/字体/fonts/PINGFANG_MEDIUM.TTF)
+        - [PINGFANG_REGULAR.TTF](代码/资源/字体/fonts/PINGFANG_REGULAR.TTF)
+      - [使用说明.md](代码/资源/字体/使用说明.md)
+      - [font.css](代码/资源/字体/font.css)
+    - [好用应用.md](代码/资源/好用应用.md)
+    - [开源协议说明.md](代码/资源/开源协议说明.md)
+
+## 仓库根其他文件
+
+- [.gitignore](.gitignore)
+- [git-commit-message.md](.trae/rules/git-commit-message.md)

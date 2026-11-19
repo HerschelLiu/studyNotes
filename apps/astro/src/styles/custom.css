@@ -1,0 +1,21 @@
+:root {
+  --sl-color-accent-low: #dbeafe;
+  --sl-color-accent: #2f6feb;
+  --sl-color-accent-high: #1e40af;
+}
+
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #172554;
+  --sl-color-accent: #6ea8ff;
+  --sl-color-accent-high: #bfdbfe;
+}
+
+
+.astro-demo-fallback {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--sl-color-gray-4);
+  border-radius: 0.5rem;
+  color: var(--sl-color-gray-3);
+  background: var(--sl-color-gray-6);
+}

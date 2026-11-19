@@ -1,0 +1,711 @@
+---
+title: "useList通用"
+---
+
+> 列表/分页/查询状态，含 vue-query、`## vue3uniapp`、`## 小程序` 三个版本
+
+## 目录
+
+- [vue3](#vue3)
+- [vue3uniapp](#vue3uniapp)
+- [小程序](#小程序)
+
+## vue3
+
+```ts
+import type { QueryKey } from '@tanstack/vue-query'
+import type { AjaxResult } from '@/types/api/common'
+import type { MaybeRef, MaybeRefOrGetter } from 'vue'
+
+import { computed, reactive, toRaw, toValue, unref, watch } from 'vue'
+import { useStorage } from '@vueuse/core'
+import { useQuery } from '@tanstack/vue-query'
+import { useAssign, useValue } from '@/hooks/useObject'
+
+// #region 列表 props/emits 定义（供 CompTable 等组件使用）
+/**
+ * 定义列表参数
+ */
+export const defineListProps = () => {
+  return {
+    /** 数据列表 */
+    list: {
+      type: Object,
+      required: true
+    }
+  }
+}
+export interface DefineListProps<T = Object, R = Object> {
+  /** 数据列表 */
+  list: List<T, R>
+}
+
+/** 定义列表emits */
+export const defineListEmits = () => {
+  return ['update:list']
+}
+export interface DefineListEmits<T = Object, R = Object> {
+  'update:list': [value: List<T, R>]
+}
+// #endregion
+
+// #region List 骨架工厂、分页参数与响应解析（共享内部工具）
+/**
+ * 插入分页参数
+ * @param enablePage 是否启用分页
+ * @returns 分页参数
+ */
+const getPage = (enablePage = true): ListBaseQuery => {
+  const pageSize = useStorage('pageSize', 20)
+  return enablePage ? { pageNum: 1, pageSize: pageSize.value } : {}
+}
+
+/**
+ * List工厂函数
+ */
+export const createListState = <Q = Record<string, any>, R = Record<string, any>>(init?: Partial<List<Q, R>>): List<Q, R> => ({
+  items: [],
+  loading: false,
+  total: 0,
+  query: {} as Q & ListBaseQuery,
+  request: async () => {},
+  ...init
+})
+
+/** 列表接口响应（兼容 rows / data） */
+type ApiResult<R> = Omit<AjaxResult<R>, 'data' | 'rows'> & {
+  data?: R[]
+  rows?: R[]
+}
+
+/** 接口响应解析结果 */
+interface ParsedList<R> {
+  items: R[]
+  total: number
+}
+
+/**
+ * 解析接口响应，兼容 rows / data / 纯数组三种返回结构
+ * @param res 接口响应
+ */
+const resolveRows = <R>(res: unknown): ParsedList<R> => {
+  /** TanStack Query 的 data 是 readonly 代理，行内 v-model（如表格勾选）写入会被拦截，需先还原原始对象 */
+  const target = toRaw(res)
+  if (Array.isArray(target)) return { items: target as R[], total: target.length }
+  const body = target as ApiResult<R> | null | undefined
+  return {
+    items: (body?.rows ?? body?.data ?? []) as R[],
+    total: typeof body?.total === 'number' ? body.total : 0
+  }
+}
+// #endregion
+
+// #region useList —— 传统 callback 模式
+/**
+ *
+ * @param otherQuery 初始查询条件
+ * @param enablePage  是否启用分页
+ */
+export const useList = <Q = null, R = object>(otherQuery: Partial<Q>, enablePage = true) => {
+  const list = reactive(
+      createListState<Q, R>({
+        query: {
+          ...getPage(enablePage),
+          ...otherQuery
+        } as unknown as Q & ListBaseQuery,
+        request: async function (callback: () => Promise<unknown>) {
+          if (this.loading) return
+          this.loading = true
+          try {
+            const { items, total } = resolveRows<R>(await callback())
+            this.items = items
+            this.total = total
+          } catch (error) {
+            console.error(error)
+          } finally {
+            this.loading = false
+          }
+        }
+      })
+  )
+
+  return list
+}
+
+/**
+ * 列表数据组件化（CompTable 内部使用，建立 props.list 的双向绑定）
+ */
+export const useListRef = <Q = null, R = object>(props, context) => {
+  const list = computed({
+    get() {
+      return props.list
+    },
+    set(value) {
+      context.emit('update:list', value)
+    }
+  })
+
+  return {
+    list
+  }
+}
+// #endregion
+
+// #region useListQuery —— 基于 @tanstack/vue-query 的列表查询（搜索列表页）
+/** useListQuery 配置项 */
+export interface UseListQueryOptions<Q = Record<string, any>, R = object> {
+  /** 是否启用分页，默认 true */
+  enablePage?: MaybeRef<boolean>
+  /**
+   * 是否启用自动请求（默认 true）
+   */
+  enabled?: MaybeRef<boolean> | ((list: List<Q, R>) => boolean)
+  /** 错误处理，默认 console.error */
+  onError?: (err: unknown) => void
+}
+
+/**
+ * 列表查询 hook（基于 @tanstack/vue-query）
+ *
+ * 适用于带分页/搜索/请求的搜索列表页。
+ *
+ * @param otherQuery 初始查询条件（不含分页字段，分页字段由内部按 enablePage 自动注入）。
+ * @param queryKey   唯一标识前缀
+ * @param queryFn    请求函数（接收完整 query）
+ * @param options    其他配置
+ */
+export const useListQuery = <Q = Record<string, any>, R = object, TData = ApiResult<R>>(
+    otherQuery: MaybeRefOrGetter<Partial<Q>> = {},
+    queryKey: QueryKey | ((query: Q & ListBaseQuery) => QueryKey),
+    queryFn: (query: Q & ListBaseQuery) => Promise<TData>,
+    options: UseListQueryOptions<Q, R> = {}
+) => {
+  const { enablePage = true, enabled = true, onError = err => console.error('useListQuery error:', err) } = options
+
+  /** 分页参数设置 */
+  const pageFields = getPage(unref(enablePage))
+  /** 完整请求参数 */
+  const mergeQuery = (seed: Partial<Q>): Q & ListBaseQuery => ({ ...pageFields, ...seed } as unknown as Q & ListBaseQuery)
+
+  const list = reactive(
+      createListState<Q, R>({
+        query: mergeQuery(toValue(otherQuery)),
+        /** 兼容旧的，对于useListQuery来说是冗余字段 */
+        request: async () => {
+          await refetch()
+        }
+      })
+  ) as List<Q, R>
+
+  /** otherQuery 响应式变化 → 更新 list.query 的非分页字段 */
+  watch(
+      () => toValue(otherQuery),
+      newSeed => {
+        const snapshot = mergeQuery(newSeed)
+        Object.keys(snapshot).forEach(key => {
+          if (!(key in pageFields)) (list.query as any)[key] = snapshot[key]
+        })
+      },
+      { deep: true }
+  )
+
+  const queryParams = computed(() => useValue(list.query) as Q & ListBaseQuery)
+
+  const finalQueryKey = computed<QueryKey>(() => (typeof queryKey === 'function' ? queryKey(queryParams.value) : [...queryKey, queryParams.value]))
+
+  /** 查询结果 → list.items/total */
+  const syncList = (res: TData | undefined) => {
+    if (!res) return
+    const { items, total } = resolveRows<R>(res)
+    list.items = items
+    list.total = total
+  }
+
+  const queryResult = useQuery<TData, Error>({
+    queryKey: finalQueryKey,
+    queryFn: async () => {
+      try {
+        const res = await queryFn(queryParams.value)
+        syncList(res)
+        return res
+      } catch (err) {
+        onError(err)
+        throw err
+      }
+    },
+    enabled: typeof enabled === 'function' ? computed(() => enabled(list)) : enabled
+  })
+
+  /**
+   * TanStack Query 同一 queryKey 只保留创建缓存条目时的 queryFn，
+   * 缓存命中或组件重建时新实例的 queryFn 不会执行，
+   * 因此这里用 data 兜底同步，避免新的观察者 list.items 恒为空
+   */
+  watch(queryResult.data, syncList, { immediate: true })
+
+  const { isLoading, refetch } = queryResult
+
+  watch(isLoading, loading => (list.loading = loading), { immediate: true })
+
+  /** 整体重置：清空 items/total，query 还原为当前 otherQuery + 分页字段，并移除已失效的查询键 */
+  const resetList = () => {
+    const query = list.query as Record<string, any>
+    const nextQuery = mergeQuery(toValue(otherQuery))
+    Object.keys(query).forEach(key => {
+      if (!(key in nextQuery)) delete query[key]
+    })
+    useAssign(list.query, nextQuery)
+    list.items = []
+    list.total = 0
+  }
+
+  /** 手动请求（自动/手动模式都可用） */
+  const getList = () => refetch()
+
+  return {
+    list,
+    getList,
+    resetList,
+    queryResult,
+    ...queryResult
+  }
+}
+// #endregion
+
+// #region useListAdaptor —— 纯数组适配器（静态展示表 / 详情子表 / 弹窗表格 / CompTable公共组件）
+/**
+ * @param items   行数据（数组 / ref / getter）
+ * @param loading 加载状态（boolean / ref / getter）
+ */
+export const useListAdaptor = <R = Record<string, any>, Q = Record<string, any>>(
+    items: MaybeRefOrGetter<R[]>,
+    loading: MaybeRefOrGetter<boolean> = false
+) => {
+  const list = reactive(createListState<Q, R>())
+
+  // 数组整体替换时同步 items/total；原地增删（push/splice）时只同步 total
+  // 不使用 deep 深度监听，避免大列表编辑单元格时遍历所有行
+  watch(
+      () => toValue(items),
+      v => {
+        list.items = v as any
+        list.total = v.length
+      },
+      { immediate: true }
+  )
+  watch(
+      () => toValue(items).length,
+      total => {
+        list.total = total
+      },
+      { immediate: true }
+  )
+  watch(
+      () => toValue(loading),
+      v => {
+        list.loading = v
+      },
+      { immediate: true }
+  )
+
+  return list
+}
+// #endregion
+
+```
+
+```ts
+declare global {
+  /** 列表请求参数基础数据 */
+  interface ListBaseQuery {
+    /** 当前页码 */
+    pageNum?: number
+    /** 分页大小 */
+    pageSize?: number
+  }
+
+  /** 列表基础数据 */
+  interface ResponseList<T> {
+    /** 数据列表 */
+    records: T[]
+    /** 数据总量 */
+    total: number
+  }
+
+  interface List<Q = null, R = object> {
+    /** 数据列表 */
+    items: R[]
+    /** 请求参数 */
+    query: Q & ListBaseQuery
+    /** 数据总量 */
+    total: number
+    /** 是否加载中 */
+    loading: boolean
+    /** 请求方法 */
+    request: (callback: () => Promise<any>) => Promise<void>
+  }
+}
+```
+
+## vue3uniapp
+
+```ts
+import { reactive } from 'vue'
+
+/** 定义列表数据 */
+export function useList<Q = null, R = object>(otherQuery: Partial<Q>) {
+  const list = reactive<List<Q, R>>({
+    items: [],
+    query: {
+      pageNum: 1,
+      pageSize: 20,
+      ...(otherQuery as Q)
+    },
+    total: 0,
+    pageCount: 0,
+    loading: false,
+    haveMore: true,
+    showText: true,
+    reGet: false,
+    haveAny: true
+  })
+
+  return list
+}
+
+/** 初始化列表 */
+export function useInitList(list: List<any, any>) {
+  list.items = []
+  list.total = 0
+  if (list.query) list.query.pageNum = 1
+  list.pageCount = 0
+  list.loading = false
+  list.haveMore = true
+  list.haveAny = true
+  list.reGet = false
+
+  return list
+}
+
+/** 请求前处理 */
+export function useBeforeList<Q, R>(list: List<Q, R>, showToast = false) {
+  if (list.loading || !list.haveMore) {
+    if (showToast && !list.haveMore) {
+      useShowToast({ title: '没有更多数据了' })
+    }
+    return Promise.reject()
+  }
+  list.loading = true
+
+  return Promise.resolve(list)
+}
+
+/** 请求后处理 */
+export function useAfterList(list: List<any, any>, res: any, target = 'items') {
+  if (res.data === null) res.data = []
+  list.total = typeof res.total === 'number' ? res.total : res[target].length || 0
+  list.items = list.items.concat(res[target] || res || [])
+  list.pageCount = list.query && list.query.pageSize ? (list.total === 0 ? 0 : Math.ceil(list.total / list.query.pageSize)) : 0
+  list.loading = false
+  if (list.total === 0) {
+    list.haveAny = false
+    list.haveMore = false
+  } else {
+    if (list.query && list.query.pageNum) {
+      if (list.query.pageNum >= list.pageCount) list.haveMore = false
+      else list.query.pageNum++
+    } else list.haveMore = false
+  }
+
+  return list
+}
+
+/**
+ * 数据条数等处理-分组
+ * @param list 列表
+ * @param Page 页面栈
+ * @param res 需要插入的数据
+ * @param target 列表key值
+ * @param key 分组的字段名
+ * @returns 列表
+ */
+export function useAfterListGroup(list: List<any, any>, res: any, target = 'list', key: string) {
+  if (res.data === null) res.data = []
+  list.total = typeof res.data.total === 'number' ? res.data.total : res.data.length || 0
+  ;(Array.isArray(res.data) ? res.data : res.data.items).forEach((item: any) => {
+    const value = item[key]
+    let obj = list.items.find((listItem: any) => listItem.key === value)
+    if (obj) {
+      obj.items.push(item)
+    } else {
+      obj = {
+        key: value,
+        items: [item]
+      }
+      list.items.push(obj)
+    }
+  })
+  list.pageCount = list.query && list.query.pageSize ? (list.total === 0 ? 0 : Math.ceil(list.total / list.query.pageSize)) : 0
+  list.loading = false
+  if (list.total === 0) {
+    list.haveAny = false
+    list.haveMore = false
+  } else {
+    if (list.query && list.query.pageIndex) {
+      if (list.query.pageIndex >= list.pageCount) list.haveMore = false
+      else list.query.pageIndex++
+    } else list.haveMore = false
+  }
+
+  return list
+}
+
+/**
+ * 发生错误时
+ * @param list 列表
+ * @returns 列表
+ */
+export function useErrorList(list: List<any, any>) {
+  list.loading = false
+  list.reGet = !list.haveAny
+
+  return list
+}
+```
+
+```ts
+/** 列表请求参数基础数据 */
+declare interface ListBaseQuery {
+  /** 当前页码 */
+  pageNum?: number
+  /** 分页大小 */
+  pageSize?: number
+}
+
+/** 列表基础数据 */
+interface ResponseList<T> {
+  /** 数据列表 */
+  records: T[]
+  /** 数据总量 */
+  total: number
+}
+
+interface List<Q = null, R = object> {
+  /** 数据列表 */
+  items: R[];
+  /** 请求参数 */
+  query: Q & ListBaseQuery,
+  /** 数据总量 */
+  total: number;
+  /** 是否加载中 */
+  loading: boolean;
+  /** 总页数 */
+  pageCount: number;
+  /** 是否还有数据未加载 */
+  haveMore: boolean;
+  /** 是否有数据 */
+  haveAny: boolean
+  /** comp-list组件使用 - 是否显示提示语 */
+  showText: boolean
+  /** comp-list组件使用 - 是否显示重新加载数据提示 */
+  reGet: boolean
+}
+```
+
+## 小程序
+
+```ts
+import { isArray } from './useValidate'
+
+/**
+ * 加载前预置
+ * @param list 列表
+ * @param Page 页面栈
+ * @param target 列表key值
+ * @returns 列表
+ */
+export function usePreList(list: List<any, any>, Page: WxPage | WxComponent, target = 'list') {
+  list.loading = true
+  list.reGet = false
+  Page.setData({
+    [`${target}.loading`]: list.loading,
+    [`${target}.reGet`]: list.reGet
+  })
+  Page.data.busy = true
+  return list
+}
+
+/**
+ * 数据条数等处理
+ * @param list 列表
+ * @param Page 页面栈
+ * @param res 需要插入的数据
+ * @param target 列表key值
+ * @returns 列表
+ */
+export function useAfterList(list: List<any, any>, Page: WxPage | WxComponent, res: any, target = 'list') {
+  if (res.data === null) res.data = []
+  list.total = typeof res.data.total === 'number' ? res.data.total : res.data.length || 0
+  list.items = list.items.concat(res.data.items || res.data || [])
+  list.pageCount = list.query && list.query.pageSize ? (list.total === 0 ? 0 : Math.ceil(list.total / list.query.pageSize)) : 0
+  list.loading = false
+  if (list.total === 0) {
+    list.haveAny = false
+    list.haveMore = false
+  } else {
+    if (list.query && list.query.pageIndex) {
+      if (list.query.pageIndex >= list.pageCount) list.haveMore = false
+      else list.query.pageIndex++
+    } else list.haveMore = false
+  }
+  Page.setData({
+    [target]: list,
+    loading: false
+  })
+  Page.data.busy = false
+
+  return list
+}
+
+/**
+ * 数据条数等处理-分组
+ * @param list 列表
+ * @param Page 页面栈
+ * @param res 需要插入的数据
+ * @param target 列表key值
+ * @param key 分组的字段名
+ * @returns 列表
+ */
+export function useAfterListGroup(list: List<any, any>, Page: WxPage | WxComponent, res: any, target = 'list', key: string) {
+  if (res.data === null) res.data = []
+  list.total = typeof res.data.total === 'number' ? res.data.total : res.data.length || 0
+  ;(isArray(res.data) ? res.data : res.data.items).forEach((item: any) => {
+    const value = item[key]
+    let obj = list.items.find((listItem: any) => listItem.key === value)
+    if (obj) {
+      obj.items.push(item)
+    } else {
+      obj = {
+        key: value,
+        items: [item]
+      }
+      list.items.push(obj)
+    }
+  })
+  list.pageCount = list.query && list.query.pageSize ? (list.total === 0 ? 0 : Math.ceil(list.total / list.query.pageSize)) : 0
+  list.loading = false
+  if (list.total === 0) {
+    list.haveAny = false
+    list.haveMore = false
+  } else {
+    if (list.query && list.query.pageIndex) {
+      if (list.query.pageIndex >= list.pageCount) list.haveMore = false
+      else list.query.pageIndex++
+    } else list.haveMore = false
+  }
+  Page.setData({
+    [target]: list,
+    loading: false
+  })
+  Page.data.busy = false
+
+  return list
+}
+
+/**
+ * 发生错误时
+ * @param list 列表
+ * @param Page 页面栈
+ * @param target 列表key值
+ * @returns 列表
+ */
+export function useErrorList(list: List<any, any>, Page: WxPage | WxComponent, target = 'list') {
+  list.loading = false
+  list.reGet = true
+  Page.setData({
+    [`${target}.loading`]: list.loading,
+    [`${target}.reGet`]: list.reGet,
+    loading: false
+  })
+  Page.data.busy = false
+  return list
+}
+
+/**
+ * 初始化数据
+ * @param list 列表
+ * @param Page 页面栈
+ * @param target 列表key值
+ * @param setData 是否需要setData，onShow页面时不需要显示加载动画
+ * @returns 列表
+ */
+export function useInitList(list: List<any, any>, Page: WxPage | WxComponent, target = 'list', setData = false) {
+  list.items = []
+  list.total = 0
+  list.query && (list.query.pageIndex = 1)
+  list.pageCount = 0
+  list.loading = false
+  list.haveMore = true
+  list.haveAny = true
+  list.reGet = false
+  if (setData) {
+    Page.setData({
+      [target]: list
+    })
+  }
+  return list
+}
+
+
+```
+
+```ts
+type WxPage = WechatMiniprogram.Page.Instance<Record<string, any>, Record<string, any>>
+type WxComponent = WechatMiniprogram.Component.Instance<
+  Record<string, any>,
+  Record<string, any>,
+  Record<string, any>,
+  Record<string, any>,
+  Record<string, any>
+>
+
+/** 请求参数基础数据 */
+interface ListBaseQuery {
+  /** 当前页码 */
+  pageIndex: number
+  /** 分页大小 */
+  pageSize: number
+}
+
+/** 列表 */
+interface List<Q, R> {
+  /** 数据列表 */
+  items: R[]
+  /** 数据总量 */
+  total: number
+  /** 请求参数 */
+  query: Q
+  /** 总页数 */
+  pageCount: number
+  /** 是否加载中 */
+  loading: boolean
+  /** 是否还有数据未加载 */
+  haveMore: boolean
+  /** 是否至少有一条数据 */
+  haveAny: boolean
+  /** 是否显示重新加载数据按钮 */
+  reGet: boolean
+  /** 是否显示没有更多数据时的文本 */
+  showText: boolean
+  /** 无数据时的文本 */
+  noneText?: string
+}
+
+/** 列表基础数据 */
+interface ResponseList<T> {
+  /** 数据列表 */
+  items: T[]
+  /** 数据总量 */
+  total: number
+}
+```

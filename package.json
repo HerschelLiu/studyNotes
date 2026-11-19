@@ -1,0 +1,22 @@
+{
+  "name": "study-notes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "学习笔记：VitePress + Astro 共享内容 monorepo",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:vp": "npm --workspace apps/vitepress run dev --",
+    "build:vp": "npm --workspace apps/vitepress run build",
+    "preview:vp": "npm --workspace apps/vitepress run preview --",
+    "astro:dev": "npm --workspace apps/astro run dev --",
+    "astro:build": "npm --workspace apps/astro run build",
+    "astro:preview": "npm --workspace apps/astro run preview --",
+    "dev:astro": "npm --workspace apps/astro run dev --",
+    "build:astro": "npm --workspace apps/astro run build",
+    "preview:astro": "npm --workspace apps/astro run preview --",
+    "normalize": "node scripts/normalize-frontmatter.mjs ./content",
+    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
+  }
+}
