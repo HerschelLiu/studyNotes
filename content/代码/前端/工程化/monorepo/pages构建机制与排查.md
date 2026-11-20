@@ -159,9 +159,9 @@ $ find .pages -maxdepth 2 -name index.html
 当前规模：
 
 ```text
-.pages 约 282M
-VitePress 417 个 HTML
-Astro 417 个 HTML
+.pages 约 286M
+VitePress 423 个 HTML
+Astro 423 个 HTML
 ```
 
 ### 3.4 关键依赖
