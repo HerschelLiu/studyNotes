@@ -33,7 +33,7 @@
 
 ```bash
 npm run dev:vp
-npm run astro:dev
+npm run dev:astro
 ```
 
 完整机制见[.pages 构建机制与排查](../../content/代码/前端/工程化/monorepo/pages构建机制与排查.md)。

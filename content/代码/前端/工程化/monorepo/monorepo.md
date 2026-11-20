@@ -11,7 +11,7 @@ monorepo 是仓库组织方式，不是包管理器。npm、pnpm、yarn、bun �
 ```bash
 npm install
 npm run dev:vp      # 等价于 npm --workspace apps/vitepress run dev --
-npm run astro:build   # 等价于 npm --workspace apps/astro run build
+npm run build:astro   # 等价于 npm --workspace apps/astro run build
 ```
 
 本文第 2～11 节保留的是 **pnpm 通用教程**，所以会出现：
@@ -35,9 +35,11 @@ pnpm -F portal dev
   "scripts": {
     "dev:vp": "npm --workspace apps/vitepress run dev --",
     "build:vp": "npm --workspace apps/vitepress run build",
-    "astro:dev": "npm --workspace apps/astro run dev --",
-    "astro:build": "npm --workspace apps/astro run build",
-    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp apps/home/404.html .pages/404.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
+    "dev:astro": "npm --workspace apps/astro run dev --",
+    "build:astro": "npm --workspace apps/astro run build",
+    "pages:build": "node scripts/pages.mjs build",
+    "pages:serve": "node scripts/pages.mjs serve",
+    "pages:preview": "node scripts/pages.mjs preview"
   }
 }
 ```
@@ -47,7 +49,7 @@ npm install
 npm ci                 # CI
 npm run dev:vp
 npm run build:vp
-npm run astro:build
+npm run build:astro
 npm run pages:build
 ```
 
@@ -151,8 +153,8 @@ bun 默认生成接近 npm 的根 `node_modules`，VitePress 外部 `srcDir` 可
 | 安装 | `npm install` | `pnpm install` | `yarn install` | `bun install` |
 | 开发 VitePress | `npm run dev:vp` | `pnpm --filter study-notes-vitepress dev` | `yarn workspace study-notes-vitepress dev` | `bun --cwd apps/vitepress run dev` |
 | 构建 VitePress | `npm run build:vp` | `pnpm --filter study-notes-vitepress build` | `yarn workspace study-notes-vitepress build` | `bun --cwd apps/vitepress run build` |
-| 开发 Astro | `npm run astro:dev` | `pnpm --filter study-notes-astro dev` | `yarn workspace study-notes-astro dev` | `bun --cwd apps/astro run dev` |
-| 构建 Astro | `npm run astro:build` | `pnpm --filter study-notes-astro build` | `yarn workspace study-notes-astro build` | `bun --cwd apps/astro run build` |
+| 开发 Astro | `npm run dev:astro` | `pnpm --filter study-notes-astro dev` | `yarn workspace study-notes-astro dev` | `bun --cwd apps/astro run dev` |
+| 构建 Astro | `npm run build:astro` | `pnpm --filter study-notes-astro build` | `yarn workspace study-notes-astro build` | `bun --cwd apps/astro run build` |
 
 根 scripts 只是编排，不绑定包管理器；可以把 `dev:vp` 等命令改成对应包管理器的写法。
 
@@ -784,10 +786,10 @@ https://<user>.github.io/<repo>/astro/        # Astro
 - 根 `/` 是 `apps/home/index.html`，不是任何框架；
 - VitePress 在 `/vitepress/`，文档路径变成 `/vitepress/代码/...`、`/vitepress/指南/...`；
 - Astro 在 `/astro/`；
-- `npm run pages:build` 把 home、VitePress、Astro 组装到 `.pages`；
+- `npm run pages:build` 构建两个站点，并把 home、VitePress、Astro 组装到 `.pages`；
 - 以后新增框架时，只需在 `apps/home/index.html` 加链接、在 `.pages/<framework>/` 放产物。
 
-本地开发时分别运行 `npm run dev:vp`（5173）和 `npm run astro:dev`（4321）；根 home 只在合并产物/部署后生效。
+本地开发时分别运行 `npm run dev:vp`（5173）和 `npm run dev:astro`（4321）；根 home 只在合并产物/部署后生效。
 
 ### 12.6 VSCode 不再报错：两套 Vite 的类型冲突
 

@@ -24,6 +24,33 @@ https://<user>.github.io/<repo>/
 - 但**同一个 Pages 站点**只能有一个根 `index.html`；
 - 两个站点同时上线时，必须一个放根、一个放子路径，或者拆到两个仓库/域名。
 
+### 1.1 `/repo/` 到底打开哪个页面
+
+Pages 不识别“框架主页”，只按 artifact 里的文件路径返回：
+
+```text
+.pages/index.html           -> https://<user>.github.io/<repo>/
+.pages/vitepress/index.html -> https://<user>.github.io/<repo>/vitepress/
+.pages/astro/index.html     -> https://<user>.github.io/<repo>/astro/
+```
+
+Pages 之所以使用 `.pages/` 作为站点根，只因为 workflow 里写了：
+
+```yaml
+- uses: actions/upload-pages-artifact@v3
+  with:
+    path: .pages
+```
+
+它不读 `package.json`、不扫描 `dist`，`path` 指向哪个目录，哪个目录就是站点根；Settings 里只需要把 Source 设为 GitHub Actions，不需要填目录。
+
+所以本仓库访问根路径一定是门户 `apps/home/index.html`，由它再选择 VitePress 或 Astro。想让根路径直接进入某个站点，只有两种做法：
+
+- 把该站点产物放到 `.pages/index.html`（或在根 `index.html` 写跳转），同时把对应 `base` 改成 `/`；
+- 拆成两个仓库/两个域名，各自占根路径。
+
+不推荐在保留 `/vitepress/`、`/astro/` 子路径的同时，把根 `index.html` 换成某个站点的首页：站点内部的资源路径仍带子路径，容易白屏。
+
 ## 2. 前置条件
 
 1. 仓库已推送到 GitHub；
@@ -281,17 +308,15 @@ workflow 片段：
 
 ```yaml
 - run: npm ci
-- run: npm run build:vp
-  env:
-    DOCS_BASE: /repo/vitepress/
-- run: npm run build:astro
-  env:
-    ASTRO_BASE: /repo/astro/
 - run: npm run pages:build
+  env:
+    PAGES_BASE: /repo/
 - uses: actions/upload-pages-artifact@v3
   with:
     path: .pages
 ```
+
+`pages:build` 内部会按 `PAGES_BASE` 计算两个子站 base，依次执行 `build:vp`、`build:astro`，再组装并校验 `.pages`。
 
 注意：
 
@@ -339,17 +364,26 @@ npm run pages:build
 └── astro/            # Astro 站点
 ```
 
-本地模拟 Pages 访问（可选，确认子路径资源不 404）：
+本地模拟 Pages 访问（推荐，一条命令完成“构建 + 组装 + 托管”）：
 
 ```bash
-mkdir -p /tmp/ghp/studyNotes
-cp -R .pages/* /tmp/ghp/studyNotes/
-cd /tmp/ghp && python3 -m http.server 8765
-# 依次打开：
-# http://localhost:8765/studyNotes/
-# http://localhost:8765/studyNotes/vitepress/
-# http://localhost:8765/studyNotes/astro/
+npm run pages:preview
+# 打开：
+# http://localhost:4173/studyNotes/           门户
+# http://localhost:4173/studyNotes/vitepress/ VitePress
+# http://localhost:4173/studyNotes/astro/     Astro
 ```
+
+它等价于：
+
+```bash
+npm run pages:build   # 默认 PAGES_BASE=/studyNotes/，构建两站并组装
+npm run pages:serve   # 只托管已有的 .pages，默认 4173
+```
+
+`pages:build`、`pages:serve` 都读取 `scripts/pages.config.mjs`，base 与端口只维护一处。
+
+> `pages:preview` / `pages:serve` 是**静态预览**，没有热更新；写文档时仍分别用 `npm run dev:vp`、`npm run dev:astro`，需要验证子路径与跨站跳转时再用 `pages:preview`。
 
 #### 第 3 步：提交并推送
 
@@ -387,8 +421,10 @@ workflow 共两个 job：
 
 | job | 做什么 |
 | --- | --- |
-| `build` | `npm ci` → `build:vp` → `build:astro` → `pages:build` → 上传 `.pages` |
+| `build` | `npm ci` → `pages:build`（内部构建两站并组装、校验）→ 上传 `.pages` |
 | `deploy` | `actions/deploy-pages@v4` 发布到 Pages，并输出 `page_url` |
+
+> 上传目录由 `upload-pages-artifact` 的 `path: .pages` 决定，Pages 不关心项目里有没有 `dist`、用的是什么框架。
 
 两个 job 都变绿后，**Settings → Pages** 顶部会出现：
 
@@ -493,6 +529,8 @@ base 配错是白屏和 CSS/JS 404 的第一原因：
 | 双栈后 Astro 页面在 `/astro/` 404 | 没有把 Astro dist 复制进 VitePress dist | 见方案 B 的 cp 步骤 |
 | Astro 首页点“进入文档”跳到 `/astro/astro/代码/`，显示“页面已迁移到 VitePress 文档站” | 相对链接写成了 `./代码/README.md`，被解析成 `astro/代码`；该地址不存在，Pages 回落到根 `404.html` | 改成 `../代码/README.md`；并确认 remark 插件已去掉 `astro/` 前缀 |
 | Astro 首页能开但像纯文本、没有 Hero | `template: splash` 下没有配置 `hero` | frontmatter 增加 `hero.title` / `hero.tagline`，正文用「分类入口」链接 |
+| 本地 `npx serve .pages` 打开白屏 | 站点构建时 base 是 `/studyNotes/...`，直接挂在根路径下资源会 404 | 用 `npm run pages:preview`，按 `/studyNotes/` 前缀托管 |
+| 根路径想直接显示 VitePress/Astro | 换了 `.pages/index.html`，但子站资源仍带子路径 | 同时把对应 `base` 改为 `/`，或保留门户 |
 | 中文 URL 变成 `%E5...` | 浏览器正常编码 | 无需处理；避免频繁改文件名 |
 | 构建内存不足 | 页面很多 + 高亮 | `NODE_OPTIONS=--max-old-space-size=4096` |
 | 附件 `.rar` / `.zip` 404 | 非 Markdown 引用文件不会进 dist | 放 `public/files/` 并用 `/files/...` |

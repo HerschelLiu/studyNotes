@@ -45,9 +45,16 @@ npm run dev:astro       # Astro，4321
 npm run build:astro     # 产物 apps/astro/dist
 npm run preview:astro
 
-npm run pages:build     # 组装 .pages（home + VitePress + Astro）
+npm run pages:build     # 构建两站并组装 .pages（home + VitePress + Astro）
+npm run pages:preview   # 一键构建并本地预览 Pages：http://localhost:4173/studyNotes/
+npm run pages:serve     # 直接预览已有的 .pages（不重新构建）
+
 npm run normalize       # 规范化 content/ 的 frontmatter
 ```
+
+> `pages:preview` 会按 CI 的 base 构建两个站点再托管，适合验证子路径；写文档时仍用 `dev:vp` / `dev:astro` 获得热更新。
+>
+> Pages 的站点根就是 workflow 里 `upload-pages-artifact` 的 `path: .pages`；根主页是 `.pages/index.html`（来自 `apps/home/index.html`）。
 
 ## 内容规范
 
@@ -77,14 +84,12 @@ VitePress 侧由 `AppLayout.vue` 把 `frontmatter.title` 注入为一级标题�
 - Astro：`/studyNotes/astro/`；
 - 两个站点共用一个 GitHub Pages artifact，不是两个仓库。
 
-本地开发时分别运行 `npm run dev:vp`（5173）和 `npm run astro:dev`（4321）；根 home 只在合并产物 `.pages/` 或部署后可见。
+本地开发时分别运行 `npm run dev:vp`（5173）和 `npm run dev:astro`（4321）；根 home 只在合并产物 `.pages/` 或部署后可见。
 
 ## 部署
 
 推送到 `master` 后，GitHub Actions 会：
 
 1. `npm ci` 安装 workspace；
-2. 构建 VitePress 到 `/studyNotes/vitepress/`；
-3. 构建 Astro 到 `/studyNotes/astro/`；
-4. `npm run pages:build` 把 home、VitePress、Astro 组装到 `.pages`；
-5. 发布 `.pages` 到 GitHub Pages。
+2. `npm run pages:build`：按 `PAGES_BASE` 构建 VitePress 与 Astro，并把 home 一起组装、校验到 `.pages`；
+3. 上传并发布 `.pages` 到 GitHub Pages。

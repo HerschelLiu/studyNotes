@@ -11,6 +11,44 @@
 }
 
 
+.home-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  margin: 2rem 0;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.25rem;
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 0.75rem;
+  background: var(--sl-color-bg-nav);
+  color: var(--sl-color-text);
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+.home-card:hover {
+  border-color: var(--sl-color-accent);
+  transform: translateY(-2px);
+}
+
+.home-card__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.home-card__desc {
+  color: var(--sl-color-gray-3);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
 .astro-demo-fallback {
   margin: 1.5rem 0;
   padding: 1rem 1.25rem;

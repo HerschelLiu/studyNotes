@@ -33,18 +33,10 @@ jobs:
       - name: Install workspace dependencies
         run: npm ci
 
-      - name: Build VitePress
-        run: npm run build:vp
-        env:
-          DOCS_BASE: /studyNotes/vitepress/
-
-      - name: Build Astro
-        run: npm run build:astro
-        env:
-          ASTRO_BASE: /studyNotes/astro/
-
-      - name: Assemble Pages
+      - name: Build and assemble Pages
         run: npm run pages:build
+        env:
+          PAGES_BASE: /studyNotes/
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
