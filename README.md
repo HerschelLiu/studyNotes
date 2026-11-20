@@ -13,6 +13,7 @@ content/                     # 唯一内容根
 ├── README.md                # 共享全库索引
 ├── 代码/                    # 共享笔记
 ├── 指南/                    # 共享示例说明
+├── public/brand-logo.svg           # VitePress 公共资源
 ├── vitepress/
 │   └── index.md             # VitePress 首页
 └── astro/

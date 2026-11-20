@@ -51,6 +51,12 @@ export default function remarkMdLinks({ base = '/', contentDir }) {
 
       if (relative.startsWith('..')) return;
 
+      // content/astro/ 下的文件在 Starlight 中被映射到根路由（见 content.config.ts），
+      // 生成的链接也要去掉 astro/ 前缀，否则会出现 /astro/astro/xxx/。
+      if (relative === 'astro' || relative.startsWith('astro/')) {
+        relative = relative.slice('astro/'.length);
+      }
+
       node.url = `${prefix}/${relative}${relative ? '/' : ''}${hash}`;
     });
   };

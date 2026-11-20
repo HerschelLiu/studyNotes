@@ -299,8 +299,151 @@ workflow 片段：
 - Astro 内部绝对链接要带 `/repo/astro/`；共享内容里的相对 `.md` 链接由 remark 插件转换；
 - VitePress 内部链接由 `DOCS_BASE` 生成；
 - 根 `404.html` 会把旧的 `/studyNotes/代码/...` 兼容重定向到 `/studyNotes/vitepress/代码/...`；
+- `content/astro/index.md` 里的相对链接按**文件自身位置**解析：指向共享文档要写 `../代码/README.md`，写成 `./代码/README.md` 会生成 `/astro/astro/代码/` 并 404；
+- `remark-md-links` 会把指向 `content/astro/**` 的链接去掉 `astro/` 前缀，与 `content.config.ts` 的路由映射保持一致；
 - 两个站点的搜索索引各自生成；
 - 一个 artifact 上传，Pages 只部署一次。
+
+### 6.4 本仓库完整部署操作（从仓库配置到访问验证）
+
+下面按实际顺序走一遍，照着做即可上线。
+
+#### 第 1 步：确认前置条件
+
+- 默认分支是 `master`，且 `.github/workflows/deploy.yml` 已在该分支；
+- 仓库为 Public；
+- 仓库 **Settings → Actions → General** 允许运行 Actions；
+- 本地能成功构建（见下一步）。
+
+#### 第 2 步：本地预检
+
+```bash
+npm install
+
+# 模拟 CI 的子路径构建
+DOCS_BASE=/studyNotes/vitepress/ npm run build:vp
+ASTRO_BASE=/studyNotes/astro/ npm run build:astro
+
+# 组装门户 + 两个子站到 .pages/
+npm run pages:build
+```
+
+`pages:build` 的产物结构：
+
+```text
+.pages/
+├── index.html        # 门户（apps/home/index.html）
+├── 404.html          # 统一 404
+├── .nojekyll         # 关闭 Jekyll
+├── vitepress/        # VitePress 站点
+└── astro/            # Astro 站点
+```
+
+本地模拟 Pages 访问（可选，确认子路径资源不 404）：
+
+```bash
+mkdir -p /tmp/ghp/studyNotes
+cp -R .pages/* /tmp/ghp/studyNotes/
+cd /tmp/ghp && python3 -m http.server 8765
+# 依次打开：
+# http://localhost:8765/studyNotes/
+# http://localhost:8765/studyNotes/vitepress/
+# http://localhost:8765/studyNotes/astro/
+```
+
+#### 第 3 步：提交并推送
+
+```bash
+git add .
+git commit -m "chore: [构建]配置 GitHub Pages 部署"
+git push origin master
+```
+
+必须提交的内容：
+
+- `.github/workflows/deploy.yml`；
+- `package.json`、`package-lock.json`（CI 用 `npm ci`，锁文件必须同步）；
+- `apps/home/index.html`、`apps/home/404.html`。
+
+#### 第 4 步：仓库设置 Pages
+
+打开：
+
+```text
+https://github.com/HerschelLiu/studyNotes/settings/pages
+```
+
+1. **Build and deployment → Source** 选择 **GitHub Actions**；
+2. 上面的 “GitHub Pages Jekyll”“Static HTML” 两张卡片是官方模板，**不要点 Configure**，否则会新增一个无关 workflow，可能和现有部署互相覆盖；
+3. **Custom domain** 先留空；
+4. 此时页面提示 “Workflow details will appear here once your site has been deployed”，表示还没成功部署过，属正常。
+
+#### 第 5 步：运行 workflow
+
+- 自动触发：向 `master` 推送任意提交；
+- 手动触发：**Actions → Deploy Docs to GitHub Pages → Run workflow → 分支选 master → Run**。
+
+workflow 共两个 job：
+
+| job | 做什么 |
+| --- | --- |
+| `build` | `npm ci` → `build:vp` → `build:astro` → `pages:build` → 上传 `.pages` |
+| `deploy` | `actions/deploy-pages@v4` 发布到 Pages，并输出 `page_url` |
+
+两个 job 都变绿后，**Settings → Pages** 顶部会出现：
+
+```text
+Your site is live at https://herschelliu.github.io/studyNotes/
+```
+
+#### 第 6 步：访问路径验证
+
+按顺序检查：
+
+| 地址 | 预期 |
+| --- | --- |
+| `https://herschelliu.github.io/studyNotes/` | 门户页，有 VitePress / Astro 两个入口 |
+| `https://herschelliu.github.io/studyNotes/vitepress/` | VitePress 首页，导航、侧边栏、搜索正常 |
+| `https://herschelliu.github.io/studyNotes/vitepress/代码/前端/` | 内页可打开，刷新仍为 200 |
+| `https://herschelliu.github.io/studyNotes/astro/` | Astro 首页，显示 Hero 与「分类入口」 |
+| `https://herschelliu.github.io/studyNotes/astro/代码/前端/` | Astro 内页，侧边栏与目录正常 |
+| 任意内页按 F5 | 不出现 404 |
+
+再用浏览器 DevTools → Network 检查：
+
+- Astro 资源前缀应为 `/studyNotes/astro/_astro/...`；
+- VitePress 资源前缀应为 `/studyNotes/vitepress/assets/...`；
+- 任何指向 `/_astro/`、`/assets/` 根路径的资源都说明 `base` 没生效。
+
+#### 第 7 步：自定义域名（可选）
+
+1. **Settings → Pages → Custom domain** 填域名并保存；
+2. DNS：子域名 `CNAME docs.example.com → <user>.github.io`；根域名按 GitHub 文档配 A 记录；
+3. 等待生效后勾选 **Enforce HTTPS**；
+4. 把 workflow 里的 base 全部改为 `/`：
+
+```yaml
+- run: npm run build:vp
+  env:
+    DOCS_BASE: /
+- run: npm run build:astro
+  env:
+    ASTRO_BASE: /
+```
+
+5. 重跑 workflow。此时门户、VitePress、Astro 的地址变为：
+
+```text
+https://docs.example.com/
+https://docs.example.com/vitepress/
+https://docs.example.com/astro/
+```
+
+#### 第 8 步：重跑与回滚
+
+- **重跑失败任务**：Actions 运行详情页 → **Re-run jobs**；
+- **回滚**：`git revert <commit>` 后推送，Actions 会按旧内容重新构建；
+- 不要直接改 `gh-pages` 分支：本项目用 artifact 部署，没有该分支。
 
 ### 方案 C：两个 workflow 都上传根 artifact（不可行）
 
@@ -348,6 +491,8 @@ base 配错是白屏和 CSS/JS 404 的第一原因：
 | Astro 构建失败 | Node 版本低于 22.23.4 | workflow 用 Node 22 或 24 |
 | Astro 子路径资源 404 | `ASTRO_BASE` 未设置或格式错误 | `/repo/astro/`，首尾 `/` |
 | 双栈后 Astro 页面在 `/astro/` 404 | 没有把 Astro dist 复制进 VitePress dist | 见方案 B 的 cp 步骤 |
+| Astro 首页点“进入文档”跳到 `/astro/astro/代码/`，显示“页面已迁移到 VitePress 文档站” | 相对链接写成了 `./代码/README.md`，被解析成 `astro/代码`；该地址不存在，Pages 回落到根 `404.html` | 改成 `../代码/README.md`；并确认 remark 插件已去掉 `astro/` 前缀 |
+| Astro 首页能开但像纯文本、没有 Hero | `template: splash` 下没有配置 `hero` | frontmatter 增加 `hero.title` / `hero.tagline`，正文用「分类入口」链接 |
 | 中文 URL 变成 `%E5...` | 浏览器正常编码 | 无需处理；避免频繁改文件名 |
 | 构建内存不足 | 页面很多 + 高亮 | `NODE_OPTIONS=--max-old-space-size=4096` |
 | 附件 `.rar` / `.zip` 404 | 非 Markdown 引用文件不会进 dist | 放 `public/files/` 并用 `/files/...` |
@@ -369,6 +514,8 @@ base 配错是白屏和 CSS/JS 404 的第一原因：
 - [ ] 搜索可用
 - [ ] 自定义域名（如有）HTTPS 正常
 - [ ] 双栈部署时 `/repo/`（门户）、`/repo/vitepress/`、`/repo/astro/` 都能访问
+- [ ] Astro 首页 Hero 与「分类入口」正常，点击「前端」进入 `/repo/astro/代码/前端/`
+- [ ] Astro 与 VitePress 内页刷新均为 200，不出现“页面已迁移”404 页
 
 ## 12. 相关文档
 

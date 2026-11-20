@@ -89,7 +89,7 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}logo.svg` }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}brand-logo.svg` }],
     ['meta', { name: 'theme-color', content: '#3b82f6' }],
     ['meta', { name: 'author', content: 'Herschel Liu' }],
   ],
@@ -104,7 +104,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: '/logo.svg',
+    logo: '/brand-logo.svg',
     siteTitle: '学习笔记',
 
     nav: generateNav(),

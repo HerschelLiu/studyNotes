@@ -693,6 +693,7 @@ studyNotes/
 ├── content/                    # 唯一内容根，42M
 │   ├── 代码/                   # 共享
 │   ├── 指南/                   # 共享
+│   ├── public/brand-logo.svg         # VitePress 公共资源
 │   ├── vitepress/              # 仅 VitePress
 │   └── astro/                  # 仅 Astro
 ├── apps/
