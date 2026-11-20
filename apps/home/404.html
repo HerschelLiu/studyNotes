@@ -8,7 +8,13 @@
     var base = '/studyNotes/';
     var path = location.pathname;
     if (path.indexOf(base) === 0 && path.indexOf(base + 'vitepress/') !== 0 && path.indexOf(base + 'astro/') !== 0) {
-      location.replace(base + 'vitepress/' + path.slice(base.length) + location.search + location.hash);
+      var rest = path.slice(base.length);
+      // 兼容 Node 后端文档从 前端/node/后端 迁到 后端/node
+      var oldNode = '代码/前端/node/后端/';
+      if (rest.indexOf(oldNode) === 0) {
+        rest = '代码/后端/node/' + rest.slice(oldNode.length);
+      }
+      location.replace(base + 'vitepress/' + rest + location.search + location.hash);
     }
   })();
 </script>

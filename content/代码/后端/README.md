@@ -10,7 +10,7 @@ title: "后端"
 | --- | --- | --- |
 | [java](java/) | Java 环境与 VSCode 配置 | 1 |
 | [php](php/) | ThinkPHP 写接口、根据权限添加页面（官方后台）、小玩意 | 3 |
-| [node](node/) | Nest 框架、Node 后端选型 | 2 |
+| [node](node/) | Node 后端入门、HTTP/REST、Express、NestJS、数据库与安全 | 8 |
 
 ## 说明
 

@@ -40,11 +40,11 @@ features:
     linkText: 进入资源
 ---
 
-[← 返回站点选择](../)
+<a class="vp-raw" href="../">← 返回站点选择</a>
 
 ## 快速入口
 
-[开始阅读](./代码/README.md) · [交互示例](./指南/交互示例.md) · [搭建与部署](./代码/前端/工程化/vitepress/文档站搭建与部署指南.md) · [Astro 版](./代码/前端/工程化/astro/Astro文档站搭建与部署.md)
+[开始阅读](./代码/README.md) · [交互示例](./指南/交互示例.md) · [搭建与部署](./代码/前端/工程化/vitepress/文档站搭建与部署指南.md) · <a class="vp-raw" href="../astro/">Astro 版</a>
 
 ## 为什么用文档站
 
@@ -82,4 +82,4 @@ features:
 需要按目录树浏览全部文件？打开[全库索引](/README.md)。
 
 
-[← 返回站点选择](../)
+<a class="vp-raw" href="../">← 返回站点选择</a>

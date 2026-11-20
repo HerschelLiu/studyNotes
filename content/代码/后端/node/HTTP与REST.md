@@ -150,7 +150,7 @@ app.post('/api/todos', {
 await app.listen({ port: 3000 })
 ```
 
-已有速查：[模块/express.md](../模块/express.md)、[koa开发.md](../koa开发.md)、[使用nodejs写个接口.md](../使用nodejs写个接口.md)。
+已有速查：[模块/express.md](../../前端/node/模块/express.md)、[koa开发.md](../../前端/node/koa开发.md)、[使用nodejs写个接口.md](../../前端/node/使用nodejs写个接口.md)。
 
 项目规范与进阶框架：
 
@@ -177,7 +177,7 @@ await app.listen({ port: 3000 })
 2. 加上统一错误结构、请求体大小限制、404；
 3. 换成 Fastify，对比代码少了什么；
 4. 把接口拆成 `routes/`、`services/`、`schemas/`；
-5. 写接口测试（见[测试、日志与部署](../工程化/测试、日志与部署.md)）。
+5. 写接口测试（见[测试、日志与部署](../../前端/node/工程化/测试、日志与部署.md)）。
 
 ## 8. 练习
 

@@ -209,8 +209,8 @@ const contentDir = fileURLToPath(new URL('../../content', import.meta.url));
 - `content/` 根：400+ 篇共享 Markdown；
 - `content/vitepress/`：2 篇 VitePress 专属（含 VitePress 首页）；
 - `content/astro/`：2 篇 Astro 专属（含 Astro 首页）；
-- VitePress：404 个 HTML；
-- Astro：404 个 HTML；
+- VitePress：417 个 HTML；
+- Astro：417 个 HTML；
 - 磁盘上只有一份 `content/`，没有 `apps/*/content`；
 - 根 `npm-lock` 单一锁文件；
 - 两个站点可同时启动，源内容修改直接生效。

@@ -13,8 +13,8 @@ title: "学习笔记 · 全库索引"
 | 分类 | 文档数 | 入口 |
 | --- | --- | --- |
 | ai | 8 | [README](代码/ai/README.md) |
-| 前端 | 312 | [README](代码/前端/README.md) |
-| 后端 | 7 | [README](代码/后端/README.md) |
+| 前端 | 306 | [README](代码/前端/README.md) |
+| 后端 | 13 | [README](代码/后端/README.md) |
 | 工具 | 36 | [README](代码/工具/README.md) |
 | 系统与运维 | 23 | [README](代码/系统与运维/README.md) |
 | 资源 | 4 | [README](代码/资源/README.md) |
@@ -224,7 +224,7 @@ title: "学习笔记 · 全库索引"
         - [utils.md](代码/前端/hooks/跨框架（纯JS）/utils.md)
         - [根据手机加速计计算步数的js.md](代码/前端/hooks/跨框架（纯JS）/根据手机加速计计算步数的js.md)
         - [防抖与节流.md](代码/前端/hooks/跨框架（纯JS）/防抖与节流.md)
-    - **node/**（21 篇）
+    - **node/**（28 篇）
       - **node版本管理/**（3 篇）
         - [fnm.md](代码/前端/node/node版本管理/fnm.md)
         - [npm 全局共享层和别名完整配置手册.md](代码/前端/node/node版本管理/npm%20全局共享层和别名完整配置手册.md)
@@ -602,13 +602,19 @@ title: "学习笔记 · 全库索引"
     - [三方工具 js.md](代码/前端/三方工具%20js.md)
     - [代码工具.md](代码/前端/代码工具.md)
     - [名词解释.md](代码/前端/名词解释.md)
-  - [后端/](代码/后端/README.md)（7 篇）
+  - [后端/](代码/后端/README.md)（13 篇）
     - **java/**（1 篇）
       - [vscode配置JAVA.md](代码/后端/java/vscode配置JAVA.md)
-    - **node/**（2 篇）
+    - **node/**（8 篇）
       - **Nest/**（1 篇）
         - [nest.md](代码/后端/node/Nest/nest.md)
+      - [Express项目规范.md](代码/后端/node/Express项目规范.md)
+      - [HTTP与REST.md](代码/后端/node/HTTP与REST.md)
+      - [NestJS企业级实践.md](代码/后端/node/NestJS企业级实践.md)
       - [node后端选型.md](代码/后端/node/node后端选型.md)
+      - [后端技能地图与岗位对照.md](代码/后端/node/后端技能地图与岗位对照.md)
+      - [后端学习规划.md](代码/后端/node/后端学习规划.md)
+      - [数据库、鉴权与安全.md](代码/后端/node/数据库、鉴权与安全.md)
     - **php/**（3 篇）
       - [thinkPHP写接口.md](代码/后端/php/thinkPHP写接口.md)
       - [小玩意.md](代码/后端/php/小玩意.md)

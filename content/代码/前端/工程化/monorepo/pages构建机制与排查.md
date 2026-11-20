@@ -138,7 +138,7 @@ PAGES_BASE=/demo/ npm run pages:build
 5. copy apps/home/index.html → .pages/index.html
    copy apps/home/404.html   → .pages/404.html
 6. write .pages/.nojekyll                   关闭 Jekyll
-7. 校验 4 个 index.html 存在，缺失则非 0 退出
+7. 校验 3 个 index.html 存在，缺失则非 0 退出
 ```
 
 两个构建默认串行；加 `--parallel` 可并行：
@@ -159,9 +159,9 @@ $ find .pages -maxdepth 2 -name index.html
 当前规模：
 
 ```text
-.pages 约 185M
-VitePress 404 个 HTML
-Astro 404 个 HTML
+.pages 约 282M
+VitePress 417 个 HTML
+Astro 417 个 HTML
 ```
 
 ### 3.4 关键依赖
@@ -183,7 +183,7 @@ Astro 404 个 HTML
 3. **两个 base**：VitePress 和 Astro 的 base 不同；
 4. **一个 artifact**：Pages 只能上传一个根目录；
 5. **原子性**：每次必须清空 `.pages`，否则旧文件会残留；
-6. **旧链接兼容**：根 `404.html` 把旧 `/代码/...` 重定向到 `/vitepress/代码/...`；
+6. **旧链接兼容**：根 `404.html` 把旧 `/代码/...` 重定向到 `/vitepress/代码/...`，并把旧 `前端/node/后端/` 映射到 `后端/node/`；
 7. **Jekyll**：需要 `.nojekyll`，否则 `_astro` 等目录可能被忽略；
 8. **零框架耦合**：home 是纯 HTML，不引入第三个框架。
 

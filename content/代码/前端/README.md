@@ -13,7 +13,7 @@ title: "前端"
 | [React](React/) | React 基础与 hooks | 4 |
 | [css](css/) | 布局、选择器、兼容性 hack、滚动条美化 | 15 |
 | [typescript](typescript/) | TS 笔记、类型声明（`typings/` 下有微信小程序全局声明代码） | 7 |
-| [node](node/) | 包管理与工具链：nvm / fnm、模块机制、npm 相关 | 21 |
+| [node](node/) | 包管理与工具链：nvm / fnm、模块机制、npm 相关 | 28 |
 | [工程化](工程化/) | vite、webpack、gulp、monorepo、nuxt、新项目脚手架准备 | 13 |
 | [组件库](组件库/) | Element Plus 业务组件封装（表格 / 选择抽屉 / 表单 / 预览 / 搜索区 / 抽屉）与若依页面级组件，**文档与同目录代码对齐** | 15 |
 | [hooks](hooks/) | 自研 hooks：只用于 Vue、只用于微信小程序、跨框架纯 JS、uniapp、若依、插件 | 80 |
