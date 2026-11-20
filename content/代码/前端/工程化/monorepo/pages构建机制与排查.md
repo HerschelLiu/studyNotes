@@ -15,6 +15,7 @@ title: ".pages 构建机制与排查"
 ```text
 .pages/
 ├── index.html          -> https://<user>.github.io/studyNotes/
+├── 404.html            -> 旧 /studyNotes/xxx 兼容到 /vitepress/xxx
 ├── .nojekyll           -> 关闭 GitHub Pages 的 Jekyll 处理
 ├── vitepress/          -> https://<user>.github.io/studyNotes/vitepress/
 │   ├── index.html
@@ -49,7 +50,7 @@ npm run pages:build
 ```json
 {
   "scripts": {
-    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
+    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp apps/home/404.html .pages/404.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
   }
 }
 ```
@@ -106,8 +107,9 @@ rm -rf .pages
 # 2. 创建两个子站目录
 mkdir -p .pages/vitepress .pages/astro
 
-# 3. 根首页：纯静态 home
+# 3. 根首页与旧路径兼容页
 cp apps/home/index.html .pages/index.html
+cp apps/home/404.html .pages/404.html
 
 # 4. VitePress 产物整体拷贝到 /vitepress/
 cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/
@@ -131,14 +133,15 @@ $ find .pages -maxdepth 2 -name index.html
 当前规模：
 
 ```text
-.pages 约 184M
-VitePress 403 个 HTML
-Astro 403 个 HTML
+.pages 约 185M
+VitePress 404 个 HTML
+Astro 404 个 HTML
 ```
 
 ### 3.4 关键依赖
 
 - `apps/home/index.html` 必须存在；
+- `apps/home/404.html` 必须存在，用于旧 VitePress 链接重定向；
 - `apps/vitepress/.vitepress/dist/index.html` 必须存在；
 - `apps/astro/dist/index.html` 必须存在；
 - `apps/home/index.html` 里的链接必须是相对路径 `vitepress/`、`astro/`；
@@ -154,8 +157,9 @@ Astro 403 个 HTML
 3. **两个 base**：VitePress 和 Astro 的 base 不同；
 4. **一个 artifact**：Pages 只能上传一个根目录；
 5. **原子性**：每次必须清空 `.pages`，否则旧文件会残留；
-6. **Jekyll**：需要 `.nojekyll`，否则 `_astro` 等目录可能被忽略；
-7. **零框架耦合**：home 是纯 HTML，不引入第三个框架。
+6. **旧链接兼容**：根 `404.html` 把旧 `/代码/...` 重定向到 `/vitepress/代码/...`；
+7. **Jekyll**：需要 `.nojekyll`，否则 `_astro` 等目录可能被忽略；
+8. **零框架耦合**：home 是纯 HTML，不引入第三个框架。
 
 命令选择 shell 而不是 Node 脚本，是因为它只做目录复制，不引入额外依赖；CI 与本地行为一致。
 

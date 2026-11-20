@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><title>样式已迁移</title></head>
+<body>
+<script>
+  // GitHub Pages 根 404：把旧的 /studyNotes/xxx 兼容到 /studyNotes/vitepress/xxx
+  (function () {
+    var base = '/studyNotes/';
+    var path = location.pathname;
+    if (path.indexOf(base) === 0 && path.indexOf(base + 'vitepress/') !== 0 && path.indexOf(base + 'astro/') !== 0) {
+      location.replace(base + 'vitepress/' + path.slice(base.length) + location.search + location.hash);
+    }
+  })();
+</script>
+<p>页面已迁移到 <a href="/studyNotes/vitepress/">VitePress 文档站</a>。</p>
+</body>
+</html>

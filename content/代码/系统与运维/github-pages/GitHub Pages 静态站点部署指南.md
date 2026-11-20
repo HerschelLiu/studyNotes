@@ -298,6 +298,7 @@ workflow 片段：
 - 根门户链接用相对路径 `vitepress/`、`astro/`，不要写死域名；
 - Astro 内部绝对链接要带 `/repo/astro/`；共享内容里的相对 `.md` 链接由 remark 插件转换；
 - VitePress 内部链接由 `DOCS_BASE` 生成；
+- 根 `404.html` 会把旧的 `/studyNotes/代码/...` 兼容重定向到 `/studyNotes/vitepress/代码/...`；
 - 两个站点的搜索索引各自生成；
 - 一个 artifact 上传，Pages 只部署一次。
 
@@ -374,4 +375,5 @@ base 配错是白屏和 CSS/JS 404 的第一原因：
 - [VitePress 文档站搭建与部署指南](/代码/前端/工程化/vitepress/文档站搭建与部署指南.md)
 - [Astro 文档站搭建与 VitePress 共存指南](/代码/前端/工程化/astro/Astro文档站搭建与部署.md)
 - [让项目同时支持 VitePress 与 Astro](</代码/前端/工程化/dual-docs/让项目同时支持 VitePress 与 Astro.md>)
-- [monorepo 与脚手架](/代码/前端/工程化/monorepo/monorepo.md)
+- [monorepo](/代码/前端/工程化/monorepo/monorepo.md)
+- [.pages 构建机制与排查](/代码/前端/工程化/monorepo/pages构建机制与排查.md)

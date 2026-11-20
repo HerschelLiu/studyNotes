@@ -4,7 +4,8 @@
 
 - 纯静态 `index.html`，不依赖 VitePress/Astro；
 - 链接使用相对路径 `vitepress/`、`astro/`；
-- `npm run pages:build` 会把它复制为 `.pages/index.html`。
+- `npm run pages:build` 会把它复制为 `.pages/index.html`；
+- `404.html` 负责把旧的 `/studyNotes/代码/...` 兼容到 `/studyNotes/vitepress/代码/...`。
 
 ## 它不是自动路由
 
@@ -12,6 +13,7 @@
 
 1. `pages:build` 显式执行：
    `cp apps/home/index.html .pages/index.html`
+   `cp apps/home/404.html .pages/404.html`
 2. 根 `/` 才会显示这个页面。
 
 所以“默认主页”由两部分组成：

@@ -17,6 +17,6 @@
     "build:astro": "npm --workspace apps/astro run build",
     "preview:astro": "npm --workspace apps/astro run preview --",
     "normalize": "node scripts/normalize-frontmatter.mjs ./content",
-    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
+    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp apps/home/404.html .pages/404.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
   }
 }

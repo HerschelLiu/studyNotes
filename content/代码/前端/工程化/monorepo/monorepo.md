@@ -37,7 +37,7 @@ pnpm -F portal dev
     "build:vp": "npm --workspace apps/vitepress run build",
     "astro:dev": "npm --workspace apps/astro run dev --",
     "astro:build": "npm --workspace apps/astro run build",
-    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
+    "pages:build": "rm -rf .pages && mkdir -p .pages/vitepress .pages/astro && cp apps/home/index.html .pages/index.html && cp apps/home/404.html .pages/404.html && cp -R apps/vitepress/.vitepress/dist/* .pages/vitepress/ && cp -R apps/astro/dist/* .pages/astro/ && touch .pages/.nojekyll"
   }
 }
 ```
@@ -197,6 +197,8 @@ VitePress 的 `srcDir` 在仓库根 `content/`，Vite 需要从 Markdown 文件�
   - [使用 pnpm 命令的核心场景](#使用-pnpm-命令的核心场景)
 - [注意](#注意)
   - [子package之间的引用要引用其打包后的产物](#子package之间的引用要引用其打包后的产物)
+
+> **阅读提示**：下面第 2～11 节是 pnpm 通用教程，里面的 `portal`、`admin` 是虚构示例包名，**不是本仓库的 `apps/home`**。当前项目实现看第 12 节；本仓库使用 npm workspaces，四种包管理器配置见 0.1～0.6。
 
 ## 什么是monorepo
 

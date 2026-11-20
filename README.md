@@ -44,6 +44,7 @@ npm run dev:astro       # Astro，4321
 npm run build:astro     # 产物 apps/astro/dist
 npm run preview:astro
 
+npm run pages:build     # 组装 .pages（home + VitePress + Astro）
 npm run normalize       # 规范化 content/ 的 frontmatter
 ```
 
