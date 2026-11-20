@@ -153,6 +153,51 @@ sidebar: [
 
 `slug` 是相对于 `src/content/docs/` 的路径，不带 `.md`。
 
+### 本项目为什么不能直接用 autogenerate
+
+Starlight 的 `autogenerate` 在内部把路径和 `src/content/docs/` 做前缀匹配，而本项目通过 `loader.glob({ base: '../../content' })` 读取仓库根目录的 `content/`，`entry.filePath` 不是 `src/content/docs/...`，匹配结果为空，于是**侧边栏有分组标题，但一个页面链接都没有**。
+
+解决方式是改为扫描目录生成 `slug` 列表（`apps/astro/sidebar.mjs`）：
+
+```js
+// astro.config.mjs
+import { generateSidebar } from './sidebar.mjs'
+
+starlight({
+  sidebar: generateSidebar(),
+})
+```
+
+```js
+// sidebar.mjs（核心逻辑）
+const id = relPath.replace(/\.md$/, '')
+if (id === 'astro/index') return 'index'
+if (id.startsWith('astro/')) return id.slice('astro/'.length)
+if (id.endsWith('/README')) return id.slice(0, -'/README'.length)
+return id
+```
+
+生成规则必须和 `content.config.ts` 的 `generateId` 完全一致，否则构建会报 `slug does not exist`。目录默认 `collapsed: true`，`README` / `index` 固定显示为「概览」。
+
+### 目录链接（`vue/`）为什么 404
+
+索引页里常写 `[vue](vue/)`，这种目录链接在 GitHub 上可以直接浏览，但静态站点没有目录索引：
+
+- VitePress 不会为目录自动生成 `index.html`；
+- Astro 也不会，访问 `/astro/代码/前端/vue/` 会落到根 404。
+
+共享内容里保留 `vue/` 的写法（对 GitHub 友好），由构建插件兜底：
+
+- `apps/astro/src/plugins/remark-md-links.mjs`：目录没有 `index.md` / `README.md` 时，改写成目录里的第一个 Markdown；
+- `apps/vitepress/.vitepress/plugins/directory-links.ts`：VitePress 侧做同样处理。
+
+改完 Markdown 插件后，Astro 的内容缓存可能仍返回旧渲染结果，需要清一次：
+
+```bash
+rm -rf apps/astro/.astro
+npm run build:astro
+```
+
 ## 7. 自定义样式
 
 `src/styles/custom.css`：

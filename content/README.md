@@ -714,4 +714,4 @@ title: "学习笔记 · 全库索引"
 ## 仓库根其他文件
 
 - [.gitignore](.gitignore)
-- [git-commit-message.md](.trae/rules/git-commit-message.md)
+- [git-commit-message.md](https://github.com/HerschelLiu/studyNotes/blob/master/.trae/rules/git-commit-message.md)

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import remarkMdLinks from './src/plugins/remark-md-links.mjs';
 import rehypeDemoFallback from './src/plugins/rehype-demo-fallback.mjs';
 import remarkDemoFallback from './src/plugins/remark-demo-fallback.mjs';
+import { generateSidebar } from './sidebar.mjs';
 
 // 本地 /；与 VitePress 合并部署时传 ASTRO_BASE=/studyNotes/astro/
 const base = process.env.ASTRO_BASE || '/';
@@ -36,16 +37,7 @@ export default defineConfig({
         root: { label: '简体中文', lang: 'zh-CN' },
       },
       customCss: ['./src/styles/custom.css'],
-      sidebar: [
-        { label: '前端', items: [{ autogenerate: { directory: '代码/前端' } }] },
-        { label: '后端', items: [{ autogenerate: { directory: '代码/后端' } }] },
-        { label: 'AI', items: [{ autogenerate: { directory: '代码/ai' } }] },
-        { label: '工具', items: [{ autogenerate: { directory: '代码/工具' } }] },
-        { label: '系统与运维', items: [{ autogenerate: { directory: '代码/系统与运维' } }] },
-        { label: '资源', items: [{ autogenerate: { directory: '代码/资源' } }] },
-        { label: '指南', items: [{ autogenerate: { directory: '指南' } }] },
-        { label: 'Astro 专属', items: [{ autogenerate: { directory: 'astro' } }] },
-      ],
+      sidebar: generateSidebar(),
     }),
   ],
 });

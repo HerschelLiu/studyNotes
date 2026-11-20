@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 import { fileURLToPath } from 'node:url'
 import { generateNav, generateSidebar } from './sidebar.mjs'
 import docsWatch from './plugins/content-watch'
+import directoryLinks from './plugins/directory-links'
 
 /**
  * GitHub Pages 是项目站点，地址形如：
@@ -96,7 +97,10 @@ export default defineConfig({
 
   markdown: {
     theme: { light: 'github-light', dark: 'github-dark' },
-    config: escapeVueMustache,
+    config: (md: any) => {
+      escapeVueMustache(md)
+      md.use(directoryLinks)
+    },
   },
 
   vite: {
