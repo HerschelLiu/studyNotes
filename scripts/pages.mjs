@@ -1,11 +1,9 @@
 import fs from 'node:fs/promises'
-import fsSync from 'node:fs'
-import http from 'node:http'
 import path from 'node:path'
 import { spawn, spawnSync } from 'node:child_process'
 import { pagesConfig } from './pages.config.mjs'
 
-const { repoRoot, repoBase, outDir, homeDir, port, sites } = pagesConfig
+const { repoRoot, repoBase, outDir, homeDir, sites } = pagesConfig
 const outRoot = path.join(repoRoot, outDir)
 // Windows 上 npm 是 npm.cmd，不能直接 spawn，需要借助命令解释器（shell）
 const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
@@ -13,24 +11,6 @@ const spawnOptions = {
   cwd: repoRoot,
   stdio: 'inherit',
   shell: process.platform === 'win32',
-}
-
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.webp': 'image/webp',
-  '.ico': 'image/x-icon',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.txt': 'text/plain; charset=utf-8',
-  '.xml': 'application/xml; charset=utf-8',
 }
 
 const run = (script, env = {}) => {
@@ -99,66 +79,14 @@ async function build({ parallel = false } = {}) {
   console.log(`  Astro：    ${repoBase}astro/`)
 }
 
-const sendFile = (res, file, status = 200) => {
-  res.writeHead(status, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' })
-  fsSync.createReadStream(file).pipe(res)
-}
-
-async function serve() {
-  await assertExists(path.join(outRoot, 'index.html'))
-
-  const server = http.createServer((req, res) => {
-    const url = decodeURIComponent((req.url || '/').split('?')[0])
-
-    if (url === repoBase.replace(/\/$/, '')) {
-      res.writeHead(302, { Location: repoBase })
-      res.end()
-      return
-    }
-
-    if (!url.startsWith(repoBase)) {
-      sendFile(res, path.join(outRoot, '404.html'), 404)
-      return
-    }
-
-    const relative = url.slice(repoBase.length)
-    let file = path.resolve(outRoot, relative)
-
-    if (!file.startsWith(outRoot)) {
-      sendFile(res, path.join(outRoot, '404.html'), 404)
-      return
-    }
-
-    if (!relative || relative.endsWith('/')) file = path.join(file, 'index.html')
-    else if (!fsSync.existsSync(file) && fsSync.existsSync(`${file}.html`)) file = `${file}.html`
-
-    if (!fsSync.existsSync(file) || !fsSync.statSync(file).isFile()) {
-      sendFile(res, path.join(outRoot, '404.html'), 404)
-      return
-    }
-
-    sendFile(res, file)
-  })
-
-  await new Promise((resolve) => server.listen(port, resolve))
-  console.log(`\nPages 预览：http://localhost:${port}${repoBase}`)
-  console.log(`  VitePress：http://localhost:${port}${repoBase}vitepress/`)
-  console.log(`  Astro：    http://localhost:${port}${repoBase}astro/`)
-}
-
 const command = process.argv[2]
 const flags = process.argv.slice(3)
 
 try {
   if (command === 'build') {
     await build({ parallel: flags.includes('--parallel') })
-  } else if (command === 'serve') {
-    await serve()
-  } else if (command === 'preview') {
-    await build({ parallel: flags.includes('--parallel') })
-    await serve()
   } else {
-    console.error('用法：node scripts/pages.mjs <build|serve|preview> [--parallel]')
+    console.error('用法：node scripts/pages.mjs build [--parallel]')
     process.exit(1)
   }
 } catch (error) {

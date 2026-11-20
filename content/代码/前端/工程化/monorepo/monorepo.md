@@ -37,9 +37,7 @@ pnpm -F portal dev
     "build:vp": "npm --workspace apps/vitepress run build",
     "dev:astro": "npm --workspace apps/astro run dev --",
     "build:astro": "npm --workspace apps/astro run build",
-    "pages:build": "node scripts/pages.mjs build",
-    "pages:serve": "node scripts/pages.mjs serve",
-    "pages:preview": "node scripts/pages.mjs preview"
+    "pages:build": "node scripts/pages.mjs build"
   }
 }
 ```

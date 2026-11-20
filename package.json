@@ -14,8 +14,6 @@
     "build:astro": "npm --workspace apps/astro run build",
     "preview:astro": "npm --workspace apps/astro run preview --",
     "normalize": "node scripts/normalize-frontmatter.mjs ./content",
-    "pages:build": "node scripts/pages.mjs build",
-    "pages:serve": "node scripts/pages.mjs serve",
-    "pages:preview": "node scripts/pages.mjs preview"
+    "pages:build": "node scripts/pages.mjs build"
   }
 }

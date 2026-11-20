@@ -1,4 +1,6 @@
-# 读 pages.mjs 学 Node：构建编排与子进程
+---
+title: "读 pages.mjs 学 Node：构建编排与子进程"
+---
 
 > 对应仓库文件：`scripts/pages.mjs`、`scripts/pages.config.mjs`
 >
@@ -246,13 +248,8 @@ const flags = process.argv.slice(3)
 try {
   if (command === 'build') {
     await build({ parallel: flags.includes('--parallel') })
-  } else if (command === 'serve') {
-    await serve()
-  } else if (command === 'preview') {
-    await build({ parallel: flags.includes('--parallel') })
-    await serve()
   } else {
-    console.error('用法：node scripts/pages.mjs <build|serve|preview> [--parallel]')
+    console.error('用法：node scripts/pages.mjs build [--parallel]')
     process.exit(1)
   }
 } catch (error) {
@@ -297,7 +294,5 @@ CI 里只需要一个步骤：
 
 1. 增加 `--only=vitepress`，只构建并复制一个站点；
 2. 给每个阶段加耗时统计（`performance.now()`），看看瓶颈在构建还是复制；
-3. 把 `pages.mjs` 拆成 `build.mjs` 和 `serve.mjs`，用 `node:util` 的 `parseArgs` 解析参数；
+3. 把 `pages.mjs` 拆成 `pages.config.mjs`（配置）与 `pages.mjs`（构建），用 `node:util` 的 `parseArgs` 解析参数；
 4. 用 `node --inspect-brk scripts/pages.mjs build` 在 VS Code 里单步执行，观察 `tasks` 和 `.pages` 的变化。
-
-下一篇：[静态服务器与路径处理](./pages脚本拆解-静态服务器与路径处理.md)

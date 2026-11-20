@@ -68,9 +68,7 @@ npm run pages:build
 ```json
 {
   "scripts": {
-    "pages:build": "node scripts/pages.mjs build",
-    "pages:serve": "node scripts/pages.mjs serve",
-    "pages:preview": "node scripts/pages.mjs preview"
+    "pages:build": "node scripts/pages.mjs build"
   }
 }
 ```
@@ -79,8 +77,8 @@ npm run pages:build
 
 | 文件 | 职责 |
 | --- | --- |
-| `scripts/pages.config.mjs` | 唯一配置源：`PAGES_BASE`、两个子站 base、dist 路径、端口 |
-| `scripts/pages.mjs` | `build`（构建 + 组装 + 校验）、`serve`（本地模拟 Pages）、`preview`（两者串联） |
+| `scripts/pages.config.mjs` | 唯一配置源：`PAGES_BASE`、两个子站 base、dist 路径 |
+| `scripts/pages.mjs` | `build`（构建 + 组装 + 校验） |
 
 ### 2.2 排查结论
 
@@ -238,62 +236,32 @@ test -d .pages/vitepress/assets
 test -d .pages/astro/_astro
 ```
 
-### 5.4 本地预览：为什么需要 `pages.mjs serve`
+### 5.4 本地开发与预览
 
-两个站点构建时已经写死了子路径：
-
-- VitePress：`DOCS_BASE=/studyNotes/vitepress/`
-- Astro：`ASTRO_BASE=/studyNotes/astro/`
-
-因此本地不能直接：
+`.pages/` 只是部署产物，本地写文档不经过它：
 
 ```bash
-npx serve .pages     # 打开 / 时是门户，但站内资源请求 /studyNotes/... 会 404
-npm run preview:vp   # 只认识 VitePress，挂在 /，没有门户和 Astro
-npm run preview:astro
+npm run dev:vp      # VitePress 开发服务器，带热更新
+npm run dev:astro   # Astro 开发服务器，带热更新
 ```
 
-`scripts/pages.mjs serve` 做的事情，就是在本机模拟 GitHub Pages：
-
-1. 固定以 `.pages/` 为站点根；
-2. 把所有请求挂在 `/studyNotes/` 前缀下，与构建时的 base 对齐；
-3. `/`、`/vitepress/`、`/astro/` 自动补 `index.html`；
-4. 找不到文件时返回 `.pages/404.html`，和 Pages 一致；
-5. 打印三个入口地址。
-
-```bash
-npm run pages:preview   # 构建两站 + 组装 + 启动，默认 4173
-npm run pages:serve     # 只托管已有的 .pages，不重新构建
-```
-
-可调参数：
-
-```bash
-PAGES_PORT=4174 npm run pages:serve
-PAGES_BASE=/demo/ npm run pages:serve   # 仅当构建时也用了同一个 base
-```
-
-前缀、端口、dist 路径都由 `scripts/pages.config.mjs` 统一读取，构建与预览不会各写一份。
-
-> 它只是静态预览，没有热更新；写文档用 `dev:vp` / `dev:astro`，验证子路径、跨站跳转和 404 时用 `pages:preview`。
+需要验证子路径与跨站跳转时，用 `npm run pages:build` 生成 `.pages/` 后自行用静态服务器托管，并把访问路径对齐到构建时的 base（`/studyNotes/`）。
 
 ## 6. 常见问题排查
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
-| `.pages` 不存在 | 没运行 `pages:build` | 运行 `npm run pages:build`（会同时构建两个 app） |
+| `.pages` 不存在 | 没运行 `pages:build`，或克隆后未构建（`.pages/` 被 gitignore） | 运行 `npm run pages:build`（会同时构建两个 app） |
 | `.pages/vitepress` 不存在 | VitePress 构建失败或没执行 | 检查 `build:vp` 日志与 dist |
 | `.pages/astro` 不存在 | Astro 构建失败或没执行 | 检查 `build:astro` 日志与 dist |
 | 根 `/` 是 VitePress | home 未拷贝或文件名不对 | 确认 `apps/home/index.html` 覆盖 `.pages/index.html` |
-| `/vitepress/` 白屏、资源 404 | `DOCS_BASE` 不是 `/studyNotes/vitepress/` | 重新构建 VitePress |
-| `/astro/` 资源 404 | `ASTRO_BASE` 不是 `/studyNotes/astro/` | 重新构建 Astro |
-| `_astro` 目录 404 | 缺 `.nojekyll` 或被 Jekyll 忽略 | 确认 `touch .pages/.nojekyll` |
+| `/vitepress/` 白屏、资源 404 | `PAGES_BASE` 与实际部署路径不一致 | 用正确的 `PAGES_BASE` 重新 `pages:build` |
+| `/astro/` 资源 404 | `PAGES_BASE` 与实际部署路径不一致 | 用正确的 `PAGES_BASE` 重新 `pages:build` |
+| `_astro` 目录 404 | artifact 里缺 `.pages/.nojekyll`，被 Jekyll 忽略 | 脚本会自动写；检查是否只上传了子目录 |
 | 旧页面还在 | `.pages` 没有被清空 | 脚本每次构建都会清空；确认没用其他命令覆盖 `.pages` |
 | CI 上传后 404 | Pages Source 不是 GitHub Actions | 仓库 Settings → Pages → Source |
 | 只有根页，没有子站 | 只上传了 `.pages` 的一部分 | 检查 artifact 路径是否为 `.pages` |
-| 本地 `npx serve .pages` 打开白屏 | 请求缺少 `/studyNotes/` 前缀，与构建 base 不一致 | 改用 `npm run pages:preview` |
 | 直接让根路径显示 VitePress/Astro | 根 `index.html` 被换掉，但子站资源仍带子路径 | 同时把对应 `base` 改成 `/`，或保持门户方案 |
-| `pages:preview` 端口被占用 | 4173 已被其他进程使用 | `PAGES_PORT=4174 npm run pages:preview` |
 | 仓库改名 / 自定义域名后全部 404 | `PAGES_BASE` 仍是 `studyNotes` | 用 `PAGES_BASE=/` 或新仓库名重新 `pages:build` |
 
 ### 6.1 检查是不是唯一来源

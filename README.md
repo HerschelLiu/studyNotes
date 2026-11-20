@@ -46,13 +46,11 @@ npm run build:astro     # 产物 apps/astro/dist
 npm run preview:astro
 
 npm run pages:build     # 构建两站并组装 .pages（home + VitePress + Astro）
-npm run pages:preview   # 一键构建并本地预览 Pages：http://localhost:4173/studyNotes/
-npm run pages:serve     # 直接预览已有的 .pages（不重新构建）
 
 npm run normalize       # 规范化 content/ 的 frontmatter
 ```
 
-> `pages:preview` 会按 CI 的 base 构建两个站点再托管，适合验证子路径；写文档时仍用 `dev:vp` / `dev:astro` 获得热更新。
+> `.pages` 只用于产物组装与部署，本地开发请直接运行 `dev:vp` / `dev:astro`，两者都有热更新。
 >
 > Pages 的站点根就是 workflow 里 `upload-pages-artifact` 的 `path: .pages`；根主页是 `.pages/index.html`（来自 `apps/home/index.html`）。
 

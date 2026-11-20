@@ -364,26 +364,14 @@ npm run pages:build
 └── astro/            # Astro 站点
 ```
 
-本地模拟 Pages 访问（推荐，一条命令完成“构建 + 组装 + 托管”）：
+本地验证：
 
 ```bash
-npm run pages:preview
-# 打开：
-# http://localhost:4173/studyNotes/           门户
-# http://localhost:4173/studyNotes/vitepress/ VitePress
-# http://localhost:4173/studyNotes/astro/     Astro
+npm run dev:vp      # VitePress，带热更新
+npm run dev:astro   # Astro，带热更新
 ```
 
-它等价于：
-
-```bash
-npm run pages:build   # 默认 PAGES_BASE=/studyNotes/，构建两站并组装
-npm run pages:serve   # 只托管已有的 .pages，默认 4173
-```
-
-`pages:build`、`pages:serve` 都读取 `scripts/pages.config.mjs`，base 与端口只维护一处。
-
-> `pages:preview` / `pages:serve` 是**静态预览**，没有热更新；写文档时仍分别用 `npm run dev:vp`、`npm run dev:astro`，需要验证子路径与跨站跳转时再用 `pages:preview`。
+`pages:build` 会按 `PAGES_BASE=/studyNotes/` 构建两个站点并组装校验 `.pages/`，构建通过即说明子路径资源是对的；需要看真实访问效果时，用任意静态服务器托管 `.pages/` 并让请求带 `/studyNotes/` 前缀。
 
 #### 第 3 步：提交并推送
 
@@ -529,7 +517,7 @@ base 配错是白屏和 CSS/JS 404 的第一原因：
 | 双栈后 Astro 页面在 `/astro/` 404 | 没有把 Astro dist 复制进 VitePress dist | 见方案 B 的 cp 步骤 |
 | Astro 首页点“进入文档”跳到 `/astro/astro/代码/`，显示“页面已迁移到 VitePress 文档站” | 相对链接写成了 `./代码/README.md`，被解析成 `astro/代码`；该地址不存在，Pages 回落到根 `404.html` | 改成 `../代码/README.md`；并确认 remark 插件已去掉 `astro/` 前缀 |
 | Astro 首页能开但像纯文本、没有 Hero | `template: splash` 下没有配置 `hero` | frontmatter 增加 `hero.title` / `hero.tagline`，正文用「分类入口」链接 |
-| 本地 `npx serve .pages` 打开白屏 | 站点构建时 base 是 `/studyNotes/...`，直接挂在根路径下资源会 404 | 用 `npm run pages:preview`，按 `/studyNotes/` 前缀托管 |
+| 本地 `npx serve .pages` 打开白屏 | 站点构建时 base 是 `/studyNotes/...`，直接挂在根路径下资源会 404 | 让静态服务器把站点挂在 `/studyNotes/` 前缀下访问 |
 | 根路径想直接显示 VitePress/Astro | 换了 `.pages/index.html`，但子站资源仍带子路径 | 同时把对应 `base` 改为 `/`，或保留门户 |
 | 中文 URL 变成 `%E5...` | 浏览器正常编码 | 无需处理；避免频繁改文件名 |
 | 构建内存不足 | 页面很多 + 高亮 | `NODE_OPTIONS=--max-old-space-size=4096` |
